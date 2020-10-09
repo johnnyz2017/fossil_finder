@@ -3,7 +3,9 @@
         "id" : 0,
         "title" : "Post title 1",
         "images": [
-            {"url": "images/others/hs001.jpeg"}
+            {"url": "images/others/hs001.jpeg"},
+            {"url": "images/others/hs002.jpeg"},
+            {"url": "images/others/hs003.jpeg"}
         ],
         "contents": "Post Conent 1",
         "author": "JZ 01",
@@ -19,7 +21,8 @@
         "id" : 1,
         "title" : "Post title 1",
         "images": [
-            {"url": "images/others/hs002.jpeg"}
+            {"url": "images/others/hs002.jpeg"},
+            {"url": "images/others/hs001.jpeg"}
         ],
         "contents": "Post Conent 1",
         "author": "ZZ 01",

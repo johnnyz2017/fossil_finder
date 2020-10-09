@@ -48,6 +48,14 @@ dependencies:
   shared_preferences:
   flutter_treeview:
 
+  flutter_swiper: ^1.1.6
+  swipe_stack:
+
+  flutter_picker:
+  image_picker:
+
+  permission_handler:
+
 
 dev_dependencies:
   flutter_test:

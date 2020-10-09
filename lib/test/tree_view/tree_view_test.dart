@@ -233,10 +233,10 @@ class _TreeViewTestPageState extends State<TreeViewTestPage> {
             ),
     );
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        elevation: 0,
-      ),
+      // appBar: AppBar(
+      //   title: Text(widget.title),
+      //   elevation: 0,
+      // ),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());

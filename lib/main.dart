@@ -76,19 +76,8 @@ class _FossilAppState extends State<FossilApp> {
 }
 
 class MainApp extends StatelessWidget {
-
-  
-
-
   @override
   Widget build(BuildContext context) {
-    // return 
-    // Scaffold(
-    //   appBar: AppBar(
-    //     title: Text("Fossil Finder"),
-    //   ),
-    //   body: LoginScreen(),
-    // );
     return MaterialApp(
       title: "Fossil Finder",
       debugShowCheckedModeBanner: false,

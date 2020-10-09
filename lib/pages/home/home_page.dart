@@ -2,8 +2,10 @@ import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 import 'package:decorated_flutter/decorated_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fossils_finder/map/map_demo.dart';
+import 'package:fossils_finder/pages/form/post_upload.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/pages/map/map_list.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   AmapController _controller;
+  bool _locationStatus = false;
 
   init() async{
     localStorage = await SharedPreferences.getInstance();
@@ -35,9 +38,32 @@ class _HomePageState extends State<HomePage> {
     localStorage.remove('token');
   }
 
+  _checkPermission() async{
+    // bool status = await Permission.storage.isGranted;
+    // if(!status) {
+    //   return await Permission.storage.request().isGranted;
+    // }
+
+    bool status = await Permission.locationAlways.isGranted;
+    if(!status){
+      print("need to get locationAlways permission first");
+      status = await Permission.locationAlways.request().isGranted;
+      if(status){
+        setState(() {
+          _locationStatus = true;
+        });
+
+        await _controller?.showMyLocation(MyLocationOption(
+          myLocationType: MyLocationType.Locate,
+        ));
+      }
+    }
+  }
+
   @override
   void initState(){
     super.initState();
+    // _checkPermission();
     init();
   }
 
@@ -153,13 +179,22 @@ class _HomePageState extends State<HomePage> {
                     onMapCreated: (controller) async {
                       _controller = controller;
 
-                      await _controller?.showMyLocation(MyLocationOption(
-                        myLocationType: MyLocationType.Locate,
-                      ));
-
-                      // await _controller?.showMyLocation(MyLocationOption(
-                      //   myLocationType: MyLocationType.Locate,
-                      // ));
+                      bool status = await Permission.locationAlways.isGranted;
+                      if(!status){
+                        print("need to get locationAlways permission first");
+                        status = await Permission.locationAlways.request().isGranted;
+                        if(status){
+                          await _controller?.showMyLocation(MyLocationOption(
+                            myLocationType: MyLocationType.Locate,
+                          ));
+                        }else{
+                          print("need to grant the location permission first");
+                        }
+                      }else{
+                        await _controller?.showMyLocation(MyLocationOption(
+                          myLocationType: MyLocationType.Locate,
+                        ));
+                      }
                   },
                 ),
                 //AppBar move to here
@@ -196,8 +231,18 @@ class _HomePageState extends State<HomePage> {
               
       ),
       floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
         onPressed: () async{
           print("floating action button clicked");
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              // return PostDetailPage(post: post,);
+              return PostUploadPage();
+            }) 
+          );
+
           // await _controller?.showMyLocation(MyLocationOption(
           //   myLocationType: MyLocationType.Locate,
           // ));

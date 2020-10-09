@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fossils_finder/test/tree_view/tree_view_test.dart';
 
 import 'home/home_page.dart';
-import 'list/category_dart.dart';
+import 'list/category_list.dart';
+import 'list/category_page.dart';
 import 'profile/member_page.dart';
 
 class IndexPage extends StatefulWidget {
@@ -24,17 +25,18 @@ class _IndexPageState extends State<IndexPage> {
       icon: Icon(Icons.person),
       title: Text("个人信息")
     ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.person),
-      title: Text("树形测试")
-    ),
+    // BottomNavigationBarItem(
+    //   icon: Icon(Icons.person),
+    //   title: Text("树形测试")
+    // ),
   ];
 
   final List<Widget> tabBodies = [
     HomePage(title: 'Home Page',),
-    CategoryPage(title: 'Category Page'),
+    // CategoryListView(title: 'Category Page'),
+    CategoryPage(),
     MemberPage(title: 'Member Profile'),
-    TreeViewTestPage(title: 'Tree View Test Page',)
+    // TreeViewTestPage(title: 'Tree View Test Page',)
   ];
 
   int currentIndex = 0;
@@ -54,7 +56,7 @@ class _IndexPageState extends State<IndexPage> {
         currentIndex: currentIndex,
         items: bottomTabs,
         onTap: (index){
-          print("change index to ${index}");
+          print("change index to $index");
           setState(() {
             currentIndex = index;
             currentPage = tabBodies[currentIndex];
