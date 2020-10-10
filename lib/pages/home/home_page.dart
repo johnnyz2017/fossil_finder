@@ -235,6 +235,23 @@ class _HomePageState extends State<HomePage> {
         onPressed: () async{
           print("floating action button clicked");
 
+          // bool status = await Permission.locationAlways.isGranted;
+          // if(!status){
+          //   print("need to get locationAlways permission first");
+          //   status = await Permission.locationAlways.request().isGranted;
+          //   if(status){
+          //     await _controller?.showMyLocation(MyLocationOption(
+          //       myLocationType: MyLocationType.Locate,
+          //     ));
+          //   }else{
+          //     print("need to grant the location permission first");
+          //   }
+          // }else{
+          //   await _controller?.showMyLocation(MyLocationOption(
+          //     myLocationType: MyLocationType.Locate,
+          //   ));
+          // }
+
           Navigator.push(
             context,
             MaterialPageRoute(builder: (BuildContext context) {

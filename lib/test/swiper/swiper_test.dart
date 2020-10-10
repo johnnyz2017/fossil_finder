@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fossils_finder/model/post.dart';
-import 'package:swipe_stack/swipe_stack.dart';
+// import 'package:swipe_stack/swipe_stack.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
 // class SwiperTestPage extends StatefulWidget {
