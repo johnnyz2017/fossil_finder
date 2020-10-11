@@ -24,6 +24,9 @@ PODS:
     - Flutter
   - flutter_plugin_android_lifecycle (0.0.1):
     - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
   - foundation_fluttify (0.0.1):
     - Flutter
   - image_picker (0.0.1):
@@ -48,6 +51,7 @@ PODS:
     - Flutter
   - shared_preferences_windows (0.0.1):
     - Flutter
+  - Toast (4.0.0)
   - url_launcher (0.0.1):
     - Flutter
   - url_launcher_linux (0.0.1):
@@ -65,6 +69,7 @@ DEPENDENCIES:
   - flutter_bmfbase (from `.symlinks/plugins/flutter_bmfbase/ios`)
   - flutter_bmfmap (from `.symlinks/plugins/flutter_bmfmap/ios`)
   - flutter_plugin_android_lifecycle (from `.symlinks/plugins/flutter_plugin_android_lifecycle/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - foundation_fluttify (from `.symlinks/plugins/foundation_fluttify/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
@@ -87,6 +92,7 @@ SPEC REPOS:
     - AMap3DMap
     - AMapFoundation
     - BaiduMapKit
+    - Toast
 
 EXTERNAL SOURCES:
   amap_core_fluttify:
@@ -103,6 +109,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_bmfmap/ios"
   flutter_plugin_android_lifecycle:
     :path: ".symlinks/plugins/flutter_plugin_android_lifecycle/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
   foundation_fluttify:
     :path: ".symlinks/plugins/foundation_fluttify/ios"
   image_picker:
@@ -147,6 +155,7 @@ SPEC CHECKSUMS:
   flutter_bmfbase: 8ac2c94f3f110daec8e499dc13f8a983b0c8ee40
   flutter_bmfmap: 57030919b16b5353649fbea77b6143129f7a4ff1
   flutter_plugin_android_lifecycle: dc0b544e129eebb77a6bfb1239d4d1c673a60a35
+  fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   foundation_fluttify: 0c45145e3fad1fb99188e4979daed5b24cd9b278
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
@@ -159,6 +168,7 @@ SPEC CHECKSUMS:
   shared_preferences_macos: f3f29b71ccbb56bf40c9dd6396c9acf15e214087
   shared_preferences_web: 141cce0c3ed1a1c5bf2a0e44f52d31eeb66e5ea9
   shared_preferences_windows: 36b76d6f54e76ead957e60b49e2f124b4cd3e6ae
+  Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
   url_launcher_linux: ac237cb7a8058736e4aae38bdbcc748a4b394cc0
   url_launcher_macos: fd7894421cd39320dce5f292fc99ea9270b2a313

@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PostUploadPage extends StatefulWidget {
@@ -13,7 +16,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    // _upLoadImage(image);//上传图片
+    _upLoadImage(image);//上传图片
     setState(() {
       _image = image;
     });
@@ -81,4 +84,43 @@ class _PostUploadPageState extends State<PostUploadPage> {
       ),
     );
   }
+
+
+  _upLoadImage(File image) async {
+    String path = image.path;
+    var name = path.substring(path.lastIndexOf("/") + 1, path.length);
+    var suffix = name.substring(name.lastIndexOf(".") + 1, name.length);
+    FormData formData = new FormData.fromMap({
+      "userId": "1",
+      // "image": new UploadFileInfo(new File(path), name,
+      //     contentType: ContentType.parse("image/$suffix"))
+      "image": await MultipartFile.fromFile(path, filename: name),
+    });
+
+    Dio dio = new Dio();
+    Options options = Options(
+        contentType: 'application/json',
+    );
+    var respone = await dio.post<String>("http://localhost:8000/api/v1/post", data: formData, options: options);
+    print(respone);
+    if (respone.statusCode == 200) {
+
+      var responseJson = json.decode(respone.data);
+      print('response: ${respone.data} - ${responseJson['statusCode']}');
+
+      var status = responseJson['statusCode'] as int;
+      if(status == 200){
+        Fluttertoast.showToast(
+            msg: "图片上传成功",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.grey);
+      }else{
+        Fluttertoast.showToast(
+            msg: "图片上传失败！",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.red);
+      }
+    }
+  }
+  
 }
