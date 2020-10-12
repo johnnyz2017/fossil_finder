@@ -22,7 +22,8 @@ class LoginScreen extends StatelessWidget {
     localStorage = await SharedPreferences.getInstance();
   }
 
-  static var uri = "http://localhost:8000/api/v1";
+  // static var uri = "http://localhost:8000/api/v1";
+  static var uri = "http://foss-backend.herokuapp.com/api/v1";
   static BaseOptions options = BaseOptions(
       baseUrl: uri,
       responseType: ResponseType.plain,
@@ -190,8 +191,8 @@ class LoginScreen extends StatelessWidget {
     FlutterLogin(
       title: 'Fossil Finder',
       logo: 'images/icons/fossil_icon_512.png',
-      // onLogin: _login,
-      onLogin: _authUser,
+      onLogin: _login,
+      // onLogin: _authUser, //test
       onSignup: _register,
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
