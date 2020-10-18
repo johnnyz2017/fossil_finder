@@ -63,7 +63,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   amap_map_fluttify:
-    path: /Users/johnnyz/work/sources/flutter/amap_map_fluttify-master/
+    # path: /Users/johnnyz/work/sources/flutter/amap_map_fluttify-master/
+    path: ./third_party/amap_map_fluttify/
 
   
   build_runner:

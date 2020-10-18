@@ -27,6 +27,13 @@ class _HomePageState extends State<HomePage> {
   AmapController _controller;
   bool _locationStatus = false;
 
+  final TextEditingController _filter = new TextEditingController();
+  String _searchText = "";
+  List names = new List();
+  List filteredNames = new List();
+  Icon _searchIcon = new Icon(Icons.search);
+  Widget _appBarTitle = new Text( 'Search Example' );
+
   init() async{
     localStorage = await SharedPreferences.getInstance();
     String _token = localStorage.get('token');
@@ -69,67 +76,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // return MaterialApp(
-    //   title: 'Flutter Demo',
-    //   debugShowCheckedModeBanner: false,
-    //   theme: ThemeData(
-    //     primarySwatch: Colors.blue,
-    //     visualDensity: VisualDensity.adaptivePlatformDensity,
-    //   ),
-    //   home: Scaffold(
-    //     appBar: AppBar(title: const Text('Home Page')),
-    //     body: MapListScreen(),
-    //     bottomNavigationBar: BottomNavigationBar(
-    //       items: <BottomNavigationBarItem>[
-    //         BottomNavigationBarItem(
-    //           icon: Icon(Icons.email),
-    //           title: Text("Email")
-    //           ),
-    //         BottomNavigationBarItem(
-    //           icon: Icon(Icons.home),
-    //           title: Text("Home")
-    //           ),
-    //         BottomNavigationBarItem(
-    //           icon: Icon(Icons.settings),
-    //           title: Text("User")
-    //           ),
-    //       ] 
-    //       ),
-    //     // DecoratedColumn(
-    //     //   children: <Widget>[
-    //     //     Flexible(
-    //     //       flex: 1,
-    //     //       child: AmapView(
-    //     //         mapType: MapType.Satellite,
-    //     //         showZoomControl: false,
-    //     //         maskDelay: Duration(milliseconds: 500),
-    //     //         onMapCreated: (controller) async {
-    //     //           _controller = controller;                                    
-                  
-    //     //           await _controller?.showMyLocation(MyLocationOption(
-    //     //             myLocationType: MyLocationType.Locate,
-    //     //           ));
-
-    //     //           _controller?.setMapType(MapType.Standard);
-    //     //         },
-    //     //       ),
-    //     //     ),
-    //     //   ],
-    //     // ),
-    //   )
-    // ); 
     return Scaffold(
       extendBodyBehindAppBar: true,
       // backgroundColor: Colors.red,
-      appBar: AppBar(
-        title: const Text('Home Page'),
-        // extendBodyBehindAppBar: true,
-        // backgroundColor: Colors.red,
-        // toolbarOpacity: 0.1,
-        // elevation: 0,
-        // leading: CircleAvatar(child: Icon(Icons.search),),
-        
-      ),
+      appBar: _buildBar(context),
       drawer: Drawer(
         child: Column(
           children: <Widget>[
@@ -150,13 +100,6 @@ class _HomePageState extends State<HomePage> {
                     ));
                   },
                 ),
-                // child: RaisedButton(
-                //   onPressed: () {
-                //     //
-                //     print("logout clicked");
-                //   },
-                //   child: Text("Logout"),
-                // ),
               )
             )
           ],
@@ -196,36 +139,6 @@ class _HomePageState extends State<HomePage> {
                         ));
                       }
                   },
-                ),
-                //AppBar move to here
-                Positioned( 
-                  top: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  // child: Container(
-                  //   height: 100,
-                  //   child: Row(
-                      
-                  //     children: <Widget>[
-                  //       Container(
-                  //         height: 100,
-                  //         child: Text("Left"),
-                  //         color: Colors.blue,
-                  //       ),
-                  //       RaisedButton(
-                  //         onPressed: () {  },
-                  //         child: Text("Test"),
-                  //       ),
-                  //       Text("Text Edit")
-                  //     ],
-                  //   ),
-                  // ),
-                  child: AppBar(        // Add AppBar here only
-                    backgroundColor: Colors.transparent,
-                    elevation: 0.0,
-                    title: Text("Home Page"),
-                    leading: CircleAvatar(child: Icon(Icons.search)),
-                  ),
                 ),
               ] 
               
@@ -288,37 +201,64 @@ class _HomePageState extends State<HomePage> {
           // _circleList.add(circle);
         },
       ),
-      // body: AmapView(
-      //         mapType: MapType.Satellite,
-      //         showZoomControl: false,
-      //         maskDelay: Duration(milliseconds: 500),
-      //         onMapCreated: (controller) async {
-      //           _controller = controller;
-
-      //           // await _controller?.showMyLocation(MyLocationOption(
-      //           //   myLocationType: MyLocationType.Locate,
-      //           // ));
-      //         },
-      //       ),
-      // body: DecoratedColumn(
-      //   children: <Widget>[
-      //     Flexible(
-      //       flex: 1,
-      //       child: AmapView(
-      //         mapType: MapType.Satellite,
-      //         showZoomControl: false,
-      //         maskDelay: Duration(milliseconds: 500),
-      //         onMapCreated: (controller) async {
-      //           _controller = controller;
-
-      //           await _controller?.showMyLocation(MyLocationOption(
-      //             myLocationType: MyLocationType.Locate,
-      //           ));
-      //         },
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
+
+  Widget _buildBar(BuildContext context) {
+    return new AppBar(
+      centerTitle: true,
+      title: new TextField(
+        controller: _filter,
+        decoration: InputDecoration(
+          icon: Icon(Icons.search),
+          fillColor: Colors.red,
+          focusColor: Colors.white,
+          
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: (){
+            print('search icon clicked');
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.scanner),
+          onPressed: (){
+            print('scan icon clicked');
+          },
+        )
+      ],
+    );
+    // return new AppBar(
+    //   centerTitle: true,
+    //   title: _appBarTitle,
+    //   leading: new IconButton(
+    //     icon: _searchIcon,
+    //     onPressed: _searchPressed,
+    //   ),
+    // );
+  }
+
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          controller: _filter,
+          decoration: new InputDecoration(
+            prefixIcon: new Icon(Icons.search),
+            hintText: 'Search...'
+          ),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text( 'Search Example' );
+        filteredNames = names;
+        _filter.clear();
+      }
+    });
+  }
+
 }

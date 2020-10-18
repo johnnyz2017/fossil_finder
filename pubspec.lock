@@ -18,8 +18,8 @@ packages:
   amap_map_fluttify:
     dependency: "direct dev"
     description:
-      path: "/Users/johnnyz/work/sources/flutter/amap_map_fluttify-master/"
-      relative: false
+      path: "third_party/amap_map_fluttify"
+      relative: true
     source: path
     version: "0.23.3-dev.2"
   analyzer:
