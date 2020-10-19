@@ -23,24 +23,42 @@ class _PostDetailPageState extends State<PostDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Image.asset(widget.post.images[0].url),
-            new Swiper(
-              itemHeight: 100,
-              itemBuilder: (BuildContext context,int index){
-                // return new Image.asset(widget.post.images[index].url, fit: BoxFit.fill,);
-                return new Image.asset(widget.post.images[0].url);
-              },
-              // itemCount: widget.post.images.length,
-              itemCount: 2,
-              pagination: new SwiperPagination(),
-              control: new SwiperControl(),
+            Container(
+              height: 200,
+              // decoration: BoxDecoration(
+              //   color: Colors.lightBlue,
+              //   shape: BoxShape.circle
+              // ),
+              child:
+                widget.post.images != null ? 
+                new Swiper(
+                  itemBuilder: (BuildContext context,int index){
+                    String url = widget.post.images[index].url;
+                    if(url.startsWith('http')){
+                      return new Image.network(url, fit: BoxFit.fitHeight);
+                    }else{
+                      return new Image.asset(url, fit:BoxFit.fitHeight);
+                    }
+                    
+                    // return new Image.asset('images/others/hs00${index+1}.jpeg', fit:BoxFit.fitHeight);
+                    // return new Image.network("http://via.placeholder.com/350x150",fit: BoxFit.fill,);
+                  },
+                  itemCount: widget.post.images.length > 0 ? widget.post.images.length : 0,
+                  pagination: new SwiperPagination(),
+                  control: new SwiperControl(),
+                )
+                :
+                Text('NO IMAGE'),
             ),
-            Text(widget.post.title),
-            Text(widget.post.content),
+
+            Card(
+              margin: EdgeInsets.only(left: 10, top: 10),
+              child: Text(widget.post.title)),
+            Card(child: Text(widget.post.content)),
             Divider(color: Colors.blue,),
-            Text(widget.post.comments[0].content),
-            Text(widget.post.comments[0].author),
-          ]
+            // Text(widget.post.comments[0].content),
+            // Text(widget.post.comments[0].author),
+          ],
         ),
       ),
     );

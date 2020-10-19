@@ -18,18 +18,6 @@ class CustomListItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5.0),
 
-      // child: Column(
-      //   crossAxisAlignment: CrossAxisAlignment.start,
-      //   children: <Widget>[
-      //     thumbnail,
-      //     _VideoDescription(
-      //         title: title,
-      //         user: user,
-      //         viewCount: viewCount,
-      //     ),
-      //   ],
-      // ),
-
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -45,10 +33,10 @@ class CustomListItem extends StatelessWidget {
               viewCount: viewCount,
             ),
           ),
-          const Icon(
-            Icons.more_vert,
-            size: 16.0,
-          ),
+          // const Icon(
+          //   Icons.more_vert,
+          //   size: 16.0,
+          // ),
         ],
       ),
     );

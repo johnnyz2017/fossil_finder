@@ -78,7 +78,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      // backgroundColor: Colors.red,
       appBar: _buildBar(context),
       drawer: Drawer(
         child: Column(
@@ -93,9 +92,7 @@ class _HomePageState extends State<HomePage> {
                   title: Text("Logout"),
                   onTap: (){
                     logout();
-
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      // builder: (context) => HomePage(),
                       builder: (context) => LoginScreen(),
                     ));
                   },
@@ -107,14 +104,6 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Stack(
               children: <Widget>[
-                  // Container(
-                  //   decoration: BoxDecoration(
-                  //   gradient: LinearGradient(
-                  //       begin: Alignment.centerLeft,
-                  //       end: Alignment.bottomCenter,
-                  //       colors: [Colors.red[900], Colors.blue[700]])),
-                  //   height: MediaQuery.of(context).size.height * 0.3
-                  // ),
                   AmapView(
                     mapType: MapType.Standard,
                     showZoomControl: false,
@@ -206,14 +195,42 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBar(BuildContext context) {
     return new AppBar(
-      centerTitle: true,
-      title: new TextField(
+      // centerTitle: true,
+      backgroundColor: Color(0xff885566),
+      // title: new TextFormField(
+      //   decoration: new InputDecoration(
+      //     labelText: "Enter Email",
+      //     fillColor: Colors.white,
+      //     border: new OutlineInputBorder(
+      //       borderRadius: new BorderRadius.circular(25.0),
+      //       borderSide: new BorderSide(
+      //       ),
+      //     ),
+      //     //fillColor: Colors.green
+      //   ),
+      //   validator: (val) {
+      //     if(val.length==0) {
+      //       return "Email cannot be empty";
+      //     }else{
+      //       return null;
+      //     }
+      //   },
+      //   keyboardType: TextInputType.emailAddress,
+      //   style: new TextStyle(
+      //     fontFamily: "Poppins",
+      //   ),
+      // ),
+      title: new TextFormField(
         controller: _filter,
         decoration: InputDecoration(
-          icon: Icon(Icons.search),
-          fillColor: Colors.red,
-          focusColor: Colors.white,
+          // icon: Icon(Icons.search),
           
+          fillColor: Colors.white,      
+          border: new OutlineInputBorder(
+            // borderRadius: new BorderRadius.circular(5.0),
+            borderSide: new BorderSide(),
+            gapPadding: 10.0
+          )    
         ),
       ),
       actions: <Widget>[
@@ -261,4 +278,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+}
+
+Color hexToColor(String code) {
+  return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 }

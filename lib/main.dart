@@ -22,19 +22,10 @@ void MapInit() async{
 }
 
 void main(){
-  
-  
   runApp(
     FossilApp()
-    // MainApp()
-    // MaterialApp(
-    //   home: MainApp(),
-    //   // home: IndexPage(),
-    // )
   );
-
   MapInit();
-  
 }
 
 class FossilApp extends StatefulWidget {
@@ -81,7 +72,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: "Fossil Finder",
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.indigo, accentColor: Colors.blue),
+      // theme: ThemeData(primarySwatch: Colors.indigo, accentColor: Colors.blue),
       home: LoginScreen(),
     );
   }

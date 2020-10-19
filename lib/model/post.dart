@@ -20,7 +20,7 @@ class Post {
   : id = data['id'],
     author = data['author'],
     title = data['title'],
-    content = data['contents'],
+    content = data['content'],
     comments = new List<Comment>.from(data["comments"].map((x) => Comment.fromJson(x)).toList()),
     images = new List<Image>.from(data['images'].map((x) => Image.fromJson(x)).toList())
     // comments = data['comments'].map((item) => Comment.fromJson(item)).toList(),

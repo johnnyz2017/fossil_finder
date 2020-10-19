@@ -2,6 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fossils_finder/api/post_api.dart';
+import 'package:fossils_finder/api/service_method.dart';
+import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
@@ -22,16 +25,27 @@ class CategoryListView extends StatefulWidget {
 class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeepAliveClientMixin{
 
   List<Post> posts = new List<Post>();
-  // var posts = const [];
+  
+  Future loadPostListFromServer() async{
+    var _content = await request(servicePath['posts']);
+    var _jsonData = jsonDecode(_content.toString());
+    print('get json data is  ${_jsonData}');
+    var _listJson = _jsonData['data']['data'];
+    List _jsonList = _listJson as List;
+    // print('first item of list is ${_jsonList[0]}');
+    List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
+    setState(() {
+      posts = postList;
+    });
+  }
 
   Future loadPostList() async{
+    PostService.getPost();
     String _content = await rootBundle.loadString('assets/data/posts.json');
-    // print("load string: ${_content}"); //OK
     List _jsonContent = json.decode(_content);
-    print("after json decode list size is: ${_jsonContent.length}"); //OK
+    print("after json decode list size is: ${_jsonContent}"); //OK
     print(_jsonContent[0]);
     List<Post> postList = _jsonContent.map((item) => Post.fromJson(item)).toList();
-    print('#####load post list ${postList.length}');
     setState(() {
       posts = postList;
     });
@@ -40,7 +54,8 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
   @override
   void initState() {
     print("category page init state called");
-    loadPostList();
+    loadPostListFromServer();
+    // loadPostList();
     super.initState();
   }
 
@@ -55,8 +70,8 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (BuildContext context) {
-                  // return PostDetailPage(post: post,);
-                  return SwiperTestPage(post: post,);
+                  return PostDetailPage(post: post,);
+                  // return SwiperTestPage(post: post,);
                 }) 
               );
             },
@@ -65,7 +80,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
               viewCount: post.id,
               thumbnail: Container(
                 decoration: const BoxDecoration(color: Colors.blue),
-                child: Image.asset(post.images[0].url),
+                child: post.images.length > 0 ? (post.images[0].url.startsWith('http')? Image.network(post.images[0].url) : Image.asset(post.images[0].url)) : Text('NO IMAGE'),
               ),
               title: post.title,
             ),
@@ -76,93 +91,6 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
         ), 
         itemCount: posts?.length
     );
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: Text(widget.title),
-    //   ),
-    //   body: ListView.separated(
-    //     itemBuilder: (BuildContext context, int index){
-    //       Post post = posts[index];
-
-    //       return InkWell(
-    //         onTap: (){
-    //           Navigator.push(
-    //             context,
-    //             MaterialPageRoute(builder: (BuildContext context) {
-    //               return PostDetailPage(post: post,);
-    //             }) 
-    //           );
-    //         },
-    //         child: CustomListItem(
-    //           user: post.author,
-    //           viewCount: post.id,
-    //           thumbnail: Container(
-    //             decoration: const BoxDecoration(color: Colors.blue),
-    //             child: Image.asset(post.images[0].url),
-    //           ),
-    //           title: post.title,
-    //         ),
-    //       );
-    //     }, 
-    //     separatorBuilder: (context, index) => Divider(
-    //       height: 50,
-    //     ), 
-    //     itemCount: posts?.length
-    //   ),
-    //   // body: ListView.separated(
-    //   //   itemBuilder: (BuildContext context, int index){
-    //   //     Post post = posts[index];
-
-    //   //     return ListTile(
-    //   //       title: Text(post.title),
-    //   //       isThreeLine: true,
-    //   //       //leading: CircleAvatar(child: Text(post.author.substring(0, 1)),), //use the first character
-    //   //       // leading: CircleAvatar(child: Image.asset(post.images[0].url),),
-    //   //       leading: Image.asset(post.images[0].url),
-    //   //       subtitle: Text(
-    //   //         post.content,
-    //   //         maxLines: 2,
-    //   //         overflow: TextOverflow.ellipsis,
-    //   //       ),
-    //   //       onTap: (){
-    //   //         Navigator.push(
-    //   //           context,
-    //   //           MaterialPageRoute(builder: (BuildContext context) {
-    //   //             return PostDetailPage(post: post,);
-    //   //           }) 
-    //   //         );
-    //   //       },
-    //   //     );
-    //   //   }, 
-    //   //   separatorBuilder: (context, index) => Divider(), 
-    //   //   // itemCount: posts == null? 0 : posts.length
-    //   //   itemCount: posts?.length,
-
-    //   // ),
-
-    //   // body: ListView(
-    //   //   padding: const EdgeInsets.all(8.0),
-    //   //   itemExtent: 106.0,
-    //   //   children: <CustomListItem>[
-    //   //     CustomListItem(
-    //   //       user: 'Flutter',
-    //   //       viewCount: 999000,
-    //   //       thumbnail: Container(
-    //   //         decoration: const BoxDecoration(color: Colors.blue),
-    //   //       ),
-    //   //       title: 'The Flutter YouTube Channel',
-    //   //     ),
-    //   //     CustomListItem(
-    //   //       user: 'Dash',
-    //   //       viewCount: 884000,
-    //   //       thumbnail: Container(
-    //   //         decoration: const BoxDecoration(color: Colors.yellow),
-    //   //       ),
-    //   //       title: 'Announcing Flutter 1.0',
-    //   //     ),
-    //   //   ],
-    //   // ),
-    // );
   }
 
   @override
