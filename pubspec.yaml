@@ -54,9 +54,13 @@ dependencies:
   # flutter_picker:
   image_picker:
 
+  #permission_handler:
   permission_handler:
 
   fluttertoast:
+
+  # barcode_scan: ^3.0.1
+  qrscan:
 
 
 dev_dependencies:

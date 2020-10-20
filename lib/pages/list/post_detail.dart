@@ -58,6 +58,33 @@ class _PostDetailPageState extends State<PostDetailPage> {
             Divider(color: Colors.blue,),
             // Text(widget.post.comments[0].content),
             // Text(widget.post.comments[0].author),
+
+            ListView.separated(
+              itemBuilder: (BuildContext context, int index){
+                return Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text('title ${index}'),
+                      Divider(),
+                      Text('content'),
+                      Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text('author'),
+                          Text('date')
+                        ],
+                      )
+                    ],
+                  ),
+                );
+              }, 
+              separatorBuilder: (context, index) => Divider(
+                height: 50,
+              ), 
+              itemCount: widget.post.comments.length
+            )
           ],
         ),
       ),

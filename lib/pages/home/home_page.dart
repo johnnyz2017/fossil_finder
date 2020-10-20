@@ -1,10 +1,13 @@
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+// import 'package:barcode_scan/barcode_scan.dart';
+import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:decorated_flutter/decorated_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fossils_finder/map/map_demo.dart';
 import 'package:fossils_finder/pages/form/post_upload.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/pages/map/map_list.dart';
+import 'package:fossils_finder/utils/permission.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   bool _locationStatus = false;
 
   final TextEditingController _filter = new TextEditingController();
+  
   String _searchText = "";
   List names = new List();
   List filteredNames = new List();
@@ -244,6 +248,7 @@ class _HomePageState extends State<HomePage> {
           icon: Icon(Icons.scanner),
           onPressed: (){
             print('scan icon clicked');
+            _scanCode();
           },
         )
       ],
@@ -276,6 +281,23 @@ class _HomePageState extends State<HomePage> {
         _filter.clear();
       }
     });
+  }
+
+  _scanCode() async {
+    var status = await PermissionUtils.requestCemera();
+    if (status == PermissionStatus.granted) {
+      print('permission granted');
+      String cameraScanResult = await scanner.scan();
+      print('scan result is:::: ${cameraScanResult}');
+      _filter.text = cameraScanResult;
+      // var result = await BarcodeScanner.scan();
+      // print('result is ${result}');
+      // if (result.type == ResultType.Barcode) {
+      //   print('barcode scan result --> Barcode');
+      // }
+    } else {
+      PermissionUtils.showPermissionDialog(context);
+    }
   }
 
 }
