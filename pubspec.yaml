@@ -60,7 +60,7 @@ dependencies:
   fluttertoast:
 
   # barcode_scan: ^3.0.1
-  qrscan:
+  # qrscan:
 
 
 dev_dependencies:

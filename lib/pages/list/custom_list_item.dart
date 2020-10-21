@@ -58,7 +58,8 @@ class _VideoDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+      // padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+      padding: EdgeInsets.all(5.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -76,7 +77,7 @@ class _VideoDescription extends StatelessWidget {
           ),
           const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
           Text(
-            '$viewCount views',
+            '$viewCount comments',
             style: const TextStyle(fontSize: 10.0),
           ),
         ],

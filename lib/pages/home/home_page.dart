@@ -1,6 +1,6 @@
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
+// import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:decorated_flutter/decorated_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fossils_finder/map/map_demo.dart';
@@ -200,7 +200,7 @@ class _HomePageState extends State<HomePage> {
   Widget _buildBar(BuildContext context) {
     return new AppBar(
       // centerTitle: true,
-      backgroundColor: Color(0xff885566),
+      // backgroundColor: Color(0xff885566),
       // title: new TextFormField(
       //   decoration: new InputDecoration(
       //     labelText: "Enter Email",
@@ -224,17 +224,41 @@ class _HomePageState extends State<HomePage> {
       //     fontFamily: "Poppins",
       //   ),
       // ),
-      title: new TextFormField(
-        controller: _filter,
-        decoration: InputDecoration(
-          // icon: Icon(Icons.search),
-          
-          fillColor: Colors.white,      
-          border: new OutlineInputBorder(
-            // borderRadius: new BorderRadius.circular(5.0),
-            borderSide: new BorderSide(),
-            gapPadding: 10.0
-          )    
+      title: Container(
+        height: 50,
+        padding: EdgeInsets.only(top: 10.0),
+        child: new TextFormField(
+          controller: _filter,
+          decoration: InputDecoration(
+            // icon: Icon(Icons.search),
+            labelText: "Input for Search",
+            // focusColor: Colors.white,
+            fillColor: Colors.white,      
+            // border: new OutlineInputBorder(
+            //   // borderRadius: new BorderRadius.circular(5.0),
+            //   borderSide: new BorderSide(),
+            //   gapPadding: 10.0,
+            // ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0),
+              borderSide: BorderSide(
+                color: Colors.white,
+                width: 1.5,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(5.0),
+              borderSide: BorderSide(
+                color: Colors.green,
+                width: 1.5
+              ),
+            ),
+          ),
+          style: TextStyle(
+            color: Colors.white,
+            decorationColor: Color(0XFFFFCC00),//Font color change
+            // backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
+          ),
         ),
       ),
       actions: <Widget>[
@@ -287,9 +311,9 @@ class _HomePageState extends State<HomePage> {
     var status = await PermissionUtils.requestCemera();
     if (status == PermissionStatus.granted) {
       print('permission granted');
-      String cameraScanResult = await scanner.scan();
-      print('scan result is:::: ${cameraScanResult}');
-      _filter.text = cameraScanResult;
+      // String cameraScanResult = await scanner.scan();
+      // print('scan result is:::: ${cameraScanResult}');
+      // _filter.text = cameraScanResult;
       // var result = await BarcodeScanner.scan();
       // print('result is ${result}');
       // if (result.type == ResultType.Barcode) {
@@ -300,8 +324,8 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Color hexToColor(String code) {
+    return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
+  }
 }
 
-Color hexToColor(String code) {
-  return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
-}

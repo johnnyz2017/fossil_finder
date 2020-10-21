@@ -25,7 +25,8 @@ class CategoryListView extends StatefulWidget {
 class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeepAliveClientMixin{
 
   List<Post> posts = new List<Post>();
-  
+  // var posts = const [];
+
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['posts']);
     var _jsonData = jsonDecode(_content.toString());
@@ -34,6 +35,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
     List _jsonList = _listJson as List;
     // print('first item of list is ${_jsonList[0]}');
     List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
+    // print('#####load post list ${postList.length}');
     setState(() {
       posts = postList;
     });
@@ -77,7 +79,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
             },
             child: CustomListItem(
               user: post.author,
-              viewCount: post.id,
+              viewCount: post.comments.length,
               thumbnail: Container(
                 decoration: const BoxDecoration(color: Colors.blue),
                 child: post.images.length > 0 ? (post.images[0].url.startsWith('http')? Image.network(post.images[0].url) : Image.asset(post.images[0].url)) : Text('NO IMAGE'),
