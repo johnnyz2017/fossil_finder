@@ -28,7 +28,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
               child: Card(
                 child: Column(
                   children: <Widget>[
-                    Text(widget.post.title),
+                    Text(
+                      widget.post.title, 
+                      style: TextStyle(
+                        //backgroundColor: Colors.yellow, 
+                        color: Colors.blue,
+                        fontSize: 30,
+
+                        ),
+                    ),
                     Padding(padding: EdgeInsets.only(top: 10)),
                     Container(
                       height: 200,
@@ -51,7 +59,19 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         Text('NO IMAGE'),
                     ),
                     Padding(padding: EdgeInsets.only(top: 10)),
-                    Text(widget.post.content)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      
+                      child: Text(
+                        widget.post.content,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.lightBlue,
+
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    )
                   ],
                 ),
               ),

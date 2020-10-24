@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:qrscan/qrscan.dart' as scanner;
@@ -7,6 +9,7 @@ import 'package:fossils_finder/map/map_demo.dart';
 import 'package:fossils_finder/pages/form/post_upload.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/pages/map/map_list.dart';
+import 'package:fossils_finder/utils/next_latlng.dart';
 import 'package:fossils_finder/utils/permission.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -14,6 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 final _assetsIcon = Uri.parse('images/icons/fossil_icon_512.png');
+
+final _assetsIcon1 = AssetImage('images/icons/marker.png');
 
 SharedPreferences localStorage;
 
@@ -28,6 +33,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   AmapController _controller;
+  List<Marker> _markers = [];
   bool _locationStatus = false;
 
   final TextEditingController _filter = new TextEditingController();
@@ -111,6 +117,7 @@ class _HomePageState extends State<HomePage> {
                   AmapView(
                     mapType: MapType.Standard,
                     showZoomControl: false,
+                    zoomLevel: 6,
                     maskDelay: Duration(milliseconds: 500),
                     onMapCreated: (controller) async {
                       _controller = controller;
@@ -136,70 +143,235 @@ class _HomePageState extends State<HomePage> {
               ] 
               
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () async{
-          print("floating action button clicked");
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Stack(
+        children: <Widget>[
+          Positioned(
+            bottom: 220.0,
+            right: 10.0,
+            child: FloatingActionButton(
+              heroTag: 'hide',
+              onPressed: () {
+                if(_markers.isNotEmpty){
+                  for(var marker in _markers){
+                    // marker.hideInfoWindow();
+                    marker.setVisible(false);
+                  }
+                }
+              },
+              child: Icon(Icons.keyboard_hide),
+              shape: CircleBorder(
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 150.0,
+            right: 10.0,
+            child: FloatingActionButton(
+              heroTag: 'show',
+              onPressed: () {
+                if(_markers.isNotEmpty){
+                  for(var marker in _markers){
+                    // marker.showInfoWindow();
+                    marker.setVisible(true);
+                  }
+                }
+              },
+              child: Icon(Icons.slideshow),
+              shape: CircleBorder(
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 80.0,
+            right: 10.0,
+            child: FloatingActionButton(
+              heroTag: 'add',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    // return PostDetailPage(post: post,);
+                    return PostUploadPage();
+                  }) 
+                );
+              },
+              child: Icon(Icons.add),
+              shape: CircleBorder(
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 10.0,
+            right: 10.0,
+            child: FloatingActionButton(
+              heroTag: 'close',
+              onPressed: () async {
+                final center = await _controller?.getCenterCoordinate(); //OK
+                print('center get ${center?.latitude}, ${center?.longitude}'); 
+                final random = Random();
+                // LatLng center = LatLng(39.90960, 121.247228);
+                final marker = await _controller?.addMarker(
+                  MarkerOption(
+                    // latLng: LatLng(39.90960, 121.44147669684741),
+                    latLng: LatLng(
+                      center.latitude + random.nextDouble(),
+                      center.longitude + random.nextDouble(),
+                    ),
+                    title: 'Title 北京',
+                    snippet: '描述',
+                    iconProvider: _assetsIcon1,
+                    object: '自定义数据',
+                  ),
+                );
+                _markers.add(marker);
+                // marker.showInfoWindow(); //OK
 
-          // bool status = await Permission.locationAlways.isGranted;
-          // if(!status){
-          //   print("need to get locationAlways permission first");
-          //   status = await Permission.locationAlways.request().isGranted;
-          //   if(status){
-          //     await _controller?.showMyLocation(MyLocationOption(
-          //       myLocationType: MyLocationType.Locate,
-          //     ));
-          //   }else{
-          //     print("need to grant the location permission first");
-          //   }
-          // }else{
-          //   await _controller?.showMyLocation(MyLocationOption(
-          //     myLocationType: MyLocationType.Locate,
-          //   ));
-          // }
+                print('get marker ${marker?.title}');
 
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (BuildContext context) {
-              // return PostDetailPage(post: post,);
-              return PostUploadPage();
-            }) 
-          );
-
-          // await _controller?.showMyLocation(MyLocationOption(
-          //   myLocationType: MyLocationType.Locate,
-          // ));
-
-          // //获取当前经纬度
-          // final latLng = await _controller?.getLocation(); //FAILED
-          // toast('当前经纬度: ${latLng.toString()}');
-
-          // _controller?.setMapType(MapType.Standard);  //OK
-          //_controller?.setMapType(MapType.Satellite);
-
-          //_controller?.setMapLanguage(Language.Chinese);
-          // _controller?.setMapLanguage(Language.English); //OK
-
-          //final center = await _controller?.getCenterCoordinate(); //NO
-          //toast('center: lat: ${center.latitude}, lng: ${center.longitude}');
-
-
-          //NO
-          // final circle = await _controller?.addCircle(CircleOption(
-          //   center: LatLng(121.74046,31.05408), //野生动物园附近
-          //   radius: 100,
-          //   width: 10,
-          //   strokeColor: Colors.green,
-          // ));
-          // _circleList.add(circle);
-        },
+                final marker1 = await _controller?.addMarker(
+                  MarkerOption(
+                    latLng: LatLng(
+                      center.latitude + random.nextDouble(),
+                      center.longitude + random.nextDouble(),
+                    ),
+                    widget: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text('使用Widget作为Marker'),
+                        FlutterLogo(size: 80),
+                      ],
+                    ),
+                    imageConfig: createLocalImageConfiguration(context),
+                    title: 'title .....',
+                    snippet: '描述',
+                    width: 100,
+                    height: 100,
+                  ),
+                );
+                _markers.add(marker1);
+                // marker1.showInfoWindow(); //OK
+              },
+              child: Icon(Icons.close),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+            ),
+          ),
+        ],
       ),
+
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.add),
+      //   onPressed: () async{
+      //     print("floating action button clicked");
+
+      //     // bool status = await Permission.locationAlways.isGranted;
+      //     // if(!status){
+      //     //   print("need to get locationAlways permission first");
+      //     //   status = await Permission.locationAlways.request().isGranted;
+      //     //   if(status){
+      //     //     await _controller?.showMyLocation(MyLocationOption(
+      //     //       myLocationType: MyLocationType.Locate,
+      //     //     ));
+      //     //   }else{
+      //     //     print("need to grant the location permission first");
+      //     //   }
+      //     // }else{
+      //     //   await _controller?.showMyLocation(MyLocationOption(
+      //     //     myLocationType: MyLocationType.Locate,
+      //     //   ));
+      //     // }
+
+      //     // Navigator.push(
+      //     //   context,
+      //     //   MaterialPageRoute(builder: (BuildContext context) {
+      //     //     // return PostDetailPage(post: post,);
+      //     //     return PostUploadPage();
+      //     //   }) 
+      //     // );
+
+      //     // await _controller?.showMyLocation(MyLocationOption(
+      //     //   myLocationType: MyLocationType.Locate,
+      //     // ));
+
+      //     //获取当前经纬度
+      //     // final latLng = await _controller?.getLocation(); //FAILED
+      //     // toast('当前经纬度: ${latLng.toString()}');
+
+      //     // _controller?.setMapType(MapType.Standard);  //OK
+      //     // _controller?.setMapType(MapType.Satellite);
+
+      //     // _controller?.setMapLanguage(Language.Chinese);
+      //     // _controller?.setMapLanguage(Language.English); //OK
+
+      //     final center = await _controller?.getCenterCoordinate(); //OK
+      //     // toast('get center coordinate');
+      //     //31.035595990014617, 121.26399250003774 //qibao
+      //     print('center get ${center?.latitude}, ${center?.longitude}'); //OK center get 30.996801792334708, 121.24147669684741
+      //     // toast('center: lat: ${center.latitude}, lng: ${center.longitude}'); //WRONG
+
+
+
+      //     // NO
+      //     // final circle = await _controller?.addCircle(CircleOption(
+      //     //   center: LatLng(30.996801792334708, 121.24147669684741), //野生动物园附近
+      //     //   radius: 100,
+      //     //   width: 10,
+      //     //   strokeColor: Colors.green,
+      //     // ));
+      //     // _circleList.add(circle);
+
+      //     final random = Random();
+      //     // LatLng center = LatLng(39.90960, 121.247228);
+      //     final marker = await _controller?.addMarker(
+      //       MarkerOption(
+      //         // latLng: LatLng(39.90960, 121.44147669684741),
+      //         latLng: LatLng(
+      //           center.latitude + random.nextDouble(),
+      //           center.longitude + random.nextDouble(),
+      //         ),
+      //         title: 'Title 北京',
+      //         snippet: '描述',
+      //         iconProvider: _assetsIcon1,
+      //         object: '自定义数据',
+      //       ),
+      //     );
+      //     _markers.add(marker);
+      //     marker.showInfoWindow(); //OK
+
+      //     print('get marker ${marker?.title}');
+
+      //     final marker1 = await _controller?.addMarker(
+      //       MarkerOption(
+      //         latLng: LatLng(
+      //           center.latitude + random.nextDouble(),
+      //           center.longitude + random.nextDouble(),
+      //         ),
+      //         widget: Column(
+      //           mainAxisSize: MainAxisSize.min,
+      //           children: <Widget>[
+      //             Text('使用Widget作为Marker'),
+      //             FlutterLogo(size: 80),
+      //           ],
+      //         ),
+      //         imageConfig: createLocalImageConfiguration(context),
+      //         title: 'title .....',
+      //         snippet: '描述',
+      //         width: 100,
+      //         height: 100,
+      //       ),
+      //     );
+      //     _markers.add(marker1);
+      //     marker1.showInfoWindow(); //OK
+      //   },
+      // ),
     );
   }
 
   Widget _buildBar(BuildContext context) {
     return new AppBar(
-      // centerTitle: true,
+      centerTitle: true,
       // backgroundColor: Color(0xff885566),
       // title: new TextFormField(
       //   decoration: new InputDecoration(

@@ -8,8 +8,10 @@ class CommentSubmitPage extends StatefulWidget {
 class _CommentSubmitPageState extends State<CommentSubmitPage> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text('Comment Submit Page'),
+    return Scaffold(
+      body: Center(
+        child: Text('Comment Submit Page'),
+      ),
     );
   }
 }

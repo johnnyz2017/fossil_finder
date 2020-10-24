@@ -89,6 +89,7 @@ flutter:
   assets:
     - images/icons/fossil_icon_512.png
     - images/icons/user.png
+    - images/icons/marker.png
     - images/others/hs001.jpeg
     - images/others/hs002.jpeg
     - images/others/hs003.jpeg
