@@ -41,7 +41,7 @@ class _FossilAppState extends State<FossilApp> {
   init() async{
     localStorage = await SharedPreferences.getInstance();
     String _token = localStorage.get('token');
-    print('token is ${_token}');
+    // print('token is ${_token}');
     if(_token != null && !(_token.isEmpty)){
       setState(() {
         isLoggedIn = true;

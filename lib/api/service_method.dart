@@ -29,22 +29,7 @@ Future request(url, {formData}) async{
     // print('api url is ' + dio.options.baseUrl);
     // print('url is ' + url);
     response = await dio.get(url, options: ops);
-    // print('api url is ' + dio.options.baseUrl);
-    print(response);
-
-    // List _jsonList = json.decode(response.data);
-    // print('json decode raw response is ${_jsonList[0]}');
-    // // print(_jsonCotent[0]);
-    // List<Post> postList = _jsonList[0].map((item) => Post.fromJson(item)).toList();
-    // print('#####load post list ${postList.length}');
-
-
-
-    // var data = json.decode(response.toString());
-    // var d =jsonDecode(response.toString());
-    // print('get json data: ');
-    // print(d['data']['current_page']);
-    // print(d['data']['data']);
+    print('get response : ${response}');
     return response;
     // dio.options = options;
     // dio.options.contentType = ContentType.parse("application/x-www-form-urlencoded").toString();
@@ -52,6 +37,8 @@ Future request(url, {formData}) async{
     //   response = await dio.get(service_path[url], options: options);
     // }
   }catch(e){
+    print('ERRRRRRRROR  ########################################');
     print(e);
+    return null;
   }
 }

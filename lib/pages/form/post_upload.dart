@@ -6,13 +6,21 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+
 class PostUploadPage extends StatefulWidget {
+  final LatLng latLng;
+
+  const PostUploadPage({Key key, this.latLng}) : super(key: key);
   @override
   _PostUploadPageState createState() => _PostUploadPageState();
 }
 
 class _PostUploadPageState extends State<PostUploadPage> {
   File _image;
+
+  var _latTextController = new TextEditingController();
+  var _lngTextController = new TextEditingController();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -26,20 +34,34 @@ class _PostUploadPageState extends State<PostUploadPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Image Picker Example'),
+        title: Text('发布页面'),
       ),
       body: Column(
         children: <Widget>[
-          Container(
-            height: 200,
-            child: Center(
-              child: _image == null
-                  ? Text('No image selected.')
-                  : Image.file(_image),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  height: 200,
+                  child: Center(
+                    child: _image == null
+                        ? Text('没有选择图片加入')
+                        : Image.file(_image),
+                  ),
+                ),
+              
+              ),
+              FloatingActionButton(
+                  onPressed: getImage,
+                  tooltip: '获取图片',
+                  child: Icon(Icons.add_a_photo),
+              ),
+            ],
           ),
+          
           Divider(),
-          Text("选择上图进行发布"),
+          // Text("选择上图进行发布"),
           // Row(
           //   children: <Widget>[
           //     Text("经度： "),
@@ -53,20 +75,35 @@ class _PostUploadPageState extends State<PostUploadPage> {
           //   ],
           // ),
           Divider(),
-          TextField(
-            decoration: InputDecoration(
-              icon: Icon(Icons.my_location),
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('经度: '),
+              Expanded(child: TextField(controller: _lngTextController,)),
+              Text('纬度: '),
+              Expanded(child: TextField(controller: _latTextController,)),
+              IconButton(
+                iconSize: 20, 
+                icon: Icon(Icons.my_location), 
+                onPressed: () async { 
+                  //AmapService.navigateDrive(LatLng(36.547901, 104.258354));
+                  setState(() {
+                    _latTextController.text = widget.latLng.latitude.toString();
+                    _lngTextController.text = widget.latLng.longitude.toString();
+                  });
+                },
+              )
+            ],
           ),
           Divider(),
-          CalendarDatePicker(
-            initialDate: DateTime.now(), 
-            firstDate: DateTime.parse("2020-10-01"), 
-            lastDate: DateTime.parse("2020-11-20"), 
-            onDateChanged: (value)=>{
-              print("changed to $value")
-            }
-          ),
+          // CalendarDatePicker(
+          //   initialDate: DateTime.now(), 
+          //   firstDate: DateTime.parse("2020-10-01"), 
+          //   lastDate: DateTime.parse("2020-11-20"), 
+          //   onDateChanged: (value)=>{
+          //     print("changed to $value")
+          //   }
+          // ),
           // Row(
           //   children: <Widget>[
           //     Text("纬度： "),
@@ -77,11 +114,15 @@ class _PostUploadPageState extends State<PostUploadPage> {
           // )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: getImage,
-        tooltip: 'Pick Image',
-        child: Icon(Icons.add_a_photo),
-      ),
+      // floatingActionButton: Positioned(
+      //   top: 50,
+      //   right: 10,
+      //   child: FloatingActionButton(
+      //     onPressed: getImage,
+      //     tooltip: 'Pick Image',
+      //     child: Icon(Icons.add_a_photo),
+      //   ),
+      // ),
     );
   }
 
@@ -101,7 +142,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
     Options options = Options(
         contentType: 'application/json',
     );
-    var respone = await dio.post<String>("http://localhost:8000/api/v1/post", data: formData, options: options);
+    var respone = await dio.post<String>("http://localhost:8000/api/v1/posts", data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
 

@@ -1,26 +1,71 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fossils_finder/api/service_method.dart';
+import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fossils_finder/pages/list/comment_submit.dart';
 
-class PostDetailPage extends StatefulWidget {
-  final Post post;
+// import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 
-  const PostDetailPage({Key key, this.post}) : super(key: key);
+class PostDetailPage extends StatefulWidget {
+  final int pid;
+
+  const PostDetailPage({Key key, this.pid}) : super(key: key);
   
   @override
   _PostDetailPageState createState() => _PostDetailPageState();
 }
 
 class _PostDetailPageState extends State<PostDetailPage> {
+  // Future<Post> post;
+  Post post;
+
+  Future loadPostFromServer() async{
+    var _content = await request('${serviceUrl}/api/v1/posts/${widget.pid}');
+    var _jsonData = jsonDecode(_content.toString());
+    print('get json data is  ${_jsonData}');
+    var _postJson = _jsonData['data'];
+    Post _post = Post.fromJson(_postJson);
+    setState(() {
+      post = _post;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadPostFromServer();
+  }
+  
   @override
   Widget build(BuildContext context) {
+    if(post == null){
+      return Center(child: CircularProgressIndicator());
+    }
+    // return StreamBuilder(
+    //   builder: (context, snapshot){
+    //     return Column(
+    //       children: <Widget>[
+    //         Center(child: Text("详情页面"),),
+    //         Expanded(
+    //           child: ListView.builder(
+    //             itemBuilder: (_, index){
+    //               return ListTile(title: Text('title'),);
+    //             }
+    //           ),
+    //         )
+    //     ],);
+    //   },
+    // ); 
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.post.author)
+        title: Text("详情页")
       ),
       body: ListView.builder(
-        itemCount: widget.post.comments.length + 2,
+        itemCount: post.comments.length + 2,
         itemBuilder: (BuildContext context, int index){
           if(index == 0){                                            // post content
             return Container(
@@ -29,7 +74,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      widget.post.title, 
+                      post.title, 
                       style: TextStyle(
                         //backgroundColor: Colors.yellow, 
                         color: Colors.blue,
@@ -41,17 +86,17 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     Container(
                       height: 200,
                       child:
-                        widget.post.images != null ? 
+                        post.images != null ? 
                         new Swiper(
                           itemBuilder: (BuildContext context,int index){
-                            String url = widget.post.images[index].url;
+                            String url = post.images[index].url;
                             if(url.startsWith('http')){
                               return new Image.network(url, fit: BoxFit.fitHeight);
                             }else{
                               return new Image.asset(url, fit:BoxFit.fitHeight);
                             }
                           },
-                          itemCount: widget.post.images.length > 0 ? widget.post.images.length : 0,
+                          itemCount: post.images.length > 0 ? post.images.length : 0,
                           pagination: new SwiperPagination(),
                           control: new SwiperControl(),
                         )
@@ -63,7 +108,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       padding: const EdgeInsets.all(8.0),
                       
                       child: Text(
-                        widget.post.content,
+                        post.content,
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.lightBlue,
@@ -78,7 +123,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
             );
 
 
-          }else if(index == widget.post.comments.length + 1){     // submit button
+          }else if(index == post.comments.length + 1){     // submit button
             return Container(
               padding: EdgeInsets.all(5),
               child: RaisedButton(
@@ -88,9 +133,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (BuildContext context) {
-                      return CommentSubmitPage();
+                      return CommentSubmitPage(post: post,);
                     }) 
                   );
+
+                  // AmapService.navigateDrive(LatLng(36.547901, 104.258354));
                 },
                 child: Text('Submit Comment'),
                 textColor: Colors.green,

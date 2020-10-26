@@ -60,7 +60,10 @@ dependencies:
   fluttertoast:
 
   # barcode_scan: ^3.0.1
-  # qrscan:
+  qrscan:
+
+  #icons
+  flutter_icons:
 
 
 dev_dependencies:
@@ -90,6 +93,10 @@ flutter:
     - images/icons/fossil_icon_512.png
     - images/icons/user.png
     - images/icons/marker.png
+    - images/icons/map-icon-satillite.png
+    - images/icons/map-icon-standard.png
+    - images/icons/map-amap.png
+    - images/icons/map-google.png
     - images/others/hs001.jpeg
     - images/others/hs002.jpeg
     - images/others/hs003.jpeg

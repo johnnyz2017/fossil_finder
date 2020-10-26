@@ -8,7 +8,6 @@ import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
-import 'package:fossils_finder/test/swiper/swiper_test.dart';
 
 class CategoryListView extends StatefulWidget {
 
@@ -25,17 +24,22 @@ class CategoryListView extends StatefulWidget {
 class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeepAliveClientMixin{
 
   List<Post> posts = new List<Post>();
-  // var posts = const [];
+  final scrollController = ScrollController();
 
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['posts']);
     var _jsonData = jsonDecode(_content.toString());
+    var _listJson;
+    if(_jsonData['paginated']){
+      _listJson = _jsonData['data']['data'];
+    }
+    else{
+      _listJson = _jsonData['data'];
+    }
     print('get json data is  ${_jsonData}');
-    var _listJson = _jsonData['data']['data'];
+    
     List _jsonList = _listJson as List;
-    // print('first item of list is ${_jsonList[0]}');
     List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
-    // print('#####load post list ${postList.length}');
     setState(() {
       posts = postList;
     });
@@ -57,12 +61,19 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
   void initState() {
     print("category page init state called");
     loadPostListFromServer();
+    // scrollController.addListener(() { 
+    //   if(scrollController.position.maxScrollExtent == scrollController.position.
+    // });
     // loadPostList();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if(posts == null){
+      return Center(child: CircularProgressIndicator());
+    }
+
     return ListView.separated(
         itemBuilder: (BuildContext context, int index){
           Post post = posts[index];
@@ -72,8 +83,8 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (BuildContext context) {
-                  return PostDetailPage(post: post,);
-                  // return SwiperTestPage(post: post,);
+                  // return PostDetailPage(post: post,);
+                  return PostDetailPage(pid: post.id,);
                 }) 
               );
             },
@@ -91,7 +102,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
         separatorBuilder: (context, index) => Divider(
           height: 50,
         ), 
-        itemCount: posts?.length
+        itemCount: posts?.length ?? 0
     );
   }
 
