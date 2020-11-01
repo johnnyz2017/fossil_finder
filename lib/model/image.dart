@@ -4,6 +4,6 @@ class Image{
   Image(this.url);
 
   Image.fromJson(Map<String, dynamic> data) 
-  : url = data['url'];
+  : url = data['url'] ?? '';
 
 }

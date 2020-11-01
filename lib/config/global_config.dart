@@ -46,12 +46,12 @@ class Global{
   //     _prefs.setString("profile", jsonEncode(profile.toJson()));
 }
 
-// const String serviceUrl = 'http://localhost:8000';
-const String serviceUrl = 'http://foss-backend.herokuapp.com';
+const String serviceUrl = 'http://localhost:8000';
+// const String serviceUrl = 'http://foss-backend.herokuapp.com';
 const String apiUrl = serviceUrl + '/api/v1';
 const servicePath = {
   'posts' : '/posts',
-  'categories' : '/categories'
+  'categories' : '/categories/hi'
 };
 
 const httpHeaders = {
@@ -60,3 +60,7 @@ const httpHeaders = {
   'Connection' : 'keep-alive',
   'Content-Type' : 'application/json'
 };
+
+
+const String TABLE_NAME_PBSETTING = 'pb_setting';
+const String TABLE_NAME_UPLOADED = 'uploaded';

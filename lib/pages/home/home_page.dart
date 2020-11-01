@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+
 // import 'package:barcode_scan/barcode_scan.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
+// import 'package:qrscan/qrscan.dart' as scanner;
+
 import 'package:decorated_flutter/decorated_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fossils_finder/api/service_method.dart';
@@ -627,9 +629,8 @@ class _HomePageState extends State<HomePage> {
                 // _markers.add(marker1);
                 // // marker1.showInfoWindow(); //OK
               },
-              child: Icon(Icons.close),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0),
+              child: Icon(FontAwesome.map_marker),
+              shape: CircleBorder(
               ),
             ),
           ),
@@ -793,9 +794,11 @@ class _HomePageState extends State<HomePage> {
     var status = await PermissionUtils.requestCemera();
     if (status == PermissionStatus.granted) {
       print('permission granted');
-      String cameraScanResult = await scanner.scan();
-      print('scan result is:::: ${cameraScanResult}');
-      _filter.text = cameraScanResult;
+      // String cameraScanResult = await scanner.scan();
+      // print('scan result is:::: ${cameraScanResult}');
+      // _filter.text = cameraScanResult;
+
+
       // var result = await BarcodeScanner.scan();
       // print('result is ${result}');
       // if (result.type == ResultType.Barcode) {

@@ -3,10 +3,15 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fossils_finder/utils/image_upload.dart';
+import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+
+import 'package:path/path.dart' as path;
 
 class PostUploadPage extends StatefulWidget {
   final LatLng latLng;
@@ -17,17 +22,21 @@ class PostUploadPage extends StatefulWidget {
 }
 
 class _PostUploadPageState extends State<PostUploadPage> {
-  File _image;
+
+  // File _image;
+  Image _image;
+  List<String> _imgsPath = [];
 
   var _latTextController = new TextEditingController();
   var _lngTextController = new TextEditingController();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    _upLoadImage(image);//上传图片
-    setState(() {
-      _image = image;
-    });
+    // _upLoadImage(image);//上传图片
+    _doUploadImage(image, "");
+    // setState(() {
+    //   _image = image;
+    // });
   }
 
   @override
@@ -38,43 +47,128 @@ class _PostUploadPageState extends State<PostUploadPage> {
       ),
       body: Column(
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  height: 200,
-                  child: Center(
-                    child: _image == null
-                        ? Text('没有选择图片加入')
-                        : Image.file(_image),
-                  ),
-                ),
-              
+          Container(
+            height: 200,
+            child: Expanded(
+              child: _imgsPath.length > 0 ? ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (BuildContext context, int index){
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.network(_imgsPath[index]),
+                  );
+                },
+                itemCount: _imgsPath.length,
+              ) : Center(child: Text("No Picture uploaded")),
+              // child: ListView(
+              //     // This next line does the trick.
+              //     scrollDirection: Axis.horizontal,
+              //     children: <Widget>[
+              //       new Container(
+              //         width: 160.0,
+              //         color: Colors.red,
+              //       ),
+              //       new Container(
+              //         width: 160.0,
+              //         color: Colors.blue,
+              //       ),
+              //       new Container(
+              //         width: 160.0,
+              //         color: Colors.green,
+              //       ),
+              //       new Container(
+              //         width: 160.0,
+              //         color: Colors.yellow,
+              //       ),
+              //       new Container(
+              //         width: 160.0,
+              //         color: Colors.orange,
+              //       ),
+              //     ],
+              //   ),
               ),
-              FloatingActionButton(
-                  onPressed: getImage,
-                  tooltip: '获取图片',
-                  child: Icon(Icons.add_a_photo),
-              ),
-            ],
           ),
-          
-          Divider(),
-          // Text("选择上图进行发布"),
+          RaisedButton(
+            child: Text('Select & Upload Image'),
+            onPressed: (){
+              getImage();
+            },
+          ),
+          // IconButton(
+          //   icon: Icon(Icons.photo_album),
+          //   onPressed: (){
+          //     print('try to load picture and upload');
+          //     getImage();
+          //   },
+          // ),
           // Row(
+          //   mainAxisAlignment: MainAxisAlignment.center,
+          //   mainAxisSize: MainAxisSize.max,
           //   children: <Widget>[
-          //     Text("经度： "),
-          //     EditableText(
-          //       controller: new TextEditingController(), 
-          //       backgroundCursorColor: Colors.green, 
-          //       focusNode: null, 
-          //       cursorColor: Colors.red, 
-          //       style: null,
-          //     )
+          //     Padding(
+          //       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+          //       child: FloatingActionButton(
+          //           onPressed: getImage,
+          //           tooltip: '获取图片',
+          //           child: Icon(Icons.add_a_photo),
+          //       ),
+          //     ),
+
+          //     Container(
+          //       height: 100,
+          //       child: Expanded(
+          //         // child: new ListView(
+          //         //   // This next line does the trick.
+          //         //   scrollDirection: Axis.horizontal,
+          //         //   children: <Widget>[
+          //         //     new Container(
+          //         //       width: 160.0,
+          //         //       color: Colors.red,
+          //         //     ),
+          //         //     new Container(
+          //         //       width: 160.0,
+          //         //       color: Colors.blue,
+          //         //     ),
+          //         //     new Container(
+          //         //       width: 160.0,
+          //         //       color: Colors.green,
+          //         //     ),
+          //         //     new Container(
+          //         //       width: 160.0,
+          //         //       color: Colors.yellow,
+          //         //     ),
+          //         //     new Container(
+          //         //       width: 160.0,
+          //         //       color: Colors.orange,
+          //         //     ),
+          //         //   ],
+          //         // ),
+          //         child: Container(
+          //           height: 200,
+          //           child: Center(
+          //             // child: GridView,
+          //             // child: ListView.builder(
+          //             //   itemBuilder: (BuildContext context, int index){
+          //             //     return _image == null
+          //             //             ? Text('没有选择图片加入')
+          //             //             : Image.file(_image);
+          //             //   },
+          //             //   itemCount: 1,
+          //             //   scrollDirection: Axis.horizontal,
+          //             // ),
+          //             child: _image == null
+          //                 ? Text('没有选择图片加入')
+          //                 // : Image.file(_image),
+          //                 : _image
+          //           ),
+          //         ),
+          //       ),
+          //     ),
           //   ],
           // ),
+          
           Divider(),
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -114,15 +208,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
           // )
         ],
       ),
-      // floatingActionButton: Positioned(
-      //   top: 50,
-      //   right: 10,
-      //   child: FloatingActionButton(
-      //     onPressed: getImage,
-      //     tooltip: 'Pick Image',
-      //     child: Icon(Icons.add_a_photo),
-      //   ),
-      // ),
     );
   }
 
@@ -164,4 +249,36 @@ class _PostUploadPageState extends State<PostUploadPage> {
     }
   }
   
+
+
+  /// 根据配置上传图片
+  _doUploadImage(File file, String renameImage) async {
+    // 读取配置
+    try {
+      String suffix = path.extension(file.path);
+      String filename = path.basenameWithoutExtension(file.path);
+      String _renameImage = '$filename$suffix';
+      
+      var uploader = QiniuImageUpload();
+      var uploadedItem = await uploader.upload(file, _renameImage);
+      if (uploadedItem != null) {
+        print('upload success ....');
+        setState(() {
+          // _image = Image.network(uploadedItem.path, height: 200,); //OK
+          _imgsPath.add(uploadedItem.path);
+        });
+        // _view.uploadSuccess(uploadedItem.path);
+      } else {
+        print('failed to upload ...');
+        // _view.uploadFaild('上传失败！请重试');
+      }
+    } on DioError catch (e) {
+      debugPrint(e.toString());
+      print('dio error ${e.message}');
+      // _view.uploadFaild('${e.message}');
+    } catch (e) {
+      debugPrint(e.toString());
+      // _view.uploadFaild('$e');
+    }
+  }
 }

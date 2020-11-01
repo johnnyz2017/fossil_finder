@@ -4,12 +4,16 @@ import 'package:fossils_finder/pages/home/home_page.dart';
 import 'package:fossils_finder/pages/index_page.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+import 'package:fossils_finder/utils/db_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 SharedPreferences localStorage;
 
 void MapInit() async{
+  final provider = DbProvider();
+  await provider.init();
+  
   localStorage = await SharedPreferences.getInstance();
   String _token = localStorage.get('token');
   print('token is ${_token}');

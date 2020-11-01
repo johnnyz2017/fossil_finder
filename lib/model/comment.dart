@@ -9,9 +9,9 @@ class Comment{
   Comment(this.id, this.author, this.content);
 
   Comment.fromJson(Map<String, dynamic> json)
-  : id = json["id"],
-    author = json["author"],
-    content = json["contents"] ; //tbd
+  : id = json["id"] ?? 0,
+    author = json["author"] ?? '',
+    content = json["contents"] ?? ''; //tbd
 
 }
 
