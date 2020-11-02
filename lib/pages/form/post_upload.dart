@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -14,9 +15,9 @@ import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 import 'package:path/path.dart' as path;
 
 class PostUploadPage extends StatefulWidget {
-  final LatLng latLng;
+  final LatLng center;
 
-  const PostUploadPage({Key key, this.latLng}) : super(key: key);
+  const PostUploadPage({Key key, this.center}) : super(key: key);
   @override
   _PostUploadPageState createState() => _PostUploadPageState();
 }
@@ -32,15 +33,12 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    // _upLoadImage(image);//上传图片
-    _doUploadImage(image, "");
-    // setState(() {
-    //   _image = image;
-    // });
+    _doUploadImage(image, "");//上传图片
   }
 
   @override
   Widget build(BuildContext context) {
+    print('center got : ${widget.center.latitude}, ${widget.center.longitude}');
     return Scaffold(
       appBar: AppBar(
         title: Text('发布页面'),
@@ -48,44 +46,28 @@ class _PostUploadPageState extends State<PostUploadPage> {
       body: Column(
         children: <Widget>[
           Container(
-            height: 200,
+            height: 150,
             child: Expanded(
               child: _imgsPath.length > 0 ? ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index){
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.network(_imgsPath[index]),
+                    // child: Image.network(_imgsPath[index],),
+                    child: CachedNetworkImage(
+                      // height: 150,
+                      // width: 150,
+                      imageUrl: _imgsPath[index],
+                      placeholder: (context, url) => CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                      // progressIndicatorBuilder: (context, url, downloadProgress) => 
+                      //   CircularProgressIndicator(value: downloadProgress.progress),
+                    ),
                   );
                 },
                 itemCount: _imgsPath.length,
               ) : Center(child: Text("No Picture uploaded")),
-              // child: ListView(
-              //     // This next line does the trick.
-              //     scrollDirection: Axis.horizontal,
-              //     children: <Widget>[
-              //       new Container(
-              //         width: 160.0,
-              //         color: Colors.red,
-              //       ),
-              //       new Container(
-              //         width: 160.0,
-              //         color: Colors.blue,
-              //       ),
-              //       new Container(
-              //         width: 160.0,
-              //         color: Colors.green,
-              //       ),
-              //       new Container(
-              //         width: 160.0,
-              //         color: Colors.yellow,
-              //       ),
-              //       new Container(
-              //         width: 160.0,
-              //         color: Colors.orange,
-              //       ),
-              //     ],
-              //   ),
+             
               ),
           ),
           RaisedButton(
@@ -94,79 +76,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
               getImage();
             },
           ),
-          // IconButton(
-          //   icon: Icon(Icons.photo_album),
-          //   onPressed: (){
-          //     print('try to load picture and upload');
-          //     getImage();
-          //   },
-          // ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   mainAxisSize: MainAxisSize.max,
-          //   children: <Widget>[
-          //     Padding(
-          //       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-          //       child: FloatingActionButton(
-          //           onPressed: getImage,
-          //           tooltip: '获取图片',
-          //           child: Icon(Icons.add_a_photo),
-          //       ),
-          //     ),
-
-          //     Container(
-          //       height: 100,
-          //       child: Expanded(
-          //         // child: new ListView(
-          //         //   // This next line does the trick.
-          //         //   scrollDirection: Axis.horizontal,
-          //         //   children: <Widget>[
-          //         //     new Container(
-          //         //       width: 160.0,
-          //         //       color: Colors.red,
-          //         //     ),
-          //         //     new Container(
-          //         //       width: 160.0,
-          //         //       color: Colors.blue,
-          //         //     ),
-          //         //     new Container(
-          //         //       width: 160.0,
-          //         //       color: Colors.green,
-          //         //     ),
-          //         //     new Container(
-          //         //       width: 160.0,
-          //         //       color: Colors.yellow,
-          //         //     ),
-          //         //     new Container(
-          //         //       width: 160.0,
-          //         //       color: Colors.orange,
-          //         //     ),
-          //         //   ],
-          //         // ),
-          //         child: Container(
-          //           height: 200,
-          //           child: Center(
-          //             // child: GridView,
-          //             // child: ListView.builder(
-          //             //   itemBuilder: (BuildContext context, int index){
-          //             //     return _image == null
-          //             //             ? Text('没有选择图片加入')
-          //             //             : Image.file(_image);
-          //             //   },
-          //             //   itemCount: 1,
-          //             //   scrollDirection: Axis.horizontal,
-          //             // ),
-          //             child: _image == null
-          //                 ? Text('没有选择图片加入')
-          //                 // : Image.file(_image),
-          //                 : _image
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // ),
-          
+       
           Divider(),
           
           Row(
@@ -182,8 +92,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
                 onPressed: () async { 
                   //AmapService.navigateDrive(LatLng(36.547901, 104.258354));
                   setState(() {
-                    _latTextController.text = widget.latLng.latitude.toString();
-                    _lngTextController.text = widget.latLng.longitude.toString();
+                    _latTextController.text = widget.center.latitude.toString();
+                    _lngTextController.text = widget.center.longitude.toString();
                   });
                 },
               )

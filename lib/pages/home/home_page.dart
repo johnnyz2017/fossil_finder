@@ -556,11 +556,13 @@ class _HomePageState extends State<HomePage> {
             right: 10.0,
             child: FloatingActionButton(
               heroTag: 'add',
-              onPressed: () {
+              onPressed: () async{
+                final center = await _controller?.getCenterCoordinate();
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) {
-                    return PostUploadPage();
+                    return PostUploadPage(center: center,);
                   }) 
                 );
               },

@@ -67,6 +67,8 @@ dependencies:
 
   #db
   sqflite:
+  
+  cached_network_image:
 
 
 dev_dependencies:
