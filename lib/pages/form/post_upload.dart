@@ -8,6 +8,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/utils/image_upload.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
+import 'package:fossils_finder/utils/strings.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
@@ -30,6 +31,10 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
   var _latTextController = new TextEditingController();
   var _lngTextController = new TextEditingController();
+  var _altTextController = new TextEditingController();
+  var _addrTextController = new TextEditingController();
+  var _titleTextController = new TextEditingController();
+  var _contentTextController = new TextEditingController();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -45,6 +50,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
       ),
       body: Column(
         children: <Widget>[
+          
           Container(
             height: 150,
             child: Expanded(
@@ -58,7 +64,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       // height: 150,
                       // width: 150,
                       imageUrl: _imgsPath[index],
-                      placeholder: (context, url) => CircularProgressIndicator(),
+                      placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                       errorWidget: (context, url, error) => Icon(Icons.error),
                       // progressIndicatorBuilder: (context, url, downloadProgress) => 
                       //   CircularProgressIndicator(value: downloadProgress.progress),
@@ -75,6 +81,25 @@ class _PostUploadPageState extends State<PostUploadPage> {
             onPressed: (){
               getImage();
             },
+          ),
+
+          Row(
+            children: <Widget>[
+              Text('标题: '),
+              Expanded(child: TextField(controller: _titleTextController,))
+            ],
+          ),
+
+          Row(
+            children: <Widget>[
+              Text('描述: '),
+              Expanded(
+                child: TextField(
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  controller: _contentTextController,),
+              )
+            ],
           ),
        
           Divider(),
@@ -99,7 +124,26 @@ class _PostUploadPageState extends State<PostUploadPage> {
               )
             ],
           ),
-          Divider(),
+          // Divider(),
+          Row(
+            children: <Widget>[
+              Text('海拔: '),
+              Expanded(child: TextField(controller: _altTextController,),)
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text('地址: '),
+              Expanded(child: TextField(controller: _addrTextController,),)
+            ],
+          ),
+
+          RaisedButton(
+            child: Text('Submit Post'),
+            onPressed: (){
+              _submitPost();
+            },
+          ),
           // CalendarDatePicker(
           //   initialDate: DateTime.now(), 
           //   firstDate: DateTime.parse("2020-10-01"), 
@@ -121,6 +165,47 @@ class _PostUploadPageState extends State<PostUploadPage> {
     );
   }
 
+  _submitPost() async{
+    String _images = list2String(_imgsPath, ',');
+    print('get images path string: ${_images}');
+
+    FormData formData = new FormData.fromMap({
+      // "user_id": 1,
+      "images" : _images,
+      "title" : _titleTextController.text,
+      "content" : _contentTextController.text,
+      "coordinate_latitude" : double.parse(_latTextController.text),
+      "coordinate_longitude" : double.parse(_lngTextController.text),
+      "coordinate_altitude" : double.parse(_altTextController.text),
+      "address" : _addrTextController.text,
+      'category_id' : 3
+    });
+
+    Dio dio = new Dio();
+    Options options = Options(
+        contentType: 'application/json',
+    );
+    var respone = await dio.post<String>("http://localhost:8000/api/v1/posts", data: formData, options: options);
+    print(respone);
+    if (respone.statusCode == 200) {
+
+      var responseJson = json.decode(respone.data);
+      print('response: ${respone.data} - ${responseJson['message']}');
+
+      var status = responseJson['statusCode'] as int;
+      if(status == 200){
+        Fluttertoast.showToast(
+            msg: "提交成功",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.grey);
+      }else{
+        Fluttertoast.showToast(
+            msg: "提交失败，暂存在本地数据库中！",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.red);
+      }
+    }
+  }
 
   _upLoadImage(File image) async {
     String path = image.path;
