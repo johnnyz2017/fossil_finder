@@ -36,7 +36,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
     else{
       _listJson = _jsonData['data'];
     }
-    print('get json data is  ${_jsonData}');
+    // print('get json data is  ${_jsonData}');
     
     List _jsonList = _listJson as List;
     List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
@@ -49,7 +49,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
     PostService.getPost();
     String _content = await rootBundle.loadString('assets/data/posts.json');
     List _jsonContent = json.decode(_content);
-    print("after json decode list size is: ${_jsonContent}"); //OK
+    // print("after json decode list size is: ${_jsonContent}"); //OK
     print(_jsonContent[0]);
     List<Post> postList = _jsonContent.map((item) => Post.fromJson(item)).toList();
     setState(() {
@@ -59,7 +59,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
 
   @override
   void initState() {
-    print("category page init state called");
+    // print("category page init state called");
     loadPostListFromServer();
     // scrollController.addListener(() { 
     //   if(scrollController.position.maxScrollExtent == scrollController.position.

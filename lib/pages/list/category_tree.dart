@@ -63,22 +63,107 @@ class CategoryTreeView extends StatefulWidget {
 
 class _CategoryTreeViewState extends State<CategoryTreeView> {
 
+  List<Map<String, dynamic>> _categories_list = [{
+	"id": 0,
+	"parent_id": null,
+	"label": "root",
+	"description": "root",
+	"key": "0",
+	"children": [{
+		"id": 4,
+		"parent_id": 0,
+		"label": "Category velit",
+		"description": "Qui assumenda aut harum placeat.",
+		"key": "4",
+		"children": [{
+			"id": 2,
+			"parent_id": 4,
+			"label": "Category vel",
+			"description": "Quo temporibus sapiente sit est quaerat numquam.",
+			"key": "2",
+			"children": [{
+				"id": 6,
+				"parent_id": 2,
+				"label": "Category fuga",
+				"description": "Velit dolorum libero in eius ut quisquam.",
+				"key": "6",
+				"children": [{
+					"id": 10,
+					"parent_id": 6,
+					"label": "Category adipisci",
+					"description": "Vero dicta est et voluptatem ut est.",
+					"key": "10",
+					"children": []
+				}]
+			}]
+		}, {
+			"id": 3,
+			"parent_id": 4,
+			"label": "Category impedit",
+			"description": "Numquam vel qui et ut.",
+			"key": "3",
+			"children": []
+		}]
+	}, {
+		"id": 5,
+		"parent_id": 0,
+		"label": "Category animi",
+		"description": "Eum necessitatibus aut dolorem sunt dolorum.",
+		"key": "5",
+		"children": [{
+			"id": 7,
+			"parent_id": 5,
+			"label": "Category officiis",
+			"description": "Aspernatur a a id ut dolorem.",
+			"key": "7",
+			"children": []
+		}, {
+			"id": 8,
+			"parent_id": 5,
+			"label": "Category quia",
+			"description": "Sapiente dolor sunt velit quo.",
+			"key": "8",
+			"children": [{
+				"id": 9,
+				"parent_id": 8,
+				"label": "Category voluptatem",
+				"description": "Quaerat harum debitis fugit sequi.",
+				"key": "9",
+				"children": [{
+					"id": 1,
+					"parent_id": 9,
+					"label": "Category excepturi",
+					"description": "A pariatur molestias sit suscipit temporibus.",
+					"key": "1",
+					"children": []
+				}]
+			}]
+		}]
+	}]
+}];
+
   TreeViewController _treeViewController = TreeViewController(children: nodes);
   CategoryNode _node;
 
 
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['categories']);
+
+    print('get request content: ${_content}');
+
     var _jsonData = jsonDecode(_content.toString());
     // var _jsonData = jsonDecode(_content.toString())['data'];
     // print('json data: ${_jsonData.toString()}');
     // var _childrenJson = jsonEncode(_jsonData['data']['children']);
     // CategoryNode node = CategoryNode.fromJson(_jsonData);
-    CategoryNode node = CategoryNode.fromJson(_jsonData);
-    print('node ${node.label}');
+    // CategoryNode node = CategoryNode.fromJson(_jsonData);
+   
     setState(() {
-      _node = node;
-      // _treeViewController = _treeViewController.loadJSON(json: _childrenJson);
+      // _node = node;
+      // String _categories_list_json = jsonEncode(_categories_list);
+      // _treeViewController = _treeViewController.loadJSON(json: _categories_list_json);
+      String US_STATES_JSON = jsonEncode(_jsonData[0]['children']);
+      _treeViewController = _treeViewController.loadJSON(json: US_STATES_JSON);
     });
   }
 

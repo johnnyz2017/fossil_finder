@@ -10,7 +10,7 @@ class CategoryNode{
   // CategoryNode(this.label, this.key, this.type);
 
   CategoryNode.fromJson(Map<String, dynamic> json)
-  : label = json['label'] ?? 'label',
+  : label = json['title'] ?? 'label',
     key = json['key'] ?? 'key',
     type = json['type'] ?? 0 ,
     children = json['children'] != null ? new List<CategoryNode>.from(json["children"].map((x) => CategoryNode.fromJson(x)).toList()) : []

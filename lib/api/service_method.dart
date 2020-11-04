@@ -29,7 +29,7 @@ Future request(url, {formData}) async{
     // print('api url is ' + dio.options.baseUrl);
     // print('url is ' + url);
     response = await dio.get(url, options: ops);
-    print('get response : ${response}');
+    // print('get response : ${response}');
     return response;
     // dio.options = options;
     // dio.options.contentType = ContentType.parse("application/x-www-form-urlencoded").toString();
@@ -37,7 +37,7 @@ Future request(url, {formData}) async{
     //   response = await dio.get(service_path[url], options: options);
     // }
   }catch(e){
-    print('ERRRRRRRROR  ########################################');
+    // print('ERRRRRRRROR  ########################################');
     print(e);
     return null;
   }
