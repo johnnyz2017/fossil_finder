@@ -25,10 +25,10 @@ class _IndexPageState extends State<IndexPage> {
       icon: Icon(Icons.person),
       title: Text("个人信息")
     ),
-    // BottomNavigationBarItem(
-    //   icon: Icon(Icons.person),
-    //   title: Text("树形测试")
-    // ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.person),
+      title: Text("树形测试")
+    ),
   ];
 
   final List<Widget> tabBodies = [
@@ -36,7 +36,7 @@ class _IndexPageState extends State<IndexPage> {
     // CategoryListView(title: 'Category Page'),
     CategoryPage(),
     MemberPage(title: 'Member Profile'),
-    // TreeViewTestPage(title: 'Tree View Test Page',)
+    TreeViewTestPage(title: 'Tree View Test Page',)
   ];
 
   int currentIndex = 0;

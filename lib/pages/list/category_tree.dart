@@ -5,6 +5,7 @@ import 'package:flutter_treeview/tree_view.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
+import 'package:fossils_finder/pages/list/post_detail.dart';
 
 
 List<Node> nodes = [
@@ -184,16 +185,37 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
           },
         ),
         Expanded(
-                  child: Container(
+          child: Container(
             child: TreeView(
               controller: _treeViewController,
               allowParentSelect: false,
               supportParentDoubleTap: false,
               // onExpansionChanged: _expandNodeHandler,
+              // onNodeTap: (key) {
+              //   setState(() {
+              //     _treeViewController = _treeViewController.copyWith(selectedKey: key);
+              //   });
+              // },
               onNodeTap: (key) {
+                debugPrint('Selected: $key');
                 setState(() {
-                  _treeViewController = _treeViewController.copyWith(selectedKey: key);
+                  _treeViewController =
+                      _treeViewController.copyWith(selectedKey: key);
                 });
+
+                var _key = "${key}";
+                int pid = int.parse(_key.split('_')[1]);
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    // return PostDetailPage(post: post,);
+                    return PostDetailPage(pid: pid,);
+                  }) 
+                );
+              },
+              onNodeDoubleTap: (key){
+                debugPrint('double tap on ${key}');
               },
             ),
           ),
