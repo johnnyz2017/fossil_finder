@@ -51,7 +51,8 @@ const String serviceUrl = 'http://localhost:8000';
 const String apiUrl = serviceUrl + '/api/v1';
 const servicePath = {
   'posts' : '/posts',
-  'categories' : '/categories/hi'
+  'categorieswithposts' : '/categories/allwithposts',
+  'categorieswithoutposts' : '/categories/allwithoutposts'
 };
 
 const httpHeaders = {

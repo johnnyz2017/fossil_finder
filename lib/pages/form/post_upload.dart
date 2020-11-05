@@ -6,6 +6,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fossils_finder/model/category.dart';
+import 'package:fossils_finder/pages/list/category_select.dart';
 import 'package:fossils_finder/utils/image_upload.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:fossils_finder/utils/strings.dart';
@@ -28,6 +30,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
   // File _image;
   Image _image;
   List<String> _imgsPath = [];
+  CategoryNode category;
 
   var _latTextController = new TextEditingController();
   var _lngTextController = new TextEditingController();
@@ -35,6 +38,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
   var _addrTextController = new TextEditingController();
   var _titleTextController = new TextEditingController();
   var _contentTextController = new TextEditingController();
+  var _categoryTextController = new TextEditingController();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -90,16 +94,18 @@ class _PostUploadPageState extends State<PostUploadPage> {
             ],
           ),
 
-          Row(
-            children: <Widget>[
-              Text('描述: '),
-              Expanded(
-                child: TextField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  controller: _contentTextController,),
-              )
-            ],
+          Expanded(
+            child: Row(
+              children: <Widget>[
+                Text('描述: '),
+                Expanded(
+                  child: TextField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    controller: _contentTextController,),
+                )
+              ],
+            ),
           ),
        
           Divider(),
@@ -137,6 +143,39 @@ class _PostUploadPageState extends State<PostUploadPage> {
               Expanded(child: TextField(controller: _addrTextController,),)
             ],
           ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('分类: '),
+              Expanded(
+                child: TextField(
+                  controller: _categoryTextController,
+                  readOnly: true
+                )
+              ),
+
+              IconButton(
+                iconSize: 20, 
+                icon: Icon(Icons.category), 
+                onPressed: () async {
+                  category = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return CategorySelector(treeJson: "",);
+                    }) 
+                  );
+
+                  if(category != null){
+                    print('result: ${category.key} - ${category.label}');
+                    _categoryTextController.text = category.label;
+                  }                  
+                },
+              )
+            ],
+          ),
+
+          
 
           RaisedButton(
             child: Text('Submit Post'),
