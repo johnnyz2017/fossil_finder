@@ -46,10 +46,10 @@ class _CategorySelectorState extends State<CategorySelector> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Category Selector"),
+        title: Text("类别选择"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.reply),
+            icon: Icon(Icons.check),
             onPressed: (){
               Navigator.pop(context, cNode);
             },
@@ -86,10 +86,9 @@ class _CategorySelectorState extends State<CategorySelector> {
                   });
 
                   var _key = "${key}";
-                  String type = _key.split('_')[0];
-                  if(type.isEmpty || type == "c") return;
-                  
-                  int pid = int.parse(_key.split('_')[1]);
+                  // String type = _key.split('_')[0];
+                  // if(type.isEmpty || type == "c") return;                  
+                  // int pid = int.parse(_key.split('_')[1]);
                 },
                 onNodeDoubleTap: (key){
                   debugPrint('double tap on ${key}');

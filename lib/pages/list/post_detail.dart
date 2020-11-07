@@ -5,6 +5,7 @@ import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:fossils_finder/pages/form/comment_upload.dart';
 import 'package:fossils_finder/pages/list/comment_submit.dart';
 
 // import 'package:amap_map_fluttify/amap_map_fluttify.dart';
@@ -101,7 +102,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           control: new SwiperControl(),
                         )
                         :
-                        Text('NO IMAGE'),
+                        Text('无图片'),
                     ),
                     Padding(padding: EdgeInsets.only(top: 10)),
                     Padding(
@@ -133,13 +134,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (BuildContext context) {
-                      return CommentSubmitPage(post: post,);
+                      //return CommentSubmitPage(post: post,);
+                      return CommentUploadPage(post: post,);
                     }) 
                   );
 
                   // AmapService.navigateDrive(LatLng(36.547901, 104.258354));
                 },
-                child: Text('Submit Comment'),
+                child: Text('发表评论'),
                 textColor: Colors.green,
               ),
             );
@@ -149,7 +151,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
             return Container(
               padding: EdgeInsets.all(5),
               child: Card(
-                child: Text('Comment ${index}'),
+                child: Text('评论 ${index}'),
               ),
             );
 
