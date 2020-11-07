@@ -131,13 +131,18 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 onPressed: (){
                   print('submit comment button clicked');
 
-                  Navigator.push(
+                  var ret = Navigator.push(
                     context,
                     MaterialPageRoute(builder: (BuildContext context) {
                       //return CommentSubmitPage(post: post,);
                       return CommentUploadPage(post: post,);
                     }) 
                   );
+
+                  if(ret == true){
+                    print('post OKKK');
+                    loadPostFromServer();
+                  }
 
                   // AmapService.navigateDrive(LatLng(36.547901, 104.258354));
                 },

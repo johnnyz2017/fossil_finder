@@ -1,11 +1,5 @@
-
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-
 import 'package:fossils_finder/config/global_config.dart';
-import 'package:fossils_finder/model/post.dart';
 
 Future request(url, {formData}) async{
   try{
@@ -37,7 +31,6 @@ Future request(url, {formData}) async{
     //   response = await dio.get(service_path[url], options: options);
     // }
   }catch(e){
-    // print('ERRRRRRRROR  ########################################');
     print(e);
     return null;
   }

@@ -146,26 +146,21 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
   TreeViewController _treeViewController = TreeViewController(children: nodes);
   CategoryNode _node;
 
+  ExpanderPosition _expanderPosition = ExpanderPosition.start;
+  ExpanderType _expanderType = ExpanderType.caret;
+  ExpanderModifier _expanderModifier = ExpanderModifier.none;
+
 
   Future loadCategoriesFromServer() async{
     var _content = await request(servicePath['categorieswithposts']);
     // var _content = await request(servicePath['categorieswithoutposts']);
 
     print('get request content: ${_content}');
-
     var _jsonData = jsonDecode(_content.toString());
-    // var _jsonData = jsonDecode(_content.toString())['data'];
-    // print('json data: ${_jsonData.toString()}');
-    // var _childrenJson = jsonEncode(_jsonData['data']['children']);
-    // CategoryNode node = CategoryNode.fromJson(_jsonData);
-    // CategoryNode node = CategoryNode.fromJson(_jsonData);
-   
+
     setState(() {
-      // _node = node;
-      // String _categories_list_json = jsonEncode(_categories_list);
-      // _treeViewController = _treeViewController.loadJSON(json: _categories_list_json);
-      String US_STATES_JSON = jsonEncode(_jsonData['data']['children']);
-      _treeViewController = _treeViewController.loadJSON(json: US_STATES_JSON);
+      String categoriesJson = jsonEncode(_jsonData['data']['children']);
+      _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
     });
   }
 
@@ -177,6 +172,43 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
 
   @override
   Widget build(BuildContext context) {
+    TreeViewTheme _treeViewTheme = TreeViewTheme(
+      expanderTheme: ExpanderThemeData(
+        type: _expanderType,
+        modifier: _expanderModifier,
+        position: _expanderPosition,
+        color: Colors.grey.shade800,
+        size: 20,
+      ),
+      labelStyle: TextStyle(
+        fontSize: 16,
+        letterSpacing: 0.3,
+      ),
+      parentLabelStyle: TextStyle(
+        fontSize: 16,
+        letterSpacing: 0.1,
+        fontWeight: FontWeight.w800,
+        color: Colors.blue.shade700,
+      ),
+      iconTheme: IconThemeData(
+        size: 18,
+        color: Colors.grey.shade800,
+      ),
+      colorScheme: Theme.of(context).brightness == Brightness.light
+          ? ColorScheme.light(
+              primary: Colors.blue.shade50,
+              onPrimary: Colors.grey.shade900,
+              background: Colors.transparent,
+              onBackground: Colors.black,
+            )
+          : ColorScheme.dark(
+              primary: Colors.black26,
+              onPrimary: Colors.white,
+              background: Colors.transparent,
+              onBackground: Colors.white70,
+            ),
+    );
+
     return Column(
       children: <Widget>[
         RaisedButton(
@@ -188,15 +220,11 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
         Expanded(
           child: Container(
             child: TreeView(
+              theme: _treeViewTheme,
               controller: _treeViewController,
               allowParentSelect: false,
               supportParentDoubleTap: false,
               // onExpansionChanged: _expandNodeHandler,
-              // onNodeTap: (key) {
-              //   setState(() {
-              //     _treeViewController = _treeViewController.copyWith(selectedKey: key);
-              //   });
-              // },
               onNodeTap: (key) {
                 debugPrint('Selected: $key');
                 setState(() {

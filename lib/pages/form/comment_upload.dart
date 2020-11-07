@@ -26,6 +26,8 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
   int _categoryId;
 
   TextEditingController _categoryTextController = new TextEditingController();
+  TextEditingController _titleTextController = new TextEditingController();
+  TextEditingController _contentTextController = new TextEditingController();
   CategoryNode category;
 
   @override
@@ -52,11 +54,12 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
             children: <Widget>[
               
               TextFormField(
+                controller: _titleTextController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   labelText: '标题：',
                 ),
-                initialValue: "回复： ${widget.post.title}",
+                // initialValue: "回复： ${widget.post.title}",
                 validator: (String value){
                   if(value.isEmpty)
                     return '标题不能为空';
@@ -64,6 +67,9 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
 
                 },
                 onSaved: (String value){
+                  _title = value;
+                },
+                onChanged: (value){
                   _title = value;
                 },
               ),
@@ -120,6 +126,7 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
 
               Expanded(
                 child: TextFormField(
+                  controller: _contentTextController,
                   decoration: InputDecoration(
                     labelText: '内容：',
                   ),
@@ -134,6 +141,9 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
                   onSaved: (String value){
                     _content = value;
                   },
+                  onChanged: (value){
+                    _content = value;
+                  },
                 ),
               ),
 
@@ -141,16 +151,12 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
 
               RaisedButton(
                 onPressed: () {
-                  // Validate returns true if the form is valid, otherwise false.
                   if (_formKey.currentState.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
-
-                    Scaffold
-                        .of(context)
-                        .showSnackBar(SnackBar(content: Text('数据处理中')));
+                    // Scaffold
+                    //     .of(context)
+                    //     .showSnackBar(SnackBar(content: Text('数据处理中')));
                     
-                    _submitPost();
+                    _submitComment(context);
                   }
                 },
                 child: Text('提交'),
@@ -164,37 +170,47 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
 
 
 
-  _submitPost() async{
+  _submitComment(BuildContext context) async{
+
+    print('title ${_titleTextController.text}');
+    print('content ${_contentTextController.text}');
+    print('category_id ${_categoryId}');
+    print('post_id ${_pid}');
 
     FormData formData = new FormData.fromMap({
       // "user_id": 1,
-      "title" : _title,
-      "content" : _content,
-      'category_id' : _categoryId
+      "title" : _titleTextController.text ?? "",
+      "content" : _contentTextController.text ?? "",
+      'category_id' : _categoryId,
+      'post_id' : _pid
     });
 
     Dio dio = new Dio();
     Options options = Options(
         contentType: 'application/json',
     );
-    var respone = await dio.post<String>("http://localhost:8000/api/v1/posts", data: formData, options: options);
+    var respone = await dio.post<String>("http://localhost:8000/api/v1/comments", data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
 
       var responseJson = json.decode(respone.data);
       print('response: ${respone.data} - ${responseJson['message']}');
 
-      var status = responseJson['statusCode'] as int;
+      var status = responseJson['code'] as int;
       if(status == 200){
         Fluttertoast.showToast(
             msg: "提交成功",
             gravity: ToastGravity.CENTER,
             textColor: Colors.grey);
+
+        Navigator.pop(context, true);
       }else{
         Fluttertoast.showToast(
-            msg: "提交失败，暂存在本地数据库中！",
+            msg: "提交失败！",
             gravity: ToastGravity.CENTER,
             textColor: Colors.red);
+
+        Navigator.pop(context, false);
       }
     }
   }

@@ -34,13 +34,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
   CategoryNode category;
   int _category = -1;
 
-  var _latTextController = new TextEditingController();
-  var _lngTextController = new TextEditingController();
-  var _altTextController = new TextEditingController();
-  var _addrTextController = new TextEditingController();
-  var _titleTextController = new TextEditingController();
-  var _contentTextController = new TextEditingController();
-  var _categoryTextController = new TextEditingController();
+  TextEditingController _latTextController = new TextEditingController();
+  TextEditingController _lngTextController = new TextEditingController();
+  TextEditingController _altTextController = new TextEditingController();
+  TextEditingController _addrTextController = new TextEditingController();
+  TextEditingController _titleTextController = new TextEditingController();
+  TextEditingController _contentTextController = new TextEditingController();
+  TextEditingController _categoryTextController = new TextEditingController();
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -262,11 +262,11 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
 
-                    Scaffold
-                        .of(context)
-                        .showSnackBar(SnackBar(content: Text('Processing Data')));
+                    // Scaffold
+                    //     .of(context)
+                    //     .showSnackBar(SnackBar(content: Text('Processing Data')));
                     
-                    _submitPost();
+                    _submitPost(context);
                   }
                 },
                 child: Text('提交'),
@@ -302,7 +302,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
     );
   }
 
-  _submitPost() async{
+  _submitPost(BuildContext context) async{
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
 
@@ -329,15 +329,17 @@ class _PostUploadPageState extends State<PostUploadPage> {
       var responseJson = json.decode(respone.data);
       print('response: ${respone.data} - ${responseJson['message']}');
 
-      var status = responseJson['statusCode'] as int;
+      var status = responseJson['code'] as int;
       if(status == 200){
         Fluttertoast.showToast(
             msg: "提交成功",
             gravity: ToastGravity.CENTER,
             textColor: Colors.grey);
+        
+        Navigator.pop(context, true);
       }else{
         Fluttertoast.showToast(
-            msg: "提交失败，暂存在本地数据库中！",
+            msg: "提交失败，请暂存在本地数据库中！",
             gravity: ToastGravity.CENTER,
             textColor: Colors.red);
       }
@@ -366,7 +368,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
       var responseJson = json.decode(respone.data);
       print('response: ${respone.data} - ${responseJson['statusCode']}');
 
-      var status = responseJson['statusCode'] as int;
+      var status = responseJson['code'] as int;
       if(status == 200){
         Fluttertoast.showToast(
             msg: "图片上传成功",
