@@ -88,7 +88,7 @@ class _CategorySelectorState extends State<CategorySelector> {
         title: Text("类别选择"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.check),
+            icon: Icon(Icons.done),
             onPressed: (){
               Navigator.pop(context, cNode);
             },

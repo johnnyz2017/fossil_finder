@@ -16,6 +16,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 
 import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PostUploadPage extends StatefulWidget {
   final LatLng center;
@@ -318,9 +319,16 @@ class _PostUploadPageState extends State<PostUploadPage> {
       'category_id' : _category
     });
 
+    SharedPreferences localStorage;
+    localStorage = await SharedPreferences.getInstance();
+    String _token = localStorage.get('token');
+
     Dio dio = new Dio();
     Options options = Options(
         contentType: 'application/json',
+        headers: {
+          HttpHeaders.authorizationHeader : 'Bearer $_token'
+        }
     );
     var respone = await dio.post<String>("http://localhost:8000/api/v1/posts", data: formData, options: options);
     print(respone);

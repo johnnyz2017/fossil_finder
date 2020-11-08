@@ -262,4 +262,7 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
       ],
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

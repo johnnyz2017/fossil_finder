@@ -39,4 +39,7 @@ class _CategoryPageState extends State<CategoryPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

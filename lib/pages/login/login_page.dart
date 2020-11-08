@@ -22,8 +22,8 @@ class LoginScreen extends StatelessWidget {
     localStorage = await SharedPreferences.getInstance();
   }
 
-  // static var uri = "http://localhost:8000/api/v1";
-  static var uri = "http://foss-backend.herokuapp.com/api/v1";
+  static var uri = "http://localhost:8000/api/v1";
+  // static var uri = "http://foss-backend.herokuapp.com/api/v1";
   static BaseOptions options = BaseOptions(
       baseUrl: uri,
       responseType: ResponseType.plain,
@@ -166,29 +166,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    // MaterialApp(
-    //   title: 'Flutter Demo',
-    //   debugShowCheckedModeBanner: false,
-    //   theme: ThemeData(
-    //     primarySwatch: Colors.blue,
-    //     visualDensity: VisualDensity.adaptivePlatformDensity,
-    //   ),
-    //   home: FlutterLogin(
-    //     title: 'Fossil Finder',
-    //     logo: 'images/icons/fossil_icon_512.png',
-    //     onLogin: _authUser,
-    //     onSignup: _authUser,
-    //     onSubmitAnimationCompleted: () {
-    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //         builder: (context) => HomePage(),
-    //       ));
-    //       print("submit and need to navigate to other page");
-    //     },
-    //     onRecoverPassword: _recoverPassword,
-    //   ),
-    // );
-    FlutterLogin(
+    return FlutterLogin(
       title: 'Fossil Finder',
       logo: 'images/icons/fossil_icon_512.png',
       onLogin: _login,

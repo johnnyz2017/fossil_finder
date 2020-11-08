@@ -24,7 +24,7 @@ class CategoryListView extends StatefulWidget {
 class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeepAliveClientMixin{
 
   List<Post> posts = new List<Post>();
-  final scrollController = ScrollController();
+  final ScrollController scrollController = ScrollController();
 
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['posts']);
@@ -61,9 +61,16 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
   void initState() {
     // print("category page init state called");
     loadPostListFromServer();
-    // scrollController.addListener(() { 
-    //   if(scrollController.position.maxScrollExtent == scrollController.position.
-    // });
+    scrollController.addListener(() { 
+      if(scrollController.position.maxScrollExtent == scrollController.offset){
+        //load more
+        // posts.clear();
+        // posts = null;
+        print('try to load more or others');
+        // loadPostListFromServer();
+        // scrollController.animateTo(.0, duration: Duration(milliseconds: 200), curve: Curves.ease);
+      }
+    });
     // loadPostList();
     super.initState();
   }
@@ -75,6 +82,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
     }
 
     return ListView.separated(
+        controller: scrollController,
         itemBuilder: (BuildContext context, int index){
           Post post = posts[index];
 
