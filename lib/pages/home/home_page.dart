@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> {
       drawer: Drawer(
         child: Column(
           children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 20)),
+            Padding(padding: EdgeInsets.only(top: 50)),
             Column(children: <Widget>[
               Text("地图类型"),
               Row(

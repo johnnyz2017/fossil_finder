@@ -46,6 +46,16 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("发表评论"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.done),
+            onPressed: (){
+              if (_formKey.currentState.validate()) {
+                    _submitComment(context);
+              }
+            },
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -149,20 +159,18 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
                 ),
               ),
 
-              
-
-              RaisedButton(
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    // Scaffold
-                    //     .of(context)
-                    //     .showSnackBar(SnackBar(content: Text('数据处理中')));
+              // RaisedButton(
+              //   onPressed: () {
+              //     if (_formKey.currentState.validate()) {
+              //       // Scaffold
+              //       //     .of(context)
+              //       //     .showSnackBar(SnackBar(content: Text('数据处理中')));
                     
-                    _submitComment(context);
-                  }
-                },
-                child: Text('提交'),
-              ),
+              //       _submitComment(context);
+              //     }
+              //   },
+              //   child: Text('提交'),
+              // ),
             ],
           ),
         ),

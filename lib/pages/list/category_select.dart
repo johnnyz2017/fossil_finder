@@ -152,12 +152,12 @@ class _CategorySelectorState extends State<CategorySelector> {
             ),
           ),
 
-          RaisedButton(
-            child: Text("确认"),
-            onPressed: (){
-              Navigator.pop(context, cNode);
-            },
-          ),
+          // RaisedButton(
+          //   child: Text("确认"),
+          //   onPressed: (){
+          //     Navigator.pop(context, cNode);
+          //   },
+          // ),
                
         ],
       ),

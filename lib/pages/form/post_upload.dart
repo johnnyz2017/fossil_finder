@@ -34,6 +34,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
   List<String> _imgsPath = [];
   CategoryNode category;
   int _category = -1;
+  bool _private = true;
 
   TextEditingController _latTextController = new TextEditingController();
   TextEditingController _lngTextController = new TextEditingController();
@@ -54,6 +55,23 @@ class _PostUploadPageState extends State<PostUploadPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('发布页面'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.done),
+            onPressed: (){
+              if (_formKey.currentState.validate()) {
+                // If the form is valid, display a snackbar. In the real world,
+                // you'd often call a server or save the information in a database.
+
+                // Scaffold
+                //     .of(context)
+                //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+                
+                _submitPost(context);
+              }
+            },
+          )
+        ],
       ),
       body: Form(
         key: _formKey,
@@ -254,25 +272,42 @@ class _PostUploadPageState extends State<PostUploadPage> {
               ],
             ),
 
+            Row(
+              children: <Widget>[
+                Text('是否私有：'),
+                Switch(
+                  value: _private, 
+                  onChanged: (value){
+                    // _private = value;
+                    setState(() {
+                      _private = value;
+                    });
+                  },
+                )
+              ],
+            ),
 
-            Expanded(
-              child: RaisedButton(
-                onPressed: () {
-                  // Validate returns true if the form is valid, otherwise false.
-                  if (_formKey.currentState.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
+            // RaisedButton(
+            //     onPressed: () {
+            //       // Validate returns true if the form is valid, otherwise false.
+            //       if (_formKey.currentState.validate()) {
+            //         // If the form is valid, display a snackbar. In the real world,
+            //         // you'd often call a server or save the information in a database.
 
-                    // Scaffold
-                    //     .of(context)
-                    //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+            //         // Scaffold
+            //         //     .of(context)
+            //         //     .showSnackBar(SnackBar(content: Text('Processing Data')));
                     
-                    _submitPost(context);
-                  }
-                },
-                child: Text('提交'),
-              ),
-            )
+            //         _submitPost(context);
+            //       }
+            //     },
+            //     child: Text('提交'),
+            //   ),
+
+
+            // Expanded(
+            //   child: 
+            // )
             // RaisedButton(
             //   child: Text('Submit Post'),
             //   onPressed: (){
@@ -316,7 +351,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "coordinate_longitude" : double.parse(_lngTextController.text),
       "coordinate_altitude" : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
-      'category_id' : _category
+      'category_id' : _category,
+      'private' : _private
     });
 
     SharedPreferences localStorage;
