@@ -16,23 +16,45 @@ class _CategoryPageState extends State<CategoryPage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          // title: Text("test tab"),
-          bottom: TabBar(
-            tabs: <Widget>[
-              Tab(text: "List",),
-              Tab(text: "Tree",)
-              // Tab(text: "List", icon: Icon(Icons.list),),
-              // Tab(text: "Tree", icon: Icon(Icons.traffic))
-            ]
+        appBar: new PreferredSize(
+            preferredSize: Size.fromHeight(kToolbarHeight),
+            child: new Container(
+              color: Colors.blue,
+              child: new SafeArea(
+                child: Column(
+                  children: <Widget>[
+                    new Expanded(child: new Container()),
+                    new TabBar(
+                      tabs: [new Text("列表"), new Text("分类")],
+                    ),
+                  ],
+                ),
+              ),
           ),
         ),
+        // appBar: new TabBar(
+        //     tabs: <Widget>[
+        //       Tab(text: "列表",),
+        //       Tab(text: "分类",)
+        //       // Tab(text: "List", icon: Icon(Icons.list),),
+        //       // Tab(text: "Tree", icon: Icon(Icons.traffic))
+        //     ]
+        // ),
+        // appBar: AppBar(
+        //   title: Text(""),
+        //   bottom: TabBar(
+        //     tabs: <Widget>[
+        //       Tab(text: "列表",),
+        //       Tab(text: "分类",)
+        //       // Tab(text: "List", icon: Icon(Icons.list),),
+        //       // Tab(text: "Tree", icon: Icon(Icons.traffic))
+        //     ]
+        //   ),
+        // ),
         body: TabBarView(
           children: <Widget>[
-            Center(child: CategoryListView(title: "test")),
-            // Center(child: SwiperTestPage(title: "Test Page"))
+            Center(child: CategoryListView(title: "列表")),
             Center(child: CategoryTreeView()),
-            // Center(child: TreeViewTestPage(title: 'Tree View Test Page',))
           ],
         ),
         

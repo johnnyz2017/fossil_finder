@@ -211,12 +211,12 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
 
     return Column(
       children: <Widget>[
-        RaisedButton(
-          child: Text('Reload'),
-          onPressed: (){
-            loadCategoriesFromServer();
-          },
-        ),
+        // RaisedButton(
+        //   child: Text('Reload'),
+        //   onPressed: (){
+        //     loadCategoriesFromServer();
+        //   },
+        // ),
         Expanded(
           child: Container(
             child: TreeView(

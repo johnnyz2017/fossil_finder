@@ -11,7 +11,8 @@ class User{
   : id = data['id'] ?? 0,
     name = data['name'] ?? 'Unknown',
     email = data['email'] ?? '',
-    avatar = data['avatar'] ?? 'images/icons/user.png',
-    created =  DateTime.parse(data['created'] ?? DateTime.now())
+    avatar = data['profile_image'] ?? 'images/icons/user.png',
+    // created =  data['created'] ?? DateTime.now()
+    created =  DateTime.parse(data['created_at'] ?? DateTime.now().toString())
   ;
 }

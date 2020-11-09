@@ -108,7 +108,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
           );
         }, 
         separatorBuilder: (context, index) => Divider(
-          height: 50,
+          height: 30,
         ), 
         itemCount: posts?.length ?? 0
     );

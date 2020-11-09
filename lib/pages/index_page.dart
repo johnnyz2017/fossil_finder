@@ -32,10 +32,10 @@ class _IndexPageState extends State<IndexPage> {
   ];
 
   final List<Widget> tabBodies = [
-    HomePage(title: 'Home Page',),
+    HomePage(title: '首页',),
     // CategoryListView(title: 'Category Page'),
     CategoryPage(),
-    MemberPage(title: 'Member Profile'),
+    MemberPage(title: '会员中心'),
     // TreeViewTestPage(title: 'Tree View Test Page',)
   ];
 

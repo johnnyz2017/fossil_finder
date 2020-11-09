@@ -1,4 +1,10 @@
+import 'dart:convert';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fossils_finder/api/service_method.dart';
+import 'package:fossils_finder/config/global_config.dart';
+import 'package:fossils_finder/model/user.dart';
 
 class MemberPage extends StatefulWidget {
   final String title;
@@ -10,6 +16,28 @@ class MemberPage extends StatefulWidget {
 }
 
 class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMixin{
+
+  User user;
+
+  Future loadPostFromServer() async{
+    var _content = await request('${serviceUrl}/api/v1/self');
+    var _jsonData = jsonDecode(_content.toString());
+    // print('get json data is  ${_jsonData}');
+    var _postJson = _jsonData['data'];
+    User _user = User.fromJson(_postJson);
+    print('user name is ${_user.name}');
+    setState(() {
+      user = _user;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadPostFromServer();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,31 +46,73 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
       ),
       body: ListView(
         children: <Widget>[
-          _topHeader()
+          _topHeader(),
+          _actionList()
         ],
       ),
     );
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
   Widget _topHeader(){
+    String userName = user == null ? "未命名" : user.name;
+    String profileUrl = user == null ? 'images/icons/user.png' : user.avatar;
+
     return Container(
       // width: MediaQuery.of(context),
       padding: EdgeInsets.all(20),
-      color: Colors.pinkAccent,
+      color: Colors.grey,
       child: Column(
         children: <Widget>[
           Container(
             margin: EdgeInsets.only(top: 20),
-            child: ClipOval(child: Image.asset('images/icons/user.png', height: 100,),),
+            child: ClipOval(
+              child: 
+                profileUrl.startsWith('http') ? CachedNetworkImage(
+                        height: 100,
+                        width: 100,
+                        imageUrl: profileUrl,
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      )
+                 : Image.asset(profileUrl, height: 100, width: 100,),
+            )
           ),
           Container(
             margin: EdgeInsets.only(top: 10),
-            child: Text('测试名字'),
+            child: Text(userName),
           )
+        ],
+      ),
+    );
+  }
+
+  Widget _myListTile(String title){
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(width: 1, color: Colors.black12)
+        )
+      ),
+      child: ListTile(
+        leading: Icon(Icons.blur_circular),
+        title: Text(title),
+        trailing: Icon(Icons.arrow_right),
+      ),
+    );
+  }
+
+  Widget _actionList(){
+    return Container(
+      margin: EdgeInsets.only(top: 10),
+      child: Column(
+        children: <Widget>[
+          _myListTile('已公开发布'),
+          _myListTile('已私有发布'),
+          _myListTile('尚未发布'),
         ],
       ),
     );
