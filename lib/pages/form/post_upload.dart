@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
 import 'package:fossils_finder/utils/image_upload.dart';
@@ -352,21 +353,36 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "coordinate_altitude" : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
       'category_id' : _category,
-      'private' : _private
+      'private' : _private ? 1 : 0
     });
 
     SharedPreferences localStorage;
     localStorage = await SharedPreferences.getInstance();
     String _token = localStorage.get('token');
 
-    Dio dio = new Dio();
+    BaseOptions baseOptions = BaseOptions(
+      baseUrl: apiUrl,
+      responseType: ResponseType.json,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      validateStatus: (code) {
+        if (code >= 200) {
+          return true;
+        }
+      },
+      headers: {
+        HttpHeaders.authorizationHeader : 'Bearer $_token'
+      }
+    );
+
+    Dio dio = new Dio(baseOptions);
     Options options = Options(
         contentType: 'application/json',
         headers: {
           HttpHeaders.authorizationHeader : 'Bearer $_token'
         }
     );
-    var respone = await dio.post<String>("http://localhost:8000/api/v1/posts", data: formData, options: options);
+    var respone = await dio.post<String>(servicePath['posts'], data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
 
@@ -401,11 +417,25 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "image": await MultipartFile.fromFile(path, filename: name),
     });
 
-    Dio dio = new Dio();
+    BaseOptions baseOptions = BaseOptions(
+      baseUrl: apiUrl,
+      responseType: ResponseType.json,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      validateStatus: (code) {
+        if (code >= 200) {
+          return true;
+        }
+      },
+      // headers: {
+      //   HttpHeaders.authorizationHeader : 'Bearer $_token'
+      // }
+    );
+    Dio dio = new Dio(baseOptions);
     Options options = Options(
         contentType: 'application/json',
     );
-    var respone = await dio.post<String>("http://localhost:8000/api/v1/posts", data: formData, options: options);
+    var respone = await dio.post<String>(servicePath['posts'], data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
 

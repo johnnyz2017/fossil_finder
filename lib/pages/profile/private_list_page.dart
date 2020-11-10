@@ -6,6 +6,7 @@ import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
+import 'package:fossils_finder/pages/profile/post_editable_page.dart';
 
 class PrivatePostsPage extends StatefulWidget {
   @override
@@ -65,7 +66,7 @@ class _PrivatePostsPageState extends State<PrivatePostsPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) {
-                    return PostDetailPage(pid: post.id,);
+                    return PostEditblePage(post: post,);
                   }) 
                 );
               },

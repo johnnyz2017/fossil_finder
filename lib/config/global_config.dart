@@ -55,7 +55,8 @@ const servicePath = {
   'categorieswithoutposts' : '/categories/allwithoutposts',
   'unpublishedposts' : '/unpublishedposts',
   'publishedposts' : '/publishedposts',
-  'privateposts' : '/privateposts'
+  'privateposts' : '/privateposts',
+  'comments' : '/comments'
 };
 
 const httpHeaders = {
