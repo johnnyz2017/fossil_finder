@@ -100,7 +100,8 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
               user: post.author,
               viewCount: post.comments.length,
               thumbnail: Container(
-                decoration: const BoxDecoration(color: Colors.blue),
+                height: 100,
+                decoration: const BoxDecoration(color: Colors.grey),
                 child: post.images.length > 0 ? (post.images[0].url.startsWith('http')? Image.network(post.images[0].url) : Image.asset(post.images[0].url)) : Text('NO IMAGE'),
               ),
               title: post.title,

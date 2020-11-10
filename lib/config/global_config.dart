@@ -52,7 +52,10 @@ const String apiUrl = serviceUrl + '/api/v1';
 const servicePath = {
   'posts' : '/posts',
   'categorieswithposts' : '/categories/allwithposts',
-  'categorieswithoutposts' : '/categories/allwithoutposts'
+  'categorieswithoutposts' : '/categories/allwithoutposts',
+  'unpublishedposts' : '/unpublishedposts',
+  'publishedposts' : '/publishedposts',
+  'privateposts' : '/privateposts'
 };
 
 const httpHeaders = {

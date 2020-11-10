@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/user.dart';
+import 'package:fossils_finder/pages/profile/local_list_page.dart';
+import 'package:fossils_finder/pages/profile/private_list_page.dart';
+import 'package:fossils_finder/pages/profile/public_list_page.dart';
 
 class MemberPage extends StatefulWidget {
   final String title;
@@ -89,7 +92,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
     );
   }
 
-  Widget _myListTile(String title){
+  Widget _myListTile(String title, Function onTapCallback){
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -101,6 +104,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
         leading: Icon(Icons.blur_circular),
         title: Text(title),
         trailing: Icon(Icons.arrow_right),
+        onTap: onTapCallback,
       ),
     );
   }
@@ -110,9 +114,33 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
       margin: EdgeInsets.only(top: 10),
       child: Column(
         children: <Widget>[
-          _myListTile('已公开发布'),
-          _myListTile('已私有发布'),
-          _myListTile('尚未发布'),
+          _myListTile('已公开发布', (){
+            print('public clicked');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return PublisPostsPage();
+              }) 
+            );
+          }),
+          _myListTile('已私有发布', (){
+            print('private clicked');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return PrivatePostsPage();
+              }) 
+            );
+          }),
+          _myListTile('尚未发布', (){
+            print('local clicked');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                return LocalPostsPage();
+              }) 
+            );
+          }),
         ],
       ),
     );
