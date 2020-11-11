@@ -324,6 +324,24 @@ class _PostEditblePageState extends State<PostEditblePage> {
                 )
               ],
             ),
+
+            Row(
+              children: <Widget>[
+                Text('提交时间: '),
+                Expanded(child: TextFormField(
+                  readOnly: !editmode,
+                  initialValue: widget.post.created_at.toString(),
+                  // controller: _altTextController,
+                  validator: (value){
+                      if(value.isEmpty){
+                        return '提交时间为空';
+                      }
+
+                      return null;
+                    },
+                  ),)
+              ],
+            ),
           ],
         ),
       ),

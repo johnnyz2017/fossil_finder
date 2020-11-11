@@ -46,8 +46,9 @@ class Global{
   //     _prefs.setString("profile", jsonEncode(profile.toJson()));
 }
 
-const String serviceUrl = 'http://localhost:8000';
+// const String serviceUrl = 'http://localhost:8000';
 // const String serviceUrl = 'http://foss-backend.herokuapp.com';
+const String serviceUrl = "http://42.192.48.39:8080";
 const String apiUrl = serviceUrl + '/api/v1';
 const servicePath = {
   'posts' : '/posts',

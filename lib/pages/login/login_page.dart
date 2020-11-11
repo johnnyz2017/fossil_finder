@@ -22,8 +22,9 @@ class LoginScreen extends StatelessWidget {
     localStorage = await SharedPreferences.getInstance();
   }
 
-  static var uri = "http://localhost:8000/api/v1";
+  // static var uri = "http://localhost:8000/api/v1";
   // static var uri = "http://foss-backend.herokuapp.com/api/v1";
+  static var uri = "http://42.192.48.39:8080/api/v1";
   static BaseOptions options = BaseOptions(
       baseUrl: uri,
       responseType: ResponseType.plain,
