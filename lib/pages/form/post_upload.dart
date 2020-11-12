@@ -172,7 +172,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       if(value.isEmpty){
                         return '纬度没有填写';
                       }
-
                       return null;
                     },
                 )),
@@ -182,8 +181,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   onPressed: () async { 
                     //AmapService.navigateDrive(LatLng(36.547901, 104.258354));
                     setState(() {
-                      _latTextController.text = widget.center.latitude.toString();
-                      _lngTextController.text = widget.center.longitude.toString();
+                      _latTextController.text = widget.center.latitude.toStringAsFixed(6);
+                      _lngTextController.text = widget.center.longitude.toStringAsFixed(6);
                     });
                   },
                 )
@@ -198,7 +197,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       if(value.isEmpty){
                         return '海拔没有填写';
                       }
-
                       return null;
                     },
                   ),)
@@ -213,7 +211,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       if(value.isEmpty){
                         return '地址没有填写';
                       }
-
                       return null;
                     },
                   ),)

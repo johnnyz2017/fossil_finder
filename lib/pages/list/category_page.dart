@@ -19,7 +19,7 @@ class _CategoryPageState extends State<CategoryPage> {
         appBar: new PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: new Container(
-              color: Colors.blue,
+              color: Colors.blueAccent,
               child: new SafeArea(
                 child: Column(
                   children: <Widget>[

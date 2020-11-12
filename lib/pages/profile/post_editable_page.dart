@@ -59,9 +59,9 @@ class _PostEditblePageState extends State<PostEditblePage> {
     _imgsPath = widget.post.images.map((e) => e.url).toList(); //TBD
     print('get image path: ${_imgsPath[0]}');
 
-    _latTextController.text = widget.post.latitude.toString();
-    _lngTextController.text = widget.post.longitude.toString();
-    _altTextController.text = widget.post.altitude.toString();
+    _latTextController.text = widget.post.latitude.toStringAsFixed(6);
+    _lngTextController.text = widget.post.longitude.toStringAsFixed(6);
+    _altTextController.text = widget.post.altitude.toStringAsFixed(6);
     _addrTextController.text = widget.post.address;
     _titleTextController.text = widget.post.title;
     _contentTextController.text = widget.post.content;
@@ -97,7 +97,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
                 //     .of(context)
                 //     .showSnackBar(SnackBar(content: Text('Processing Data')));
                 
-                // _submitPost(context);
+                _submitPost(context);
               }
             },
           )
@@ -196,7 +196,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       if(value.isEmpty){
                         return '经度没有填写';
                       }
-
                       return null;
                     },
                   )),
@@ -216,12 +215,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
                 IconButton(
                   iconSize: 20, 
                   icon: Icon(Icons.my_location), 
-                  onPressed: () async { 
-                    //AmapService.navigateDrive(LatLng(36.547901, 104.258354));
-                    // setState(() {
-                    //   _latTextController.text = widget.center.latitude.toString();
-                    //   _lngTextController.text = widget.center.longitude.toString();
-                    // });
+                  onPressed: () async {
                   },
                 )
               ],
@@ -237,7 +231,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       if(value.isEmpty){
                         return '海拔没有填写';
                       }
-
                       return null;
                     },
                   ),)
@@ -254,7 +247,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       if(value.isEmpty){
                         return '地址没有填写';
                       }
-
                       return null;
                     },
                   ),)
@@ -274,7 +266,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       if(value.isEmpty){
                         return '请选择一个分类';
                       }
-
                       return null;
                     },
                     onSaved: (value){
@@ -304,7 +295,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
                         _category = int.parse(_key.split('_')[1]);
                         print('got category id ${_category}');
                       }
-                      
                     }                  
                   },
                 )
@@ -336,7 +326,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       if(value.isEmpty){
                         return '提交时间为空';
                       }
-
                       return null;
                     },
                   ),)
@@ -346,102 +335,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
         ),
       ),
     );
-
-
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: Text("详情页")
-    //   ),
-    //   body: ListView.builder(
-    //     itemCount: widget.post.comments.length + 2,
-    //     itemBuilder: (BuildContext context, int index){
-    //       if(index == 0){                                            // post content
-    //         return Container(
-    //           padding: EdgeInsets.all(5),
-    //           child: Card(
-    //             child: Column(
-    //               children: <Widget>[
-    //                 Text(
-    //                   widget.post.title, 
-    //                   style: TextStyle(
-    //                     //backgroundColor: Colors.yellow, 
-    //                     color: Colors.blue,
-    //                     fontSize: 30,
-
-    //                     ),
-    //                 ),
-    //                 Padding(padding: EdgeInsets.only(top: 10)),
-    //                 Container(
-    //                   height: 200,
-    //                   child:
-    //                     widget.post.images != null ? 
-    //                     new Swiper(
-    //                       itemBuilder: (BuildContext context,int index){
-    //                         String url = widget.post.images[index].url;
-    //                         if(url.startsWith('http')){
-    //                           return new Image.network(url, fit: BoxFit.fitHeight);
-    //                         }else{
-    //                           return new Image.asset(url, fit:BoxFit.fitHeight);
-    //                         }
-    //                       },
-    //                       itemCount: widget.post.images.length > 0 ? widget.post.images.length : 0,
-    //                       pagination: new SwiperPagination(),
-    //                       control: new SwiperControl(),
-    //                     )
-    //                     :
-    //                     Text('无图片'),
-    //                 ),
-    //                 Padding(padding: EdgeInsets.only(top: 10)),
-    //                 Padding(
-    //                   padding: const EdgeInsets.all(8.0),
-                      
-    //                   child: Text(
-    //                     widget.post.content,
-    //                     style: TextStyle(
-    //                       fontSize: 20,
-    //                       color: Colors.lightBlue,
-
-    //                     ),
-    //                     textAlign: TextAlign.start,
-    //                   ),
-    //                 )
-    //               ],
-    //             ),
-    //           ),
-    //         );
-
-
-    //       }else if(index == widget.post.comments.length + 1){     // submit button
-    //         return Container(
-    //           padding: EdgeInsets.all(5),
-    //           child: RaisedButton(
-    //             onPressed: (){
-    //               print('submit comment button clicked');
-
-    //               // var ret = Navigator.push(
-    //               //   context,
-    //               //   MaterialPageRoute(builder: (BuildContext context) {
-    //               //     //return CommentSubmitPage(post: post,);
-    //               //     return CommentUploadPage(post: post,);
-    //               //   }) 
-    //               // );
-    //             },
-    //             child: Text('发表评论'),
-    //             textColor: Colors.green,
-    //           ),
-    //         );
-
-
-    //       }else{                                                  // comments
-    //         return Container(
-    //           padding: EdgeInsets.all(5),
-    //           child: Card(
-    //             child: Text('评论 ${index}'),
-    //           ),
-    //         );
-    //       }
-    //     }),
-    // );
   }
 
   //
@@ -451,7 +344,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
     print('get images path string: ${_images}');
 
     FormData formData = new FormData.fromMap({
-      // "user_id": 1,
       "images" : _images,
       "title" : _titleTextController.text,
       "content" : _contentTextController.text,
@@ -460,7 +352,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
       "coordinate_altitude" : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
       'category_id' : _category,
-      'private' : _private
+      'private' : _private ? 1 : 0
     });
 
     SharedPreferences localStorage;
@@ -478,7 +370,8 @@ class _PostEditblePageState extends State<PostEditblePage> {
         }
       },
       headers: {
-        HttpHeaders.authorizationHeader : 'Bearer $_token'
+        HttpHeaders.authorizationHeader : 'Bearer $_token',
+        HttpHeaders.acceptHeader : 'application/json'
       }
     );
 
@@ -486,27 +379,28 @@ class _PostEditblePageState extends State<PostEditblePage> {
     Options options = Options(
         contentType: 'application/json',
         headers: {
-          HttpHeaders.authorizationHeader : 'Bearer $_token'
+          HttpHeaders.authorizationHeader : 'Bearer $_token',
+          HttpHeaders.acceptHeader : 'application/json'
         }
     );
-    var respone = await dio.post<String>(servicePath['posts'], data: formData, options: options);
+    String updateUrl = apiUrl+servicePath['posts']+'/${widget.post.id}';
+    var respone = await dio.post<String>(updateUrl, data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
-
       var responseJson = json.decode(respone.data);
       print('response: ${respone.data} - ${responseJson['message']}');
 
       var status = responseJson['code'] as int;
       if(status == 200){
         Fluttertoast.showToast(
-            msg: "提交成功",
+            msg: "更新成功",
             gravity: ToastGravity.CENTER,
             textColor: Colors.grey);
         
         Navigator.pop(context, true);
       }else{
         Fluttertoast.showToast(
-            msg: "提交失败，请暂存在本地数据库中！",
+            msg: "更新失败，请暂存在本地数据库中！",
             gravity: ToastGravity.CENTER,
             textColor: Colors.red);
       }

@@ -154,6 +154,14 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
   Future loadCategoriesFromServer() async{
     var _content = await request(servicePath['categorieswithposts']);
     // var _content = await request(servicePath['categorieswithoutposts']);
+    if(_content.statusCode != 200){
+      if(_content.statusCode == 401){
+        print('#### unauthenticated, need back to login page ${_content.statusCode}');
+      }
+      print('#### Network Connection Failed: ${_content.statusCode}');
+
+      return;
+    }
 
     print('get request content: ${_content}');
     var _jsonData = jsonDecode(_content.toString());

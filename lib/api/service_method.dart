@@ -4,19 +4,13 @@ import 'package:dio/dio.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future request(url, {formData}) async{
+Future<Response> request(url, {formData}) async{
   try{
     print('start to request data');
     
     SharedPreferences localStorage;
     localStorage = await SharedPreferences.getInstance();
     String _token = localStorage.get('token');
-
-    // Map<String, dynamic> httpHeaders = {
-    //   'Accept' : 'application/json',
-    //   'Content-Type' : 'application/json',
-    //   'token' : 'Bearer $_token' 
-    // };
 
     BaseOptions options = BaseOptions(
       baseUrl: apiUrl,
@@ -29,7 +23,8 @@ Future request(url, {formData}) async{
         }
       },
       headers: {
-        HttpHeaders.authorizationHeader : 'Bearer $_token'
+        HttpHeaders.authorizationHeader : 'Bearer $_token',
+        HttpHeaders.acceptHeader : 'application/json'
       }
     );
     Response response;
@@ -38,6 +33,7 @@ Future request(url, {formData}) async{
       contentType: 'application/json',
     );
     response = await dio.get(url, options: ops);
+    // print('#### get response status code:  ${response.data}');
     return response;
   }catch(e){
     print(e);

@@ -24,6 +24,14 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
 
   Future loadPostFromServer() async{
     var _content = await request('${serviceUrl}/api/v1/self');
+    if(_content.statusCode != 200){
+      if(_content.statusCode == 401){
+        print('#### unauthenticated, need back to login page ${_content.statusCode}');
+      }
+      print('#### Network Connection Failed: ${_content.statusCode}');
+
+      return;
+    }
     var _jsonData = jsonDecode(_content.toString());
     // print('get json data is  ${_jsonData}');
     var _postJson = _jsonData['data'];

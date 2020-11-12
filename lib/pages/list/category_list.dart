@@ -8,6 +8,7 @@ import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
+import 'package:fossils_finder/pages/login/login_page.dart';
 
 class CategoryListView extends StatefulWidget {
 
@@ -28,6 +29,18 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
 
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['posts']);
+    if(_content.statusCode != 200){
+      if(_content.statusCode == 401){
+        print('#### unauthenticated, need back to login page ${_content.statusCode}');
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ));
+      }
+      print('#### Network Connection Failed: ${_content.statusCode}');
+
+      return;
+    }
+
     var _jsonData = jsonDecode(_content.toString());
     var _listJson;
     if(_jsonData['paginated']){

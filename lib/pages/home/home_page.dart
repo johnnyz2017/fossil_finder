@@ -43,8 +43,23 @@ class _HomePageState extends State<HomePage> {
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['posts']);
     // print('get _content ${_content}');
-    var _jsonData = jsonDecode(_content.toString());
+    if(_content.statusCode != 200){
+      if(_content.statusCode == 401){
+        print('#### unauthenticated, need back to login page ${_content.statusCode}');
+
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ));
+      }
+      print('#### Network Connection Failed: ${_content.statusCode}');
+
+      return;
+    }
+    var _jsonData = jsonDecode(_content.data.toString());
     // print('get json data is  ${_jsonData}');
+    if(_jsonData['message'] && _jsonData['message'] == "Unauthenticated."){
+      print('#### unauthenticated, need back to login page ${_jsonData}');
+    }
     var _listJson;
     if(_jsonData['paginated']){
       _listJson = _jsonData['data']['data'];
@@ -684,6 +699,7 @@ class _HomePageState extends State<HomePage> {
       centerTitle: true,
       title: Container(
         height: 50,
+        // color: Colors.blueAccent,
         padding: EdgeInsets.only(top: 10.0),
         child: new TextFormField(
           controller: _filter,

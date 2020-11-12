@@ -1,6 +1,4 @@
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,11 +44,12 @@ class Global{
   //     _prefs.setString("profile", jsonEncode(profile.toJson()));
 }
 
-// const String serviceUrl = 'http://localhost:8000';
-// const String serviceUrl = 'http://foss-backend.herokuapp.com';
-const String serviceUrl = "http://42.192.48.39:8080";
+const String serviceUrl = 'http://localhost:8000'; //local
+// const String serviceUrl = 'http://foss-backend.herokuapp.com'; //heroku
+// const String serviceUrl = "http://42.192.48.39:8080"; //tx cloud
 const String apiUrl = serviceUrl + '/api/v1';
 const servicePath = {
+  'testauth' : '/testauth',
   'posts' : '/posts',
   'categorieswithposts' : '/categories/allwithposts',
   'categorieswithoutposts' : '/categories/allwithoutposts',

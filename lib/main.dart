@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fossils_finder/main_app.dart';
 import 'package:fossils_finder/pages/home/home_page.dart';
@@ -8,15 +10,18 @@ import 'package:fossils_finder/utils/db_provider.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'api/service_method.dart';
+import 'config/global_config.dart';
+
 SharedPreferences localStorage;
 
 void MapInit() async{
   final provider = DbProvider();
   await provider.init();
   
-  localStorage = await SharedPreferences.getInstance();
-  String _token = localStorage.get('token');
-  print('token is ${_token}');
+  // localStorage = await SharedPreferences.getInstance();
+  // String _token = localStorage.get('token');
+  // print('token is ${_token}');
 
   await enableFluttifyLog(false);
   await AmapService.init(
@@ -42,14 +47,23 @@ class _FossilAppState extends State<FossilApp> {
 
   bool isLoggedIn = false;
 
-  init() async{
+  void init() async{
     localStorage = await SharedPreferences.getInstance();
     String _token = localStorage.get('token');
     // print('token is ${_token}');
     if(_token != null && !(_token.isEmpty)){
+      var _content = await request(servicePath['testauth']);
+      if(_content.statusCode != 200){
+        if(_content.statusCode == 401){
+          print('#### unauthenticated, need back to login page ${_content.statusCode}');
+        }
+        print('#### Network Connection Failed: ${_content.statusCode}');
+        return;
+      }
+
       setState(() {
         isLoggedIn = true;
-      });
+      });      
     }
   }
 
@@ -66,6 +80,7 @@ class _FossilAppState extends State<FossilApp> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.indigo, accentColor: Colors.blue),
       home: isLoggedIn ? IndexPage() : LoginScreen(),
+      // home: IndexPage(),
     );
   }
 }
