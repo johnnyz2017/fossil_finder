@@ -136,7 +136,8 @@ class _PostEditblePageState extends State<PostEditblePage> {
             RaisedButton(
               child: Text('选择图片上传'),
               onPressed: (){
-                getImage();
+                if(editmode)
+                  getImage();
               },
             ),
 
@@ -208,7 +209,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       if(value.isEmpty){
                         return '纬度没有填写';
                       }
-
                       return null;
                     },
                 )),
@@ -278,24 +278,26 @@ class _PostEditblePageState extends State<PostEditblePage> {
                   iconSize: 20, 
                   icon: Icon(Icons.category), 
                   onPressed: () async {
-                    category = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                        return CategorySelector(treeJson: "",);
-                      }) 
-                    );
+                    if(editmode){
+                      category = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (BuildContext context) {
+                          return CategorySelector(treeJson: "",);
+                        }) 
+                      );
 
-                    if(category != null){
-                      print('result: ${category.key} - ${category.label}');
-                      _categoryTextController.text = category.label;
-                      
-                      String _key = category.key;
-                      String _type = _key.split('_')[0];
-                      if(_type.isNotEmpty || _type == "c"){
-                        _category = int.parse(_key.split('_')[1]);
-                        print('got category id ${_category}');
+                      if(category != null){
+                        print('result: ${category.key} - ${category.label}');
+                        _categoryTextController.text = category.label;
+                        
+                        String _key = category.key;
+                        String _type = _key.split('_')[0];
+                        if(_type.isNotEmpty || _type == "c"){
+                          _category = int.parse(_key.split('_')[1]);
+                          print('got category id ${_category}');
+                        }
                       }
-                    }                  
+                    }             
                   },
                 )
               ],

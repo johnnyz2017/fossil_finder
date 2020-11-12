@@ -55,6 +55,7 @@ class _FossilAppState extends State<FossilApp> {
       var _content = await request(servicePath['testauth']);
       if(_content.statusCode != 200){
         if(_content.statusCode == 401){
+          localStorage.remove('token');
           print('#### unauthenticated, need back to login page ${_content.statusCode}');
         }
         print('#### Network Connection Failed: ${_content.statusCode}');

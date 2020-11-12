@@ -4,8 +4,8 @@ import io.flutter.embedding.android.FlutterActivity
 
 import io.flutter.app.FlutterApplication;
 
-import com.baidu.mapapi.SDKInitializer;
-import com.baidu.flutter_bmfbase.BmfContextHelper;
+//import com.baidu.mapapi.SDKInitializer;
+//import com.baidu.flutter_bmfbase.BmfContextHelper;
 
 class FossilApplication : FlutterApplication() {
   //lateinit var flutterEngine : FlutterEngine
@@ -26,8 +26,8 @@ class FossilApplication : FlutterApplication() {
     //  .getInstance()
     //  .put("my_engine_id", flutterEngine)
 
-    BmfContextHelper.sContext = this;
-    SDKInitializer.initialize(this);
+    //BmfContextHelper.sContext = this;
+    //SDKInitializer.initialize(this);
   }
 }
 

@@ -9,6 +9,7 @@ import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryListView extends StatefulWidget {
 
@@ -32,6 +33,8 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
     if(_content.statusCode != 200){
       if(_content.statusCode == 401){
         print('#### unauthenticated, need back to login page ${_content.statusCode}');
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.remove('token');
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => LoginScreen(),
         ));

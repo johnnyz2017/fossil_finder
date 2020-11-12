@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:qrscan/qrscan.dart' as scanner;
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   List<Post> posts = new List<Post>();
 
   bool _used = false;
+  bool _show = true;
 
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['posts']);
@@ -46,6 +48,9 @@ class _HomePageState extends State<HomePage> {
     if(_content.statusCode != 200){
       if(_content.statusCode == 401){
         print('#### unauthenticated, need back to login page ${_content.statusCode}');
+
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.remove('token');
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => LoginScreen(),
@@ -55,11 +60,11 @@ class _HomePageState extends State<HomePage> {
 
       return;
     }
-    var _jsonData = jsonDecode(_content.data.toString());
+    var _jsonData = jsonDecode(_content.toString());
     // print('get json data is  ${_jsonData}');
-    if(_jsonData['message'] && _jsonData['message'] == "Unauthenticated."){
-      print('#### unauthenticated, need back to login page ${_jsonData}');
-    }
+    // if(_jsonData['message'] && _jsonData['message'] == "Unauthenticated."){
+    //   print('#### unauthenticated, need back to login page ${_jsonData}');
+    // }
     var _listJson;
     if(_jsonData['paginated']){
       _listJson = _jsonData['data']['data'];
@@ -69,6 +74,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     List _jsonList = _listJson as List;
+    print('get list item 0 ${_jsonList[0]}');
     List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
     setState(() {
       posts = postList;
@@ -90,8 +96,9 @@ class _HomePageState extends State<HomePage> {
               // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
               ClipOval(
                 child: post.images.length > 0 ? 
-                    (post.images[0].url.startsWith('http') ? Image.network(post.images[0].url, height: 50,) : Image.asset(post.images[0].url, height: 50,))
+                    (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50,) : Image.asset(post.images[0].url, height: 50,))
                     : Image.asset('images/icons/marker.png', height: 50,)
+                // child: Image.asset('images/icons/marker.png', height: 50,)
               )
             ],
           ),
@@ -168,7 +175,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState(){
     super.initState();
-    loadPostListFromServer();
+    // loadPostListFromServer();
     // _checkPermission();
     init();
   }
@@ -373,6 +380,8 @@ class _HomePageState extends State<HomePage> {
                       //   );
                       //   _markers.add(marker1);
                       // }); //foreach
+
+                      loadPostListFromServer(); //load posts after amap init
                   },
                 ),
               ] 
@@ -487,11 +496,34 @@ class _HomePageState extends State<HomePage> {
               heroTag: 'show',
               onPressed: () async{
 
+                print('markers size: ${_markers.length}');
+                print('posts ${posts.length} - ${posts[0].images[0].url}');
+
+                setState(() {
+                  _show = !_show;
+                });
+
+                bool need_reload = false;
+
                 if(_markers.isNotEmpty){
                   for(var marker in _markers){
                     // marker.showInfoWindow();
-                    marker.setVisible(true);
+                    print('marker ${marker.toString()}'); //null
+                    if(marker != null)
+                      marker.setVisible(_show);
+                    else
+                      need_reload = true;
                   }
+                }else{
+                  need_reload = true;
+                }
+
+                if(need_reload){
+                  print('need reload ...........');
+                  setState(() {
+                    _show = true;
+                    loadPostListFromServer();
+                  });
                 }
 
                 if(_used) return;
@@ -561,7 +593,7 @@ class _HomePageState extends State<HomePage> {
                   //   return true;
                   // });
               },
-              child: Icon(FontAwesome5Solid.shower),
+              child: _show? Icon(Icons.brightness_5) : Icon(Icons.brightness_1),
               shape: CircleBorder(
               ),
             ),
@@ -592,11 +624,14 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               heroTag: 'close',
               onPressed: () async {
-                if(_markers.isNotEmpty){
-                  for(var marker in _markers){
-                    marker.setVisible(false);
-                  }
-                }
+                await _controller?.showMyLocation(MyLocationOption(
+                  myLocationType: MyLocationType.Locate,
+                ));
+                // if(_markers.isNotEmpty){
+                //   for(var marker in _markers){
+                //     marker.setVisible(false);
+                //   }
+                // }
 
                 // final center = await _controller?.getCenterCoordinate(); //OK
                 // print('center get ${center?.latitude}, ${center?.longitude}'); 
@@ -702,6 +737,7 @@ class _HomePageState extends State<HomePage> {
         // color: Colors.blueAccent,
         padding: EdgeInsets.only(top: 10.0),
         child: new TextFormField(
+          autofocus: false,
           controller: _filter,
           decoration: InputDecoration(
             // icon: Icon(Icons.search),

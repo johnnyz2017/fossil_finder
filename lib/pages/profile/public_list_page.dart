@@ -61,14 +61,15 @@ class _PublisPostsPageState extends State<PublisPostsPage> {
             Post post = posts[index];
 
             return InkWell(
-              onTap: (){
-                Navigator.push(
+              onTap: () async{
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) {
                     //return PostDetailPage(pid: post.id,);
                     return PostEditblePage(post: post,);
                   }) 
                 );
+                loadPostListFromServer();
               },
               child: CustomListItem(
                 user: post.author,

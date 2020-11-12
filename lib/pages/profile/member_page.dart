@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/user.dart';
+import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/pages/profile/local_list_page.dart';
 import 'package:fossils_finder/pages/profile/private_list_page.dart';
 import 'package:fossils_finder/pages/profile/public_list_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MemberPage extends StatefulWidget {
   final String title;
@@ -27,6 +29,11 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
     if(_content.statusCode != 200){
       if(_content.statusCode == 401){
         print('#### unauthenticated, need back to login page ${_content.statusCode}');
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.remove('token');
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ));
       }
       print('#### Network Connection Failed: ${_content.statusCode}');
 
