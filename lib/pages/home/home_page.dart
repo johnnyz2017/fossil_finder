@@ -593,7 +593,8 @@ class _HomePageState extends State<HomePage> {
                   //   return true;
                   // });
               },
-              child: _show? Icon(Icons.brightness_5) : Icon(Icons.brightness_1),
+              // child: _show? Icon(Icons.brightness_5) : Icon(Icons.brightness_1),
+              child: _show? Icon(Icons.highlight) : Icon(Icons.highlight_off),
               shape: CircleBorder(
               ),
             ),
