@@ -54,18 +54,18 @@ class _PostEditblePageState extends State<PostEditblePage> {
     // TODO: implement initState
     super.initState();
     _private = widget.post.private;
-    _category = widget.post.category_id;
+    _category = widget.post.categoryId;
     
     _imgsPath = widget.post.images.map((e) => e.url).toList(); //TBD
     print('get image path: ${_imgsPath[0]}');
 
-    _latTextController.text = widget.post.latitude.toStringAsFixed(6);
-    _lngTextController.text = widget.post.longitude.toStringAsFixed(6);
-    _altTextController.text = widget.post.altitude.toStringAsFixed(6);
+    _latTextController.text = widget.post.coordinateLatitude.toStringAsFixed(6);
+    _lngTextController.text = widget.post.coordinateLongitude.toStringAsFixed(6);
+    _altTextController.text = widget.post.coordinateAltitude.toStringAsFixed(6);
     _addrTextController.text = widget.post.address;
     _titleTextController.text = widget.post.title;
     _contentTextController.text = widget.post.content;
-    _categoryTextController.text = widget.post.category_id.toString();
+    _categoryTextController.text = widget.post.categoryId.toString();
   }
 
 
@@ -322,7 +322,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
                 Text('提交时间: '),
                 Expanded(child: TextFormField(
                   readOnly: !editmode,
-                  initialValue: widget.post.created_at.toString(),
+                  initialValue: widget.post.createdAt.toString(),
                   // controller: _altTextController,
                   validator: (value){
                       if(value.isEmpty){

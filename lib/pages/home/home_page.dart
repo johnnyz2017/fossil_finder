@@ -86,8 +86,8 @@ class _HomePageState extends State<HomePage> {
       final marker1 = await _controller?.addMarker(
         MarkerOption(
           latLng: LatLng(
-            post.latitude,
-            post.longitude,
+            post.coordinateLatitude,
+            post.coordinateLongitude,
           ),
           widget: Column(
             mainAxisSize: MainAxisSize.min,
@@ -786,7 +786,7 @@ class _HomePageState extends State<HomePage> {
                   print('found author ${post.author} - ${post.id}');
                   // await _controller?.setCenterCoordinate(LatLng(post.latitude, post.longitude));
                   _controller?.setCenterCoordinate(
-                    LatLng(post.latitude, post.longitude),
+                    LatLng(post.coordinateLatitude, post.coordinateLongitude),
                     zoomLevel: 19,
                     animated: true,
                   );
