@@ -11,11 +11,24 @@ class DatabaseHelper {
 
   String postTable = 'post_table';
   String colId = 'id';
+  String colUserId = 'user_id';
+  String colAuthUserId = 'auth_user_id';
+  String colTempId = 'temp_id';
+  String colPermId = 'perm_id';
   String colTitle = 'title';
-  String colDescription = 'description';
-  String colPriority = 'priority';
-  String colColor = 'color';
-  String colDate = 'date';
+  String colContent = 'content';
+  String colPrivate = 'private';
+  String colPublished = 'published';
+  String colCategoryId = 'category_id';
+  String colFinalCategoryId = 'final_category_id';
+  String colFinalCategoryIdFrom = 'final_category_id_from';
+  String colCoordinateLongitude = 'coordinate_longitude';
+  String colCoordinateLatitude = 'coordinate_latitude';
+  String colCoordinateAltitude = 'coordinate_altitude';
+  String colAddress = 'address';
+  String colCreatedAt = 'created_at';
+  String colUpdatedAt = 'updated_at';
+  String colAuthor = 'author';
 
   DatabaseHelper._createInstance(); // Named constructor to create instance of DatabaseHelper
 
@@ -47,8 +60,10 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        'CREATE TABLE $postTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTitle TEXT, '
-        '$colDescription TEXT, $colPriority INTEGER, $colColor INTEGER,$colDate TEXT)');
+        'CREATE TABLE $postTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colUserId INTEGER, $colAuthUserId INTEGER, $colTempId TEXT, $colPermId TEXT, $colTitle TEXT, '
+        '$colContent TEXT, $colPrivate INTEGER, $colPublished INTEGER, $colCategoryId INTEGER, $colFinalCategoryId INTEGER, $colFinalCategoryIdFrom INTEGER, '
+        '$colCoordinateLongitude DOUBLE, $colCoordinateLatitude DOUBLE, $colCoordinateAltitude DOUBLE, '
+        '$colAddress TEXT, $colCreatedAt TEXT, $colUpdatedAt TEXT, $colAuthor TEXT)');
   }
 
   // Fetch Operation: Get all post objects from database
@@ -56,7 +71,7 @@ class DatabaseHelper {
     Database db = await this.database;
 
 //		var result = await db.rawQuery('SELECT * FROM $postTable order by $colPriority ASC');
-    var result = await db.query(postTable, orderBy: '$colPriority ASC');
+    var result = await db.query(postTable, orderBy: '$colId ASC');
     return result;
   }
 
@@ -100,9 +115,9 @@ class DatabaseHelper {
 
     List<Post> postList = List<Post>();
     // For loop to create a 'Post List' from a 'Map List'
-    // for (int i = 0; i < count; i++) {
-    //   postList.add(Post.fromMapObject(postMapList[i]));
-    // }
+    for (int i = 0; i < count; i++) {
+      postList.add(Post.fromMapObject(postMapList[i]));
+    }
 
     return postList;
   }

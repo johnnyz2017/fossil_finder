@@ -1,5 +1,4 @@
 
-import 'dart:convert';
 
 import 'package:fossils_finder/model/comment.dart';
 import 'package:fossils_finder/model/image.dart';
@@ -86,7 +85,7 @@ class Post {
         "content": content,
         "private": private,
         "published": published,
-        "images": List<dynamic>.from(images.map((x) => x.toJson())),
+        "images": List<Image>.from(images.map((x) => x.toJson())),
         "category_id": categoryId,
         "final_category_id": finalCategoryId,
         "final_category_id_from": finalCategoryIdFrom,
@@ -94,10 +93,10 @@ class Post {
         "coordinate_latitude": coordinateLatitude,
         "coordinate_altitude": coordinateAltitude,
         "address": address,
-        "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
+        "created_at": createdAt == null ? '' : createdAt.toIso8601String(),
+        "updated_at": updatedAt == null ? '' : updatedAt.toIso8601String(),
         "author": author,
-        "comments": List<dynamic>.from(comments.map((x) => x.toJson())),
+        "comments": List<Comment>.from(comments.map((x) => x.toJson())),
     };
 
     Map<String, dynamic> toMap() {
@@ -108,6 +107,23 @@ class Post {
       map['user_id'] = userId;
       map['auth_user_id'] = authUserId;
       map['temp_id'] = tempId;
+      map['perm_id'] = permId;
+      map['title'] = title;
+      map['content'] = content;
+      map['private'] = private ? 1 : 0;
+      map['published'] = published ? 1 : 0;
+      // map['images'] = images;
+      map['category_id'] = categoryId;
+      map['final_category_id'] = finalCategoryId;
+      map['final_category_id_from'] = finalCategoryIdFrom;
+      map['coordinate_longitude'] = coordinateLongitude;
+      map['coordinate_latitude'] = coordinateLatitude;
+      map['coordinate_altitude'] = coordinateAltitude;
+      map['address'] = address;
+      map['created_at'] = createdAt == null ? '' : createdAt.toIso8601String();
+      map['updated_at'] = updatedAt == null ? '' : updatedAt.toIso8601String();
+      map['author'] = author;
+      // map['comments'] = comments;
       return map;
     }
 
@@ -117,6 +133,24 @@ class Post {
       this.userId = map['user_id'];
       this.authUserId = map['auth_user_id'];
       this.tempId = map['temp_id'];
+      this.permId = map['perm_id'];
+      this.title = map['title'];
+      this.content = map['content'];
+      this.private = map['private'] > 0 ? true : false;
+      this.published = map['published'] > 0 ? true : false;
+      // this.images = Image.fromMapObject(map['imaegs']);
+      // this.images = map['images'];
+      this.categoryId = map['category_id'];
+      this.finalCategoryId = map['final_category_id'];
+      this.finalCategoryIdFrom = map['final_category_id_from'];
+      this.coordinateLongitude = map['coordinate_longitude'];
+      this.coordinateLatitude = map['coordinate_latitude'];
+      this.coordinateAltitude = map['coordinate_altitude'];
+      this.address = map['address'];
+      this.createdAt = map['created_at'].toString().isNotEmpty ? DateTime.parse(map['created_at']) : null;
+      this.updatedAt = map['updated_at'].toString().isNotEmpty ? DateTime.parse(map['updated_at']) : null;
+      this.author = map['author'];
+      // this.comments = map['comments'];
     }
 
 }

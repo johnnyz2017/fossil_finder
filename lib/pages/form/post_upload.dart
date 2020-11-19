@@ -8,7 +8,9 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
+import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
+import 'package:fossils_finder/utils/db_helper.dart';
 import 'package:fossils_finder/utils/image_upload.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:fossils_finder/utils/strings.dart';
@@ -18,6 +20,7 @@ import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class PostUploadPage extends StatefulWidget {
   final LatLng center;
@@ -29,6 +32,7 @@ class PostUploadPage extends StatefulWidget {
 
 class _PostUploadPageState extends State<PostUploadPage> {
 
+  DatabaseHelper dbhelper = DatabaseHelper();
   final _formKey = GlobalKey<FormState>();
   // File _image;
   Image _image;
@@ -48,6 +52,22 @@ class _PostUploadPageState extends State<PostUploadPage> {
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     _doUploadImage(image, "");//上传图片
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final Future<Database> dbFuture = dbhelper.initializeDatabase();
+    dbFuture.then((db){
+      print('after db init');
+
+      Future<List<Post>> postListFuture = dbhelper.getPostList();
+      postListFuture.then((noteList) {
+        print('get post list ${noteList.length} ');
+      });
+
+    });
   }
 
   @override
@@ -337,8 +357,59 @@ class _PostUploadPageState extends State<PostUploadPage> {
   }
 
   _submitPost(BuildContext context) async{
+    
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
+
+    // if (id != null) {
+    //   map['id'] = id;
+    // }
+    // map['user_id'] = userId;
+    // map['auth_user_id'] = authUserId;
+    // map['temp_id'] = tempId;
+    // map['perm_id'] = permId;
+    // map['title'] = title;
+    // map['content'] = content;
+    // map['private'] = private ? 1 : 0;
+    // map['published'] = published ? 1 : 0;
+    // // map['images'] = images;
+    // map['category_id'] = categoryId;
+    // map['final_category_id'] = finalCategoryId;
+    // map['final_category_id_from'] = finalCategoryIdFrom;
+    // map['coordinate_longitude'] = coordinateLongitude;
+    // map['coordinate_latitude'] = coordinateLatitude;
+    // map['coordinate_altitude'] = coordinateAltitude;
+    // map['address'] = address;
+    // map['created_at'] = createdAt.toIso8601String();
+    // map['updated_at'] = updatedAt.toIso8601String();
+    // map['author'] = author;
+    Post post = new Post.fromMapObject({
+      "user_id" : 1,
+      "auth_user_id" : null,
+      "temp_id" : "",
+      "perm_id" : "",
+      "title" : _titleTextController.text,
+      "images" : _images,
+      "content" : _contentTextController.text,
+      "private" : _private,
+      "published" : false,
+      "category_id" : null,
+      "final_category_id" : null,
+      "final_category_id_from" : null,
+      "coordinate_latitude" : double.parse(_latTextController.text),
+      "coordinate_longitude" : double.parse(_lngTextController.text),
+      "coordinate_altitude" : double.parse(_altTextController.text),
+      "address" : _addrTextController.text,
+      "created_at" : null,
+      "updated_at" : null,
+      "author" : null
+    });
+
+    print('create post ${post.coordinateAltitude}, ${post.address}');
+
+    await dbhelper.insertPost(post);
+    print('#### after insert post into local database');
+    return;
 
     FormData formData = new FormData.fromMap({
       // "user_id": 1,
