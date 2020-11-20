@@ -13,3 +13,7 @@ String list2String(List<dynamic> list, String flag){
 
   return result;
 }
+
+List<String> string2List(String strs, String flag){
+  return strs.split(flag);
+}

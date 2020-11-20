@@ -1,8 +1,6 @@
-
-
 import 'package:fossils_finder/model/comment.dart';
 import 'package:fossils_finder/model/image.dart';
-
+import 'package:fossils_finder/utils/strings.dart';
 
 class Post {
     Post({
@@ -38,6 +36,7 @@ class Post {
     String content;
     bool private;
     bool published;
+    String imagesString;
     List<Image> images;
     int categoryId;
     int finalCategoryId;
@@ -112,7 +111,16 @@ class Post {
       map['content'] = content;
       map['private'] = private ? 1 : 0;
       map['published'] = published ? 1 : 0;
-      // map['images'] = images;
+      if(images != null && images.length > 0){
+        List<String> imageList = <String>[];
+        images.forEach((image) { 
+          imageList.add(image.url);
+        });
+        map['images'] = list2String(imageList, ',');
+      }else{
+        map['images'] = imagesString;
+      }
+      
       map['category_id'] = categoryId;
       map['final_category_id'] = finalCategoryId;
       map['final_category_id_from'] = finalCategoryIdFrom;
@@ -139,7 +147,17 @@ class Post {
       this.private = map['private'] > 0 ? true : false;
       this.published = map['published'] > 0 ? true : false;
       // this.images = Image.fromMapObject(map['imaegs']);
-      // this.images = map['images'];
+      if(map['images'] != null && map['images'].toString().isNotEmpty){
+        this.images = <Image>[];
+        String imgStr = map['images'].toString();
+        List<String> imgList = imgStr.split(',');
+        imgList.forEach((img) { 
+          this.images.add(Image.fromMapObject({
+            "url" : img
+          }));
+        });
+      }
+      this.imagesString = map['images'];
       this.categoryId = map['category_id'];
       this.finalCategoryId = map['final_category_id'];
       this.finalCategoryIdFrom = map['final_category_id_from'];
@@ -147,8 +165,18 @@ class Post {
       this.coordinateLatitude = map['coordinate_latitude'];
       this.coordinateAltitude = map['coordinate_altitude'];
       this.address = map['address'];
-      this.createdAt = map['created_at'].toString().isNotEmpty ? DateTime.parse(map['created_at']) : null;
-      this.updatedAt = map['updated_at'].toString().isNotEmpty ? DateTime.parse(map['updated_at']) : null;
+      // this.createdAt = map['created_at'].toString().isNotEmpty ? DateTime.parse(map['created_at']) : DateTime.now();
+      // this.updatedAt = map['updated_at'].toString().isNotEmpty ? DateTime.parse(map['updated_at']) : DateTime.now();
+      String createdAtString;
+      String updatedAtString;
+      if(map['created_at'] != null && map['created_at'].toString().isNotEmpty){
+        this.createdAt = DateTime.parse(map['created_at']);
+      }
+      if(map['updated_at'] != null && map['updated_at'].toString().isNotEmpty){
+        this.updatedAt = DateTime.parse(map['updated_at']);
+      }
+      // this.createdAt = map['created_at'] != null ? DateTime.parse(map['created_at'].toString().isNotEmpty ? map['created_at'].toString()) : DateTime.now();
+      // this.updatedAt = map['updated_at'] != null ? DateTime.parse(map['updated_at']) : DateTime.now();
       this.author = map['author'];
       // this.comments = map['comments'];
     }

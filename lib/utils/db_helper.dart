@@ -19,6 +19,7 @@ class DatabaseHelper {
   String colContent = 'content';
   String colPrivate = 'private';
   String colPublished = 'published';
+  String colImages = 'images';
   String colCategoryId = 'category_id';
   String colFinalCategoryId = 'final_category_id';
   String colFinalCategoryIdFrom = 'final_category_id_from';
@@ -50,7 +51,7 @@ class DatabaseHelper {
   Future<Database> initializeDatabase() async {
     // Get the directory path for both Android and iOS to store database.
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = directory.path + 'posts.db';
+    String path = directory.path + 'post.db';
 
     // Open/create the database at a given path
     var postsDatabase =
@@ -61,7 +62,7 @@ class DatabaseHelper {
   void _createDb(Database db, int newVersion) async {
     await db.execute(
         'CREATE TABLE $postTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colUserId INTEGER, $colAuthUserId INTEGER, $colTempId TEXT, $colPermId TEXT, $colTitle TEXT, '
-        '$colContent TEXT, $colPrivate INTEGER, $colPublished INTEGER, $colCategoryId INTEGER, $colFinalCategoryId INTEGER, $colFinalCategoryIdFrom INTEGER, '
+        '$colContent TEXT, $colPrivate INTEGER, $colPublished INTEGER, $colImages TEXT, $colCategoryId INTEGER, $colFinalCategoryId INTEGER, $colFinalCategoryIdFrom INTEGER, '
         '$colCoordinateLongitude DOUBLE, $colCoordinateLatitude DOUBLE, $colCoordinateAltitude DOUBLE, '
         '$colAddress TEXT, $colCreatedAt TEXT, $colUpdatedAt TEXT, $colAuthor TEXT)');
   }

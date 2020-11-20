@@ -56,18 +56,15 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    final Future<Database> dbFuture = dbhelper.initializeDatabase();
-    dbFuture.then((db){
-      print('after db init');
-
-      Future<List<Post>> postListFuture = dbhelper.getPostList();
-      postListFuture.then((noteList) {
-        print('get post list ${noteList.length} ');
-      });
-
-    });
+    // final Future<Database> dbFuture = dbhelper.initializeDatabase();
+    // dbFuture.then((db){
+    //   print('after db init');
+    //   Future<List<Post>> postListFuture = dbhelper.getPostList();
+    //   postListFuture.then((noteList) {
+    //     print('get post list ${noteList.length} ');
+    //   });
+    // });
   }
 
   @override
@@ -391,8 +388,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "title" : _titleTextController.text,
       "images" : _images,
       "content" : _contentTextController.text,
-      "private" : _private,
-      "published" : false,
+      "private" : _private ? 1 : 0,
+      "published" : 0,
       "category_id" : null,
       "final_category_id" : null,
       "final_category_id_from" : null,
@@ -402,7 +399,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "address" : _addrTextController.text,
       "created_at" : null,
       "updated_at" : null,
-      "author" : null
+      "author" : 'test author' //TBD get from local
     });
 
     print('create post ${post.coordinateAltitude}, ${post.address}');
