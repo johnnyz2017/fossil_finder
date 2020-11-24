@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
+import 'package:fossils_finder/utils/db_helper.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:fossils_finder/utils/strings.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,16 +19,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:path/path.dart' as path;
 
-class PostEditblePage extends StatefulWidget {
+class LocalPostEditblePage extends StatefulWidget {
   final Post post;
 
-  const PostEditblePage({Key key, this.post}) : super(key: key);
+  const LocalPostEditblePage({Key key, this.post}) : super(key: key);
 
   @override
-  _PostEditblePageState createState() => _PostEditblePageState();
+  _LocalPostEditblePageState createState() => _LocalPostEditblePageState();
 }
 
-class _PostEditblePageState extends State<PostEditblePage> {
+class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
+  DatabaseHelper dbhelper = DatabaseHelper();
   bool editmode = false;
   final _formKey = GlobalKey<FormState>();
   // File _image;
@@ -85,18 +88,17 @@ class _PostEditblePageState extends State<PostEditblePage> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.done),
+            icon: Icon(Icons.save),
             onPressed: (){
               if(!editmode) return;
-
+              _savePost();
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.done),
+            onPressed: (){
+              // if(!editmode) return;
               if (_formKey.currentState.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
-
-                // Scaffold
-                //     .of(context)
-                //     .showSnackBar(SnackBar(content: Text('Processing Data')));
-                
                 _submitPost(context);
               }
             },
@@ -126,8 +128,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
                             imageUrl: _imgsPath[index],
                             placeholder: (context, url) => Center(child: CircularProgressIndicator()),
                             errorWidget: (context, url, error) => Icon(Icons.error),
-                            // progressIndicatorBuilder: (context, url, downloadProgress) => 
-                            // CircularProgressIndicator(value: downloadProgress.progress),
                           ),
                         );
                       },
@@ -176,7 +176,6 @@ class _PostEditblePageState extends State<PostEditblePage> {
                           if(value.isEmpty){
                             return '描述内容没有填写';
                           }
-
                           return null;
                         },
                         ),
@@ -264,7 +263,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
                         readOnly: true,
                         // initialValue: widget.post.category_id.toString(), //TBD
                         validator: (value){
-                          if(value.isEmpty){
+                          if(value.isEmpty || value.contains('null')){
                             return '请选择一个分类';
                           }
                           return null;
@@ -318,22 +317,22 @@ class _PostEditblePageState extends State<PostEditblePage> {
                   ],
                 ),
 
-                Row(
-                  children: <Widget>[
-                    Text('提交时间: '),
-                    Expanded(child: TextFormField(
-                      readOnly: !editmode,
-                      initialValue: widget.post.createdAt.toString(),
-                      // controller: _altTextController,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '提交时间为空';
-                          }
-                          return null;
-                        },
-                      ),)
-                  ],
-                ),
+                // Row(
+                //   children: <Widget>[
+                //     Text('提交时间: '),
+                //     Expanded(child: TextFormField(
+                //       readOnly: !editmode,
+                //       initialValue: widget.post.createdAt.toString(),
+                //       // controller: _altTextController,
+                //       validator: (value){
+                //           if(value.isEmpty){
+                //             return '提交时间为空';
+                //           }
+                //           return null;
+                //         },
+                //       ),)
+                //   ],
+                // ),
               ],
             ),
           ),
@@ -343,6 +342,49 @@ class _PostEditblePageState extends State<PostEditblePage> {
   }
 
   //
+  _savePost() async{
+    String _images = list2String(_imgsPath, ',');
+    print('get images path string: ${_images}');
+    Post _post = new Post.fromMapObject({
+      'id' : widget.post.id,
+      "user_id" : null,
+      "auth_user_id" : null,
+      "temp_id" : "",
+      "perm_id" : "",
+      "title" : _titleTextController.text,
+      "images" : _images,
+      "content" : _contentTextController.text,
+      "private" : _private ? 1 : 0,
+      "published" : 0,
+      "category_id" : null,
+      "final_category_id" : null,
+      "final_category_id_from" : null,
+      "coordinate_latitude" : double.parse(_latTextController.text),
+      "coordinate_longitude" : double.parse(_lngTextController.text),
+      "coordinate_altitude" : double.parse(_altTextController.text),
+      "address" : _addrTextController.text,
+      "created_at" : null,
+      "updated_at" : null,
+      "author" : 'test author' //TBD get from local
+    });
+
+    var ret =  await dbhelper.updatePost(_post);
+    print('#### after insert post into local database - result: ${ret}');
+
+    if(ret > 0){
+      Fluttertoast.showToast(
+          msg: "本地保存成功",
+          gravity: ToastGravity.CENTER,
+          textColor: Colors.grey);
+      
+      Navigator.pop(context, true);
+    }else{
+      Fluttertoast.showToast(
+          msg: "本地保存失败，请检查表单各属性，程序权限授予等。",
+          gravity: ToastGravity.CENTER,
+          textColor: Colors.red);
+    }
+  }
 
   _submitPost(BuildContext context) async{
     String _images = list2String(_imgsPath, ',');
@@ -388,7 +430,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
           HttpHeaders.acceptHeader : 'application/json'
         }
     );
-    String updateUrl = apiUrl+servicePath['posts']+'/${widget.post.id}';
+    String updateUrl = apiUrl+servicePath['posts'];
     var respone = await dio.post<String>(updateUrl, data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
@@ -398,14 +440,16 @@ class _PostEditblePageState extends State<PostEditblePage> {
       var status = responseJson['code'] as int;
       if(status == 200){
         Fluttertoast.showToast(
-            msg: "更新成功",
+            msg: "发布成功",
             gravity: ToastGravity.CENTER,
             textColor: Colors.grey);
-        
+
+        dbhelper.deletePost(widget.post.id);
+
         Navigator.pop(context, true);
       }else{
         Fluttertoast.showToast(
-            msg: "更新失败，请暂存在本地数据库中！",
+            msg: "发布失败，继续保存在本地数据库中！",
             gravity: ToastGravity.CENTER,
             textColor: Colors.red);
       }

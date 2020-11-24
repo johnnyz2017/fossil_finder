@@ -5,7 +5,7 @@ import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/custom_list_item.dart';
-import 'package:fossils_finder/pages/profile/post_editable_page.dart';
+import 'package:fossils_finder/pages/profile/local_post_editable_page.dart';
 import 'package:fossils_finder/utils/db_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -19,38 +19,7 @@ class _LocalPostsPageState extends State<LocalPostsPage> {
   List<Post> posts = new List<Post>();
   final ScrollController scrollController = ScrollController();
 
-  Future loadPostListFromServer() async{
-    var _content = await request(servicePath['unpublishedposts']);
-    var _jsonData = jsonDecode(_content.toString());
-    var _listJson;
-    if(_jsonData['paginated']){
-      _listJson = _jsonData['data']['data'];
-    }
-    else{
-      _listJson = _jsonData['data'];
-    }
-    // print('get json data is  ${_jsonData}');
-    
-    List _jsonList = _listJson as List;
-    List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
-    setState(() {
-      posts = postList;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    // loadPostListFromServer();
-
-    scrollController.addListener(() { 
-      if(scrollController.position.maxScrollExtent == scrollController.offset){
-        print('try to load more or others');
-        // loadPostListFromServer();
-      }
-    });
-
+  Future loadPostListFromDB() async{
     final Future<Database> dbFuture = dbhelper.initializeDatabase();
     dbFuture.then((db){
       print('after db init');
@@ -62,15 +31,22 @@ class _LocalPostsPageState extends State<LocalPostsPage> {
           posts = postList;
         });
       });
-
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadPostListFromDB();
+    
   }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('未公开'),
+        title: Text('尚未发布记录'),
       ),
       body: ListView.separated(
           controller: scrollController,
@@ -82,10 +58,10 @@ class _LocalPostsPageState extends State<LocalPostsPage> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) {
-                    return PostEditblePage(post: post,);
+                    return LocalPostEditblePage(post: post,);
                   }) 
                 );
-                // loadPostListFromServer();
+                loadPostListFromDB();
               },
               child: CustomListItem(
                 user: post.author != null ? post.author : 'no author got',

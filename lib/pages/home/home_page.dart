@@ -258,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                 alignment: FractionalOffset.bottomCenter,
                 child: ListTile(
                   leading: Icon(Icons.exit_to_app),
-                  title: Text("Logout"),
+                  title: Text("退出登陆"),
                   onTap: (){
                     logout();
                     Navigator.of(context).pushReplacement(MaterialPageRoute(

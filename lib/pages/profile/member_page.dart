@@ -129,7 +129,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
       margin: EdgeInsets.only(top: 10),
       child: Column(
         children: <Widget>[
-          _myListTile('已公开发布', (){
+          _myListTile('已公开发布记录', (){
             print('public clicked');
             Navigator.push(
               context,
@@ -138,7 +138,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
               }) 
             );
           }),
-          _myListTile('已私有发布', (){
+          _myListTile('私有标本记录', (){
             print('private clicked');
             Navigator.push(
               context,
@@ -147,7 +147,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
               }) 
             );
           }),
-          _myListTile('尚未发布', (){
+          _myListTile('尚未发布记录', (){
             print('local clicked');
             Navigator.push(
               context,

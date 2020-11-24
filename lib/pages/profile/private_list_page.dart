@@ -54,7 +54,7 @@ class _PrivatePostsPageState extends State<PrivatePostsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('未公开'),
+        title: Text('私有标本记录'),
       ),
       body: ListView.separated(
           controller: scrollController,
