@@ -12,16 +12,9 @@ PODS:
     - foundation_fluttify
     - url_launcher
   - AMapFoundation (1.6.4)
-  - BaiduMapKit (5.4.0)
   - core_location_fluttify (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_bmfbase (0.0.1):
-    - BaiduMapKit (= 5.4.0)
-    - Flutter
-  - flutter_bmfmap (1.0.0):
-    - BaiduMapKit (= 5.4.0)
-    - Flutter
   - flutter_plugin_android_lifecycle (0.0.1):
     - Flutter
   - fluttertoast (0.0.2):
@@ -72,8 +65,6 @@ DEPENDENCIES:
   - amap_map_fluttify (from `.symlinks/plugins/amap_map_fluttify/ios`)
   - core_location_fluttify (from `.symlinks/plugins/core_location_fluttify/ios`)
   - Flutter (from `Flutter`)
-  - flutter_bmfbase (from `.symlinks/plugins/flutter_bmfbase/ios`)
-  - flutter_bmfmap (from `.symlinks/plugins/flutter_bmfmap/ios`)
   - flutter_plugin_android_lifecycle (from `.symlinks/plugins/flutter_plugin_android_lifecycle/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - foundation_fluttify (from `.symlinks/plugins/foundation_fluttify/ios`)
@@ -98,7 +89,6 @@ SPEC REPOS:
   trunk:
     - AMap3DMap
     - AMapFoundation
-    - BaiduMapKit
     - FMDB
     - Toast
 
@@ -111,10 +101,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/core_location_fluttify/ios"
   Flutter:
     :path: Flutter
-  flutter_bmfbase:
-    :path: ".symlinks/plugins/flutter_bmfbase/ios"
-  flutter_bmfmap:
-    :path: ".symlinks/plugins/flutter_bmfmap/ios"
   flutter_plugin_android_lifecycle:
     :path: ".symlinks/plugins/flutter_plugin_android_lifecycle/ios"
   fluttertoast:
@@ -159,11 +145,8 @@ SPEC CHECKSUMS:
   amap_core_fluttify: bc2e4245c6a6d869727ed16b009a9fa3dbefcf4a
   amap_map_fluttify: 611d1d575076f82a71d8c1057a6c9d8c8dc5c53d
   AMapFoundation: 3638198dfa40be54648570c3520edefad288286b
-  BaiduMapKit: 40a4382633859bd569d40da9f9a2e98a277dd28b
   core_location_fluttify: 24cc9dcd986ac7059916632d2cb3babb1568ff61
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_bmfbase: 8ac2c94f3f110daec8e499dc13f8a983b0c8ee40
-  flutter_bmfmap: 57030919b16b5353649fbea77b6143129f7a4ff1
   flutter_plugin_android_lifecycle: dc0b544e129eebb77a6bfb1239d4d1c673a60a35
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a

@@ -8,7 +8,9 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
+import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
+import 'package:fossils_finder/utils/db_helper.dart';
 import 'package:fossils_finder/utils/image_upload.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:fossils_finder/utils/strings.dart';
@@ -18,6 +20,7 @@ import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class PostUploadPage extends StatefulWidget {
   final LatLng center;
@@ -29,6 +32,7 @@ class PostUploadPage extends StatefulWidget {
 
 class _PostUploadPageState extends State<PostUploadPage> {
 
+  DatabaseHelper dbhelper = DatabaseHelper();
   final _formKey = GlobalKey<FormState>();
   // File _image;
   Image _image;
@@ -51,6 +55,19 @@ class _PostUploadPageState extends State<PostUploadPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // final Future<Database> dbFuture = dbhelper.initializeDatabase();
+    // dbFuture.then((db){
+    //   print('after db init');
+    //   Future<List<Post>> postListFuture = dbhelper.getPostList();
+    //   postListFuture.then((noteList) {
+    //     print('get post list ${noteList.length} ');
+    //   });
+    // });
+  }
+
+  @override
   Widget build(BuildContext context) {
     print('center got : ${widget.center.latitude}, ${widget.center.longitude}');
     return Scaffold(
@@ -58,290 +75,351 @@ class _PostUploadPageState extends State<PostUploadPage> {
         title: Text('发布页面'),
         actions: <Widget>[
           IconButton(
+            icon: Icon(Icons.save),
+            onPressed: (){
+                _savePost();
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.done),
             onPressed: (){
               if (_formKey.currentState.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
-
-                // Scaffold
-                //     .of(context)
-                //     .showSnackBar(SnackBar(content: Text('Processing Data')));
-                
                 _submitPost(context);
               }
             },
           )
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: <Widget>[
-            
-            Container(
-              height: 150,
-              child: Expanded(
-                child: _imgsPath.length > 0 ? ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (BuildContext context, int index){
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      // child: Image.network(_imgsPath[index],),
-                      child: CachedNetworkImage(
-                        // height: 150,
-                        // width: 150,
-                        imageUrl: _imgsPath[index],
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                        // progressIndicatorBuilder: (context, url, downloadProgress) => 
-                        // CircularProgressIndicator(value: downloadProgress.progress),
-                      ),
-                    );
-                  },
-                  itemCount: _imgsPath.length,
-                ) : Center(child: Text("未上传图片")),
-               
-                ),
-            ),
-            RaisedButton(
-              child: Text('选择图片上传'),
-              onPressed: (){
-                getImage();
-              },
-            ),
-
-            Row(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+                child: Form(
+            key: _formKey,
+            child: Column(
               children: <Widget>[
-                Text('标题: '),
-                Expanded(child: TextFormField(
-                  controller: _titleTextController,
-                  validator: (value){
-                      if(value.isEmpty){
-                        return '标题没有填写';
-                      }
-
-                      return null;
-                    },
-                  ))
-              ],
-            ),
-
-            Expanded(
-              child: Row(
-                children: <Widget>[
-                  Text('描述: '),
-                  Expanded(
-                    child: TextFormField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      controller: _contentTextController,
-                      validator: (value){
-                        if(value.isEmpty){
-                          return '描述内容没有填写';
-                        }
-
-                        return null;
+                
+                Container(
+                  height: 150,
+                  child: Expanded(
+                    child: _imgsPath.length > 0 ? ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (BuildContext context, int index){
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          // child: Image.network(_imgsPath[index],),
+                          child: CachedNetworkImage(
+                            // height: 150,
+                            // width: 150,
+                            imageUrl: _imgsPath[index],
+                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                            // progressIndicatorBuilder: (context, url, downloadProgress) => 
+                            // CircularProgressIndicator(value: downloadProgress.progress),
+                          ),
+                        );
                       },
-                      ),
-                  )
-                ],
-              ),
-            ),
-         
-            Divider(),
-            
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('经度: '),
-                Expanded(child: TextFormField(
-                  controller: _lngTextController,
-                  validator: (value){
-                      if(value.isEmpty){
-                        return '经度没有填写';
-                      }
-
-                      return null;
-                    },
-                  )),
-                Text('纬度: '),
-                Expanded(child: TextFormField(
-                  controller: _latTextController,
-                  validator: (value){
-                      if(value.isEmpty){
-                        return '纬度没有填写';
-                      }
-                      return null;
-                    },
-                )),
-                IconButton(
-                  iconSize: 20, 
-                  icon: Icon(Icons.my_location), 
-                  onPressed: () async { 
-                    //AmapService.navigateDrive(LatLng(36.547901, 104.258354));
-                    setState(() {
-                      _latTextController.text = widget.center.latitude.toStringAsFixed(6);
-                      _lngTextController.text = widget.center.longitude.toStringAsFixed(6);
-                    });
+                      itemCount: _imgsPath.length,
+                    ) : Center(child: Text("未上传图片")),
+                   
+                    ),
+                ),
+                RaisedButton(
+                  child: Text('选择图片上传'),
+                  onPressed: (){
+                    getImage();
                   },
-                )
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Text('海拔: '),
-                Expanded(child: TextFormField(
-                  controller: _altTextController,
-                  validator: (value){
-                      if(value.isEmpty){
-                        return '海拔没有填写';
-                      }
-                      return null;
-                    },
-                  ),)
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Text('地址: '),
-                Expanded(child: TextFormField(
-                  controller: _addrTextController,
-                  validator: (value){
-                      if(value.isEmpty){
-                        return '地址没有填写';
-                      }
-                      return null;
-                    },
-                  ),)
-              ],
-            ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('分类: '),
-                Expanded(
-                  child: TextFormField(
-                    controller: _categoryTextController,
-                    readOnly: true,
-                    validator: (value){
-                      if(value.isEmpty){
-                        return '请选择一个分类';
-                      }
-
-                      return null;
-                    },
-                    onSaved: (value){
-                      //
-                    },
-                  ),
-                  // child: TextField(
-                  //   controller: _categoryTextController,
-                  //   readOnly: true,
-                  // )
                 ),
 
-                IconButton(
-                  iconSize: 20, 
-                  icon: Icon(Icons.category), 
-                  onPressed: () async {
-                    category = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                        return CategorySelector(treeJson: "",);
-                      }) 
-                    );
+                Row(
+                  children: <Widget>[
+                    Text('标题: '),
+                    Expanded(child: TextFormField(
+                      controller: _titleTextController,
+                      validator: (value){
+                          if(value.isEmpty){
+                            return '标题没有填写';
+                          }
 
-                    if(category != null){
-                      print('result: ${category.key} - ${category.label}');
-                      _categoryTextController.text = category.label;
-                      
-                      String _key = category.key;
-                      String _type = _key.split('_')[0];
-                      if(_type.isNotEmpty || _type == "c"){
-                        _category = int.parse(_key.split('_')[1]);
-                        print('got category id ${_category}');
-                      }
-                      
-                    }                  
-                  },
-                )
-              ],
-            ),
+                          return null;
+                        },
+                      ))
+                  ],
+                ),
 
-            Row(
-              children: <Widget>[
-                Text('是否私有：'),
-                Switch(
-                  value: _private, 
-                  onChanged: (value){
-                    // _private = value;
-                    setState(() {
-                      _private = value;
-                    });
-                  },
-                )
-              ],
-            ),
+                Row(
+                  children: <Widget>[
+                    Text('描述: '),
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 3,
+                        controller: _contentTextController,
+                        validator: (value){
+                          if(value.isEmpty){
+                            return '描述内容没有填写';
+                          }
 
-            // RaisedButton(
-            //     onPressed: () {
-            //       // Validate returns true if the form is valid, otherwise false.
-            //       if (_formKey.currentState.validate()) {
-            //         // If the form is valid, display a snackbar. In the real world,
-            //         // you'd often call a server or save the information in a database.
+                          return null;
+                        },
+                        ),
+                    )
+                  ],
+                ),
+             
+                Divider(),
+                
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('经度: '),
+                    Expanded(child: TextFormField(
+                      controller: _lngTextController,
+                      validator: (value){
+                          if(value.isEmpty){
+                            return '经度没有填写';
+                          }
+                          return null;
+                        },
+                      )),
+                    Text('纬度: '),
+                    Expanded(child: TextFormField(
+                      controller: _latTextController,
+                      validator: (value){
+                          if(value.isEmpty){
+                            return '纬度没有填写';
+                          }
+                          return null;
+                        },
+                    )),
+                    IconButton(
+                      iconSize: 20, 
+                      icon: Icon(Icons.my_location), 
+                      onPressed: () async { 
+                        //AmapService.navigateDrive(LatLng(36.547901, 104.258354));
+                        setState(() {
+                          _latTextController.text = widget.center.latitude.toStringAsFixed(6);
+                          _lngTextController.text = widget.center.longitude.toStringAsFixed(6);
+                        });
+                      },
+                    )
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Text('海拔: '),
+                    Expanded(child: TextFormField(
+                      controller: _altTextController,
+                      validator: (value){
+                          if(value.isEmpty){
+                            return '海拔没有填写';
+                          }
+                          return null;
+                        },
+                      ),)
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Text('地址: '),
+                    Expanded(child: TextFormField(
+                      controller: _addrTextController,
+                      validator: (value){
+                          if(value.isEmpty){
+                            return '地址没有填写';
+                          }
+                          return null;
+                        },
+                      ),)
+                  ],
+                ),
 
-            //         // Scaffold
-            //         //     .of(context)
-            //         //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('分类: '),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _categoryTextController,
+                        readOnly: true,
+                        validator: (value){
+                          if(value.isEmpty){
+                            return '请选择一个分类';
+                          }
+
+                          return null;
+                        },
+                        onSaved: (value){
+                          //
+                        },
+                      ),
+                      // child: TextField(
+                      //   controller: _categoryTextController,
+                      //   readOnly: true,
+                      // )
+                    ),
+
+                    IconButton(
+                      iconSize: 20, 
+                      icon: Icon(Icons.category), 
+                      onPressed: () async {
+                        category = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                            return CategorySelector(treeJson: "",);
+                          }) 
+                        );
+
+                        if(category != null){
+                          print('result: ${category.key} - ${category.label}');
+                          _categoryTextController.text = category.label;
+                          
+                          String _key = category.key;
+                          String _type = _key.split('_')[0];
+                          if(_type.isNotEmpty || _type == "c"){
+                            _category = int.parse(_key.split('_')[1]);
+                            print('got category id ${_category}');
+                          }
+                          
+                        }                  
+                      },
+                    )
+                  ],
+                ),
+
+                Row(
+                  children: <Widget>[
+                    Text('是否私有：'),
+                    Switch(
+                      value: _private, 
+                      onChanged: (value){
+                        // _private = value;
+                        setState(() {
+                          _private = value;
+                        });
+                      },
+                    )
+                  ],
+                ),
+
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //   children: <Widget>[
+                //     RaisedButton(
+                //       onPressed: () {
+                //           _savePost();
+                //       },
+                //       child: Text('存草稿'),
+                //     ),
                     
-            //         _submitPost(context);
-            //       }
-            //     },
-            //     child: Text('提交'),
-            //   ),
+                //     RaisedButton(
+                //       onPressed: () {
+                //         // Validate returns true if the form is valid, otherwise false.
+                //         if (_formKey.currentState.validate()) {
+                //           // If the form is valid, display a snackbar. In the real world,
+                //           // you'd often call a server or save the information in a database.
+
+                //           // Scaffold
+                //           //     .of(context)
+                //           //     .showSnackBar(SnackBar(content: Text('Processing Data')));
+                          
+                //           _submitPost(context);
+                //         }
+                //       },
+                //       child: Text('提交'),
+                //     ),
+                //   ],
+                // )
 
 
-            // Expanded(
-            //   child: 
-            // )
-            // RaisedButton(
-            //   child: Text('Submit Post'),
-            //   onPressed: (){
-            //     _submitPost();
-            //   },
-            // ),
-
-
-            // CalendarDatePicker(
-            //   initialDate: DateTime.now(), 
-            //   firstDate: DateTime.parse("2020-10-01"), 
-            //   lastDate: DateTime.parse("2020-11-20"), 
-            //   onDateChanged: (value)=>{
-            //     print("changed to $value")
-            //   }
-            // ),
-            // Row(
-            //   children: <Widget>[
-            //     Text("纬度： "),
-            //     TextField(
-            //       decoration: InputDecoration(icon: Icon(Icons.my_location),),
-            //     )
-            // ],
-            // )
-          ],
+                // Expanded(
+                //   child: 
+                // )
+                // RaisedButton(
+                //   child: Text('Submit Post'),
+                //   onPressed: (){
+                //     _submitPost();
+                //   },
+                // ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
+  _savePost() async{
+    String _images = list2String(_imgsPath, ',');
+    print('get images path string: ${_images}');
+
+    // if (id != null) {
+    //   map['id'] = id;
+    // }
+    // map['user_id'] = userId;
+    // map['auth_user_id'] = authUserId;
+    // map['temp_id'] = tempId;
+    // map['perm_id'] = permId;
+    // map['title'] = title;
+    // map['content'] = content;
+    // map['private'] = private ? 1 : 0;
+    // map['published'] = published ? 1 : 0;
+    // // map['images'] = images;
+    // map['category_id'] = categoryId;
+    // map['final_category_id'] = finalCategoryId;
+    // map['final_category_id_from'] = finalCategoryIdFrom;
+    // map['coordinate_longitude'] = coordinateLongitude;
+    // map['coordinate_latitude'] = coordinateLatitude;
+    // map['coordinate_altitude'] = coordinateAltitude;
+    // map['address'] = address;
+    // map['created_at'] = createdAt.toIso8601String();
+    // map['updated_at'] = updatedAt.toIso8601String();
+    // map['author'] = author;
+    Post post = new Post.fromMapObject({
+      "user_id" : null,
+      "auth_user_id" : null,
+      "temp_id" : "",
+      "perm_id" : "",
+      "title" : _titleTextController.text,
+      "images" : _images,
+      "content" : _contentTextController.text,
+      "private" : _private ? 1 : 0,
+      "published" : 0,
+      "category_id" : null,
+      "final_category_id" : null,
+      "final_category_id_from" : null,
+      "coordinate_latitude" : double.parse(_latTextController.text),
+      "coordinate_longitude" : double.parse(_lngTextController.text),
+      "coordinate_altitude" : double.parse(_altTextController.text),
+      "address" : _addrTextController.text,
+      "created_at" : null,
+      "updated_at" : null,
+      "author" : 'test author' //TBD get from local
+    });
+
+    var ret =  await dbhelper.insertPost(post);
+    print('#### after insert post into local database - result: ${ret}');
+
+    if(ret > 0){
+      Fluttertoast.showToast(
+          msg: "本地保存成功",
+          gravity: ToastGravity.CENTER,
+          textColor: Colors.grey);
+      
+      Navigator.pop(context, true);
+    }else{
+      Fluttertoast.showToast(
+          msg: "本地保存失败，请检查表单各属性，程序权限授予等。",
+          gravity: ToastGravity.CENTER,
+          textColor: Colors.red);
+    }
+  }
+
   _submitPost(BuildContext context) async{
+    
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
 
     FormData formData = new FormData.fromMap({
-      // "user_id": 1,
       "images" : _images,
       "title" : _titleTextController.text,
       "content" : _contentTextController.text,

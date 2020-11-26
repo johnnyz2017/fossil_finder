@@ -53,7 +53,7 @@ class _PublisPostsPageState extends State<PublisPostsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('已公开'),
+        title: Text('已公开发布记录'),
       ),
       body: ListView.separated(
           controller: scrollController,

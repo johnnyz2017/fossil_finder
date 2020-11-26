@@ -9,6 +9,7 @@ import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryListView extends StatefulWidget {
@@ -27,6 +28,8 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
 
   List<Post> posts = new List<Post>();
   final ScrollController scrollController = ScrollController();
+  bool _reloading = false;
+  bool _loadingmore = false;
 
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['posts']);
@@ -59,6 +62,8 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
     setState(() {
       posts = postList;
     });
+    print('after get posts ${posts.length} - ${scrollController.offset}');
+    _reloading = false;
   }
 
   Future loadPostList() async{
@@ -71,6 +76,8 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
     setState(() {
       posts = postList;
     });
+    print('after loadpostlist');
+    _reloading = false;
   }
 
   @override
@@ -78,6 +85,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
     // print("category page init state called");
     loadPostListFromServer();
     scrollController.addListener(() { 
+      // print('scroll offset ${scrollController.offset}');
       if(scrollController.position.maxScrollExtent == scrollController.offset){
         //load more
         // posts.clear();
@@ -85,6 +93,19 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
         print('try to load more or others');
         // loadPostListFromServer();
         // scrollController.animateTo(.0, duration: Duration(milliseconds: 200), curve: Curves.ease);
+      }
+
+      if(-20 > scrollController.offset){
+        if(!_reloading){
+          _reloading = true;
+          scrollController.jumpTo(0);
+          // scrollController.animateTo(0, duration: Duration(milliseconds: 0), curve: null);
+          setState(() {
+            posts.clear();
+          });
+          print('try to reload');
+          loadPostListFromServer();
+        }
       }
     });
     // loadPostList();
@@ -100,6 +121,9 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
     return ListView.separated(
         controller: scrollController,
         itemBuilder: (BuildContext context, int index){
+          if(posts.length == 0){
+            return Center(child: CircularProgressIndicator());
+          }
           Post post = posts[index];
 
           return InkWell(
@@ -127,7 +151,7 @@ class _CategoryListViewState extends State<CategoryListView>  with AutomaticKeep
         separatorBuilder: (context, index) => Divider(
           height: 30,
         ), 
-        itemCount: posts?.length ?? 0
+        itemCount: posts?.length > 0 ? posts.length : 1
     );
   }
 

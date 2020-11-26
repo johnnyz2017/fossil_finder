@@ -68,6 +68,7 @@ class _VideoDescription extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 14.0,
+              fontStyle: FontStyle.italic
             ),
           ),
           const Padding(padding: EdgeInsets.symmetric(vertical: 2.0)),
@@ -77,7 +78,7 @@ class _VideoDescription extends StatelessWidget {
           ),
           const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
           Text(
-            '$viewCount comments',
+            '$viewCount 评论',
             style: const TextStyle(fontSize: 10.0),
           ),
         ],

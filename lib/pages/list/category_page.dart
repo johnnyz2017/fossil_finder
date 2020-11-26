@@ -25,7 +25,10 @@ class _CategoryPageState extends State<CategoryPage> {
                   children: <Widget>[
                     new Expanded(child: new Container()),
                     new TabBar(
-                      tabs: [new Text("列表"), new Text("分类")],
+                      tabs: [
+                        new Text("标本记录列表"), 
+                        new Text("分类单元")
+                      ],
                     ),
                   ],
                 ),
@@ -53,7 +56,7 @@ class _CategoryPageState extends State<CategoryPage> {
         // ),
         body: TabBarView(
           children: <Widget>[
-            Center(child: CategoryListView(title: "列表")),
+            Center(child: CategoryListView(title: "标本记录列表")),
             Center(child: CategoryTreeView()),
           ],
         ),
