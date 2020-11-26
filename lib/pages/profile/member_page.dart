@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/user.dart';
+import 'package:fossils_finder/pages/form/profile_update.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/pages/profile/local_list_page.dart';
 import 'package:fossils_finder/pages/profile/private_list_page.dart';
@@ -65,10 +66,42 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
       body: ListView(
         children: <Widget>[
           _topHeader(),
-          _actionList()
+          _actionList(),
+          // Divider(),
+          // Expanded(
+          //   child: Align(
+          //     alignment: FractionalOffset.bottomCenter,
+          //     child: 
+          //   ),
+          // ),
+          SizedBox(height: 200,),
+          ListTile(
+            leading: Icon(Icons.settings),
+              title: Text("个人设置"),
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => MemberProfileUpdatePage(),
+                ));
+              },
+          ),
+          ListTile(
+            leading: Icon(Icons.exit_to_app),
+              title: Text("退出登陆"),
+              onTap: (){
+                logout();
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                  builder: (context) => LoginScreen(),
+                ));
+              },
+          ),
         ],
       ),
     );
+  }
+
+  logout() async{
+    if(localStorage == null) localStorage = await SharedPreferences.getInstance();
+    localStorage.remove('token');
   }
 
   @override
