@@ -14,73 +14,37 @@ import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 
 
-class MemberProfileUpdatePage extends StatefulWidget {
+class PasswordUpdatePage extends StatefulWidget {
   final User user;
 
-  const MemberProfileUpdatePage({Key key, this.user}) : super(key: key);
+  const PasswordUpdatePage({Key key, this.user}) : super(key: key);
   
   @override
-  _MemberProfileUpdatePageState createState() => _MemberProfileUpdatePageState();
+  _PasswordUpdatePageState createState() => _PasswordUpdatePageState();
 }
 
-class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
+class _PasswordUpdatePageState extends State<PasswordUpdatePage> {
   final _formKey = GlobalKey<FormState>();
-  String _imgPath;
 
-  TextEditingController _nameTextController = new TextEditingController();
-  TextEditingController _descriptionTextController = new TextEditingController();
-
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    _doUploadImage(image, "");//上传图片
-  }
-
-  _doUploadImage(File file, String renameImage) async {
-    // 读取配置
-    try {
-      String suffix = path.extension(file.path);
-      String filename = path.basenameWithoutExtension(file.path);
-      String _renameImage = '$filename$suffix';
-      
-      var uploader = QiniuImageUpload();
-      var uploadedItem = await uploader.upload(file, _renameImage);
-      if (uploadedItem != null) {
-        print('upload success ....');
-        setState(() {
-          // _image = Image.network(uploadedItem.path, height: 200,); //OK
-          _imgPath = uploadedItem.path;
-        });
-        // _view.uploadSuccess(uploadedItem.path);
-      } else {
-        print('failed to upload ...');
-      }
-    } on DioError catch (e) {
-      debugPrint(e.toString());
-      print('dio error ${e.message}');
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
+  TextEditingController _passwordTextController = new TextEditingController();
+  TextEditingController _confirmPasswordTextController = new TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _imgPath = widget.user.avatar;
-    _nameTextController.text = widget.user.name;
-    _descriptionTextController.text = widget.user.description;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("个人设置"),
+        title: Text("修改密码"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.done),
             onPressed: (){
               if (_formKey.currentState.validate()) {
-                _submitProfile(context);
+                _submitPassword(context);
               }
             },
           )
@@ -92,37 +56,30 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
           child: Form(
             key: _formKey,
             child: Column(children: <Widget>[
-              Row(children: <Widget>[
-                Expanded(
-                  child: CachedNetworkImage(
-                    height: 200,
-                    imageUrl: _imgPath,
-                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.picture_in_picture),
-                  onPressed: (){
-                    getImage();
-                  },
-                )
-              ],),
               TextFormField(
-                controller: _nameTextController,
+                controller: _passwordTextController,
                 decoration: new InputDecoration(
-                  labelText: '名字',
+                  labelText: '新密码',
                 ),
-                // initialValue: widget.user.name,
-                // validator: ,
+                obscureText: true,
+                validator: (value){
+                  if(value.isEmpty || value.length < 6){
+                    return '密码少于6位';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
-                controller: _descriptionTextController,
                 decoration: new InputDecoration(
-                  labelText: '个人描述',
+                  labelText: '确认新密码',
                 ),
-                keyboardType: TextInputType.multiline,
-                maxLines: 3,
+                obscureText: true,
+                validator: (value){
+                  if(value.isEmpty || value != _passwordTextController.text){
+                    return '密码确认不一致';
+                  }
+                  return null;
+                },
               ),
             ],)
           ),
@@ -131,12 +88,10 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
     );
   }
 
-  _submitProfile(BuildContext context) async{
+  _submitPassword(BuildContext context) async{
 
     FormData formData = new FormData.fromMap({
-      "name" : _nameTextController.text,
-      "profile_image" : _imgPath,
-      "description" : _descriptionTextController.text,
+      "password" : _passwordTextController.text
     });
 
     SharedPreferences localStorage;
@@ -167,7 +122,7 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
           HttpHeaders.acceptHeader : 'application/json'
         }
     );
-    String updateUrl = apiUrl+servicePath['users']+'/${widget.user.id}';
+    String updateUrl = apiUrl+servicePath['changepw'];
     var respone = await dio.post<String>(updateUrl, data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
@@ -178,7 +133,7 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
       if(status == 200){
         Fluttertoast.showToast(
           timeInSecForIosWeb: 2,
-          msg: "个人设置更新成功",
+          msg: "密码更新成功",
           gravity: ToastGravity.CENTER,
           textColor: Colors.grey);
         
@@ -186,7 +141,7 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
       }else{
         Fluttertoast.showToast(
           timeInSecForIosWeb: 2,
-          msg: "更新失败，请检查网络重试一下！",
+          msg: "密码更新失败，请检查网络重试一下！",
           gravity: ToastGravity.CENTER,
           textColor: Colors.red);
       }

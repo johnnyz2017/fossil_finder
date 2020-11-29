@@ -56,7 +56,9 @@ const servicePath = {
   'unpublishedposts' : '/unpublishedposts',
   'publishedposts' : '/publishedposts',
   'privateposts' : '/privateposts',
-  'comments' : '/comments'
+  'comments' : '/comments',
+  'users' : '/users',
+  'changepw' : '/changepw'
 };
 
 const httpHeaders = {

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/config/global_config.dart';
@@ -173,6 +174,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   children: <Widget>[
                     Text('经度: '),
                     Expanded(child: TextFormField(
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                      ],
                       controller: _lngTextController,
                       validator: (value){
                           if(value.isEmpty){
@@ -183,6 +187,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       )),
                     Text('纬度: '),
                     Expanded(child: TextFormField(
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                      ],
                       controller: _latTextController,
                       validator: (value){
                           if(value.isEmpty){
@@ -208,6 +215,10 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   children: <Widget>[
                     Text('海拔: '),
                     Expanded(child: TextFormField(
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                      ],
+                      //WhitelistingTextInputFormatter(RegExp("[a-z,A-Z,0-9]"))
                       controller: _altTextController,
                       validator: (value){
                           if(value.isEmpty){
@@ -224,12 +235,12 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     Expanded(child: TextFormField(
                       controller: _addrTextController,
                       validator: (value){
-                          if(value.isEmpty){
-                            return '地址没有填写';
-                          }
-                          return null;
-                        },
-                      ),)
+                        if(value.isEmpty){
+                          return '地址没有填写';
+                        }
+                        return null;
+                      },
+                    ),)
                   ],
                 ),
 
@@ -251,6 +262,27 @@ class _PostUploadPageState extends State<PostUploadPage> {
                         onSaved: (value){
                           //
                         },
+                        onTap: () async{
+                          category = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (BuildContext context) {
+                              return CategorySelector(treeJson: "",);
+                            }) 
+                          );
+
+                          if(category != null){
+                            print('result: ${category.key} - ${category.label}');
+                            _categoryTextController.text = category.label;
+                            
+                            String _key = category.key;
+                            String _type = _key.split('_')[0];
+                            if(_type.isNotEmpty || _type == "c"){
+                              _category = int.parse(_key.split('_')[1]);
+                              print('got category id ${_category}');
+                            }
+                            
+                          }
+                        },
                       ),
                       // child: TextField(
                       //   controller: _categoryTextController,
@@ -258,31 +290,31 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       // )
                     ),
 
-                    IconButton(
-                      iconSize: 20, 
-                      icon: Icon(Icons.category), 
-                      onPressed: () async {
-                        category = await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (BuildContext context) {
-                            return CategorySelector(treeJson: "",);
-                          }) 
-                        );
+                    // IconButton(
+                    //   iconSize: 20, 
+                    //   icon: Icon(Icons.category), 
+                    //   onPressed: () async {
+                    //     category = await Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(builder: (BuildContext context) {
+                    //         return CategorySelector(treeJson: "",);
+                    //       }) 
+                    //     );
 
-                        if(category != null){
-                          print('result: ${category.key} - ${category.label}');
-                          _categoryTextController.text = category.label;
+                    //     if(category != null){
+                    //       print('result: ${category.key} - ${category.label}');
+                    //       _categoryTextController.text = category.label;
                           
-                          String _key = category.key;
-                          String _type = _key.split('_')[0];
-                          if(_type.isNotEmpty || _type == "c"){
-                            _category = int.parse(_key.split('_')[1]);
-                            print('got category id ${_category}');
-                          }
+                    //       String _key = category.key;
+                    //       String _type = _key.split('_')[0];
+                    //       if(_type.isNotEmpty || _type == "c"){
+                    //         _category = int.parse(_key.split('_')[1]);
+                    //         print('got category id ${_category}');
+                    //       }
                           
-                        }                  
-                      },
-                    )
+                    //     }                  
+                    //   },
+                    // )
                   ],
                 ),
 
@@ -352,28 +384,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
 
-    // if (id != null) {
-    //   map['id'] = id;
-    // }
-    // map['user_id'] = userId;
-    // map['auth_user_id'] = authUserId;
-    // map['temp_id'] = tempId;
-    // map['perm_id'] = permId;
-    // map['title'] = title;
-    // map['content'] = content;
-    // map['private'] = private ? 1 : 0;
-    // map['published'] = published ? 1 : 0;
-    // // map['images'] = images;
-    // map['category_id'] = categoryId;
-    // map['final_category_id'] = finalCategoryId;
-    // map['final_category_id_from'] = finalCategoryIdFrom;
-    // map['coordinate_longitude'] = coordinateLongitude;
-    // map['coordinate_latitude'] = coordinateLatitude;
-    // map['coordinate_altitude'] = coordinateAltitude;
-    // map['address'] = address;
-    // map['created_at'] = createdAt.toIso8601String();
-    // map['updated_at'] = updatedAt.toIso8601String();
-    // map['author'] = author;
     Post post = new Post.fromMapObject({
       "user_id" : null,
       "auth_user_id" : null,
@@ -460,17 +470,16 @@ class _PostUploadPageState extends State<PostUploadPage> {
     var respone = await dio.post<String>(servicePath['posts'], data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
-
       var responseJson = json.decode(respone.data);
       print('response: ${respone.data} - ${responseJson['message']}');
 
       var status = responseJson['code'] as int;
       if(status == 200){
         Fluttertoast.showToast(
+            timeInSecForIosWeb: 5,
             msg: "提交成功",
             gravity: ToastGravity.CENTER,
             textColor: Colors.grey);
-        
         Navigator.pop(context, true);
       }else{
         Fluttertoast.showToast(

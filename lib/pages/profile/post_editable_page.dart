@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/config/global_config.dart';
@@ -191,6 +192,9 @@ class _PostEditblePageState extends State<PostEditblePage> {
                   children: <Widget>[
                     Text('经度: '),
                     Expanded(child: TextFormField(
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                      ],
                       readOnly: !editmode,
                       // initialValue: widget.post.longitude.toString(),
                       controller: _lngTextController,
@@ -203,6 +207,9 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       )),
                     Text('纬度: '),
                     Expanded(child: TextFormField(
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                      ],
                       readOnly: !editmode,
                       // initialValue: widget.post.latitude.toString(),
                       controller: _latTextController,
@@ -225,6 +232,9 @@ class _PostEditblePageState extends State<PostEditblePage> {
                   children: <Widget>[
                     Text('海拔: '),
                     Expanded(child: TextFormField(
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                      ],
                       readOnly: !editmode,
                       // initialValue: widget.post.altitude.toString(),
                       controller: _altTextController,
@@ -272,35 +282,57 @@ class _PostEditblePageState extends State<PostEditblePage> {
                         onSaved: (value){
                           //
                         },
+                        onTap: () async{
+                          if(editmode){
+                            category = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (BuildContext context) {
+                                return CategorySelector(treeJson: "",);
+                              }) 
+                            );
+
+                            if(category != null){
+                              print('result: ${category.key} - ${category.label}');
+                              _categoryTextController.text = category.label;
+                              
+                              String _key = category.key;
+                              String _type = _key.split('_')[0];
+                              if(_type.isNotEmpty || _type == "c"){
+                                _category = int.parse(_key.split('_')[1]);
+                                print('got category id ${_category}');
+                              }
+                            }
+                          }
+                        },
                       ),
                     ),
 
-                    IconButton(
-                      iconSize: 20, 
-                      icon: Icon(Icons.category), 
-                      onPressed: () async {
-                        if(editmode){
-                          category = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (BuildContext context) {
-                              return CategorySelector(treeJson: "",);
-                            }) 
-                          );
+                    // IconButton(
+                    //   iconSize: 20, 
+                    //   icon: Icon(Icons.category), 
+                    //   onPressed: () async {
+                    //     if(editmode){
+                    //       category = await Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(builder: (BuildContext context) {
+                    //           return CategorySelector(treeJson: "",);
+                    //         }) 
+                    //       );
 
-                          if(category != null){
-                            print('result: ${category.key} - ${category.label}');
-                            _categoryTextController.text = category.label;
+                    //       if(category != null){
+                    //         print('result: ${category.key} - ${category.label}');
+                    //         _categoryTextController.text = category.label;
                             
-                            String _key = category.key;
-                            String _type = _key.split('_')[0];
-                            if(_type.isNotEmpty || _type == "c"){
-                              _category = int.parse(_key.split('_')[1]);
-                              print('got category id ${_category}');
-                            }
-                          }
-                        }             
-                      },
-                    )
+                    //         String _key = category.key;
+                    //         String _type = _key.split('_')[0];
+                    //         if(_type.isNotEmpty || _type == "c"){
+                    //           _category = int.parse(_key.split('_')[1]);
+                    //           print('got category id ${_category}');
+                    //         }
+                    //       }
+                    //     }             
+                    //   },
+                    // )
                   ],
                 ),
 

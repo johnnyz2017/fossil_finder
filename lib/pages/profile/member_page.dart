@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/user.dart';
+import 'package:fossils_finder/pages/form/password_update.dart';
 import 'package:fossils_finder/pages/form/profile_update.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/pages/profile/local_list_page.dart';
@@ -25,7 +26,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
 
   User user;
 
-  Future loadPostFromServer() async{
+  Future loadUserFromServer() async{
     var _content = await request('${serviceUrl}/api/v1/self');
     if(_content.statusCode != 200){
       if(_content.statusCode == 401){
@@ -53,7 +54,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
   @override
   void initState() {
     super.initState();
-    loadPostFromServer();
+    loadUserFromServer();
   }
 
 
@@ -80,7 +81,16 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
               title: Text("个人设置"),
               onTap: (){
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => MemberProfileUpdatePage(),
+                  builder: (context) => MemberProfileUpdatePage(user: user,),
+                ));
+              },
+          ),
+          ListTile(
+            leading: Icon(Icons.change_history),
+              title: Text("修改密码"),
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => PasswordUpdatePage(user: user,),
                 ));
               },
           ),
