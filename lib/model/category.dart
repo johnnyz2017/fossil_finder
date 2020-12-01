@@ -1,3 +1,20 @@
+class CategoryItem{
+
+  final int id;
+  final int parentId;
+  final String title;
+  final String description;
+
+  CategoryItem(this.id, this.parentId, this.title, this.description);
+
+  CategoryItem.fromJson(Map<String, dynamic> json)
+  : id = json['id'] ?? -1,
+    parentId = json['parent_id'] ?? -1,
+    title = json['title'] ?? 0 ,
+    description = json['description'] ?? ''
+  ;
+}
+
 class CategoryNode{
 
   final String label;

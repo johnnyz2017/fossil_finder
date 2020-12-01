@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<Response> request(url, {formData}) async{
   try{
-    print('start to request data');
+    print('start to request data from ${url}');
     
     SharedPreferences localStorage;
     localStorage = await SharedPreferences.getInstance();

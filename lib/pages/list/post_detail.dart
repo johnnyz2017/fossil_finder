@@ -156,7 +156,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
             return Container(
               padding: EdgeInsets.all(5),
               child: Card(
-                child: Text('评论 ${index}'),
+                child: Column(
+                  children: <Widget>[
+                    Text(post.comments[index-1].author),
+                    Text(post.comments[index-1].title),
+                    Text(post.comments[index-1].content),
+                  ],
+                ),
               ),
             );
 

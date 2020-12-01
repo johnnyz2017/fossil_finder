@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fossils_finder/test/swiper/swiper_test.dart';
-import 'package:fossils_finder/test/tree_view/tree_view_test.dart';
 
 import 'category_list.dart';
 import 'category_tree.dart';
@@ -11,6 +9,7 @@ class CategoryPage extends StatefulWidget {
 }
 
 class _CategoryPageState extends State<CategoryPage> {
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -35,6 +34,9 @@ class _CategoryPageState extends State<CategoryPage> {
               ),
           ),
         ),
+        // drawer: Drawer(
+        //   child: ,
+        // ),
         // appBar: new TabBar(
         //     tabs: <Widget>[
         //       Tab(text: "列表",),

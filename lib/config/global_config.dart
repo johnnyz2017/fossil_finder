@@ -53,6 +53,7 @@ const servicePath = {
   'posts' : '/posts',
   'categorieswithposts' : '/categories/allwithposts',
   'categorieswithoutposts' : '/categories/allwithoutposts',
+  'categories' : '/categories',
   'unpublishedposts' : '/unpublishedposts',
   'publishedposts' : '/publishedposts',
   'privateposts' : '/privateposts',
