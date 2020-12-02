@@ -92,22 +92,33 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
           child: Form(
             key: _formKey,
             child: Column(children: <Widget>[
-              Row(children: <Widget>[
-                Expanded(
-                  child: CachedNetworkImage(
-                    height: 200,
-                    imageUrl: _imgPath,
-                    placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
-                  ),
+              InkWell(
+                onTap: ()async{
+                  getImage();
+                },
+                child: CachedNetworkImage(
+                  height: 200,
+                  imageUrl: _imgPath,
+                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
-                IconButton(
-                  icon: Icon(Icons.picture_in_picture),
-                  onPressed: (){
-                    getImage();
-                  },
-                )
-              ],),
+              ),
+              // Row(children: <Widget>[
+              //   Expanded(
+              //     child: CachedNetworkImage(
+              //       height: 200,
+              //       imageUrl: _imgPath,
+              //       placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+              //       errorWidget: (context, url, error) => Icon(Icons.error),
+              //     ),
+              //   ),
+              //   IconButton(
+              //     icon: Icon(Icons.picture_in_picture),
+              //     onPressed: (){
+              //       getImage();
+              //     },
+              //   )
+              // ],),
               TextFormField(
                 controller: _nameTextController,
                 decoration: new InputDecoration(

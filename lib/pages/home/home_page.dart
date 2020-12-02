@@ -6,7 +6,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:qrscan/qrscan.dart' as scanner;
 
-import 'package:decorated_flutter/decorated_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
@@ -57,14 +56,9 @@ class _HomePageState extends State<HomePage> {
         ));
       }
       print('#### Network Connection Failed: ${_content.statusCode}');
-
       return;
     }
     var _jsonData = jsonDecode(_content.toString());
-    // print('get json data is  ${_jsonData}');
-    // if(_jsonData['message'] && _jsonData['message'] == "Unauthenticated."){
-    //   print('#### unauthenticated, need back to login page ${_jsonData}');
-    // }
     var _listJson;
     if(_jsonData['paginated']){
       _listJson = _jsonData['data']['data'];
@@ -298,197 +292,18 @@ class _HomePageState extends State<HomePage> {
                         ));
                       }
 
-                      //
                       // _controller?.showZoomControl(true); //OK
                       // _controller?.showCompass(true); //NO
                       // _controller?.showLocateControl(true); //NO
                       _controller?.showScaleControl(true); //OK
-                      //
-
-                      // await Future.forEach(posts, (post) async { 
-                      //   print('post ${post.id} ${post.author}');
-                        
-                      //   final marker1 = await _controller?.addMarker(
-                      //     MarkerOption(
-                      //       latLng: LatLng(
-                      //         post.latitude,
-                      //         post.longitude,
-                      //       ),
-                      //       widget: Column(
-                      //         mainAxisSize: MainAxisSize.min,
-                      //         children: <Widget>[
-                      //           Text('${post.title}'),
-                      //           // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
-                      //           ClipOval(
-                      //             child: post.images.length > 0 ? 
-                      //                 (post.images[0].url.startsWith('http') ? Image.network(post.images[0].url, height: 50,) : Image.asset(post.images[0].url, height: 50,))
-                      //                 : Image.asset('images/icons/marker.png', height: 50,)
-                      //           )
-                      //         ],
-                      //       ),
-                      //       imageConfig: createLocalImageConfiguration(context),
-                      //       title: '${post.title}',
-                      //       snippet: '${post.content}',
-                      //       width: 100,
-                      //       height: 100,
-                      //       object: '${post.id}'
-                      //     ),
-                      //   );
-                      //   _markers.add(marker1);
-                      // }); //foreach
-
-                      // _controller?.setMarkerClickedListener((marker) async {
-                      //   String id = await marker.object;
-                      //   int pid = int.parse(id);
-                      //   print('marker clicked ${pid}');
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(builder: (BuildContext context) {
-                      //       return PostDetailPage(pid: pid,);
-                      //     }) 
-                      //   );
-                      //   return true;
-                      // });
-
-                      // await Future.forEach(posts, (post) async { 
-                      //   print('post ${post.id} ${post.author}');
-                        
-                      //   final marker1 = await _controller?.addMarker(
-                      //     MarkerOption(
-                      //       latLng: LatLng(
-                      //         post.latitude,
-                      //         post.longitude,
-                      //       ),
-                      //       widget: Column(
-                      //         mainAxisSize: MainAxisSize.min,
-                      //         children: <Widget>[
-                      //           Text('${post.title}'),
-                      //           // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
-                      //           ClipOval(
-                      //             child: post.images.length > 0 ? 
-                      //                 (post.images[0].url.startsWith('http') ? Image.network(post.images[0].url, height: 50,) : Image.asset(post.images[0].url, height: 50,))
-                      //                 : Image.asset('images/icons/marker.png', height: 50,)
-                      //           )
-                      //         ],
-                      //       ),
-                      //       imageConfig: createLocalImageConfiguration(context),
-                      //       title: '${post.title}',
-                      //       snippet: '${post.content}',
-                      //       width: 100,
-                      //       height: 100,
-                      //     ),
-                      //   );
-                      //   _markers.add(marker1);
-                      // }); //foreach
-
+                      
                       loadPostListFromServer(); //load posts after amap init
                   },
                 ),
-              ] 
-              
+              ]
       ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Stack(
         children: <Widget>[
-//           Positioned(
-//             bottom: 220.0,
-//             right: 10.0,
-//             child: FloatingActionButton(
-//               heroTag: 'hide',
-//               onPressed: () async{
-//                 if(_markers.isNotEmpty){
-//                   for(var marker in _markers){
-//                     // marker.hideInfoWindow();
-//                     marker.setVisible(false);
-//                   }
-//                 }
-
-//                 // print('get posts size: ${posts.length}');
-//                 posts.forEach((post) { 
-//                   print('post ${post.id} ${post.author}');
-//                 });
-                
-//                 if(_used) return;
-//                 _used = true;
-
-// //                 _controller?.addMarkers(
-// //                   [
-// //                     for (int i = 0; i < 100; i++)
-// //                       MarkerOption(
-// //                         latLng: getNextLatLng(),
-// // //                            title: '北京$i',
-// // //                            snippet: '描述$i',
-// //                         iconProvider:
-// //                             i % 2 == 0 ? _assetsIcon1 : _assetsIcon2,
-// //                         imageConfig: createLocalImageConfiguration(context),
-// //                         width: 40,
-// //                         infoWindowEnabled: false,
-// // //                            rotateAngle: 90,
-// //                         height: 40,
-// //                         object: 'Marker_$i',
-// //                       ),
-// //                   ],
-// //                 )?.then(_markers.addAll);
-                
-//                   await Future.forEach(posts, (post) async { 
-//                         print('post ${post.id} ${post.author}');
-                        
-//                         final marker1 = await _controller?.addMarker(
-//                           MarkerOption(
-//                             latLng: LatLng(
-//                               post.latitude,
-//                               post.longitude,
-//                             ),
-//                             widget: Column(
-//                               mainAxisSize: MainAxisSize.min,
-//                               children: <Widget>[
-//                                 Text('${post.title}'),
-//                                 // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
-//                                 ClipOval(
-//                                   child: post.images.length > 0 ? 
-//                                       (post.images[0].url.startsWith('http') ? Image.network(post.images[0].url, height: 50,) : Image.asset(post.images[0].url, height: 50,))
-//                                       : Image.asset('images/icons/marker.png', height: 50,)
-//                                 )
-//                               ],
-//                             ),
-//                             imageConfig: createLocalImageConfiguration(context),
-//                             title: '${post.title}',
-//                             snippet: '${post.content}',
-//                             width: 100,
-//                             height: 100,
-//                             object: '${post.id}'
-//                           ),
-//                         );
-//                         _markers.add(marker1);
-//                       }); //foreach
-
-//                       _controller?.setMarkerClickedListener((marker) async {
-//                         String id = await marker.object;
-//                         int pid = int.parse(id);
-//                         print('marker clicked ${pid}');
-//                         Navigator.push(
-//                           context,
-//                           MaterialPageRoute(builder: (BuildContext context) {
-//                             // return PostDetailPage(post: post,);
-//                             return PostDetailPage(pid: pid,);
-//                           }) 
-//                         );
-//                         return true;
-//                       });
-
-//                       // _controller?.setMarkerDragListener(
-//                       //   onMarkerDragEnd: (marker) async {
-//                       //     toast(
-//                       //       '${await marker.title}, ${await marker.location}',
-//                       //     );
-//                       //   },
-//                       // );
-//               },
-//               child: Icon(Icons.keyboard_hide),
-//               shape: CircleBorder(
-//               ),
-//             ),
-//           ),
           Positioned(
             bottom: 80.0,
             right: 10.0,
@@ -528,70 +343,6 @@ class _HomePageState extends State<HomePage> {
 
                 if(_used) return;
                 _used = true;
-
-//                 _controller?.addMarkers(
-//                   [
-//                     for (int i = 0; i < 100; i++)
-//                       MarkerOption(
-//                         latLng: getNextLatLng(),
-// //                            title: '北京$i',
-// //                            snippet: '描述$i',
-//                         iconProvider:
-//                             i % 2 == 0 ? _assetsIcon1 : _assetsIcon2,
-//                         imageConfig: createLocalImageConfiguration(context),
-//                         width: 40,
-//                         infoWindowEnabled: false,
-// //                            rotateAngle: 90,
-//                         height: 40,
-//                         object: 'Marker_$i',
-//                       ),
-//                   ],
-//                 )?.then(_markers.addAll);
-                
-                  // await Future.forEach(posts, (post) async { 
-                  //   print('post ${post.id} ${post.author}');
-                    
-                  //   final marker1 = await _controller?.addMarker(
-                  //     MarkerOption(
-                  //       latLng: LatLng(
-                  //         post.latitude,
-                  //         post.longitude,
-                  //       ),
-                  //       widget: Column(
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         children: <Widget>[
-                  //           Text('${post.title}'),
-                  //           // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
-                  //           ClipOval(
-                  //             child: post.images.length > 0 ? 
-                  //                 (post.images[0].url.startsWith('http') ? Image.network(post.images[0].url, height: 50,) : Image.asset(post.images[0].url, height: 50,))
-                  //                 : Image.asset('images/icons/marker.png', height: 50,)
-                  //           )
-                  //         ],
-                  //       ),
-                  //       imageConfig: createLocalImageConfiguration(context),
-                  //       title: '${post.title}',
-                  //       snippet: '${post.content}',
-                  //       width: 100,
-                  //       height: 100,
-                  //       object: '${post.id}'
-                  //     ),
-                  //   );
-                  //   _markers.add(marker1);
-                  // }); //foreach
-
-                  // _controller?.setMarkerClickedListener((marker) async {
-                  //   String id = await marker.object;
-                  //   int pid = int.parse(id);
-                  //   print('marker clicked ${pid}');
-                  //   Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(builder: (BuildContext context) {
-                  //       return PostDetailPage(pid: pid,);
-                  //     }) 
-                  //   );
-                  //   return true;
-                  // });
               },
               // child: _show? Icon(Icons.brightness_5) : Icon(Icons.brightness_1),
               child: _show? Icon(Icons.highlight) : Icon(Icons.highlight_off),
@@ -628,59 +379,6 @@ class _HomePageState extends State<HomePage> {
                 await _controller?.showMyLocation(MyLocationOption(
                   myLocationType: MyLocationType.Locate,
                 ));
-                // if(_markers.isNotEmpty){
-                //   for(var marker in _markers){
-                //     marker.setVisible(false);
-                //   }
-                // }
-
-                // final center = await _controller?.getCenterCoordinate(); //OK
-                // print('center get ${center?.latitude}, ${center?.longitude}'); 
-                // final random = Random();
-                // // LatLng center = LatLng(39.90960, 121.247228);
-                // final marker = await _controller?.addMarker(
-                //   MarkerOption(
-                //     // latLng: LatLng(39.90960, 121.44147669684741),
-                //     latLng: LatLng(
-                //       center.latitude + random.nextDouble() * 0.1,
-                //       center.longitude + random.nextDouble() * 0.1,
-                //     ),
-                //     title: 'Title 北',
-                //     snippet: '描述 ${center?.latitude}, ${center?.longitude}',
-                //     iconProvider:  _assetsIcon1,
-                //     object: '自定义数据',
-                //     width: 10,
-                //     height: 10
-                //   ),
-                // );
-                // _markers.add(marker);
-                // // marker.showInfoWindow(); //OK
-
-                // print('get marker ${marker?.title}');
-
-                // final marker1 = await _controller?.addMarker(
-                //   MarkerOption(
-                //     latLng: LatLng(
-                //       center.latitude + random.nextDouble(),
-                //       center.longitude + random.nextDouble(),
-                //     ),
-                //     widget: Column(
-                //       mainAxisSize: MainAxisSize.min,
-                //       children: <Widget>[
-                //         Text('使用Widget作为Marker'),
-                //         //FlutterLogo(size: 80),
-                //         ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
-                //       ],
-                //     ),
-                //     imageConfig: createLocalImageConfiguration(context),
-                //     title: 'title .....',
-                //     snippet: '描述',
-                //     width: 100,
-                //     height: 100,
-                //   ),
-                // );
-                // _markers.add(marker1);
-                // // marker1.showInfoWindow(); //OK
               },
               child: Icon(FontAwesome.map_marker),
               shape: CircleBorder(
@@ -689,44 +387,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.add),
-      //   onPressed: () async{
-      //     print("floating action button clicked");
-
-      //     // bool status = await Permission.locationAlways.isGranted;
-      //     // if(!status){
-      //     //   print("need to get locationAlways permission first");
-      //     //   status = await Permission.locationAlways.request().isGranted;
-      //     //   if(status){
-      //     //     await _controller?.showMyLocation(MyLocationOption(
-      //     //       myLocationType: MyLocationType.Locate,
-      //     //     ));
-      //     //   }else{
-      //     //     print("need to grant the location permission first");
-      //     //   }
-      //     // }else{
-      //     //   await _controller?.showMyLocation(MyLocationOption(
-      //     //     myLocationType: MyLocationType.Locate,
-      //     //   ));
-      //     // }
-
-
-      //     // await _controller?.showMyLocation(MyLocationOption(
-      //     //   myLocationType: MyLocationType.Locate,
-      //     // ));
-
-      //     //获取当前经纬度
-      //     // final latLng = await _controller?.getLocation(); //FAILED
-      //     // toast('当前经纬度: ${latLng.toString()}');
-
-      //     // _controller?.setMapType(MapType.Standard);  //OK
-      //     // _controller?.setMapType(MapType.Satellite);
-
-      //     // _controller?.setMapLanguage(Language.Chinese);
-      //     // _controller?.setMapLanguage(Language.English); //OK
-
     );
   }
 
@@ -768,7 +428,6 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(
             color: Colors.white,
             decorationColor: Color(0XFFFFCC00),//Font color change
-            // backgroundColor: Color(0XFFFFCC00),//TextFormField title background color change
           ),
         ),
       ),
@@ -793,16 +452,6 @@ class _HomePageState extends State<HomePage> {
                   return;
                 }
               }
-              // posts.forEach((post) { 
-              //   // print('post : ${post.id} - ${post.author}');
-              //   if(post.author == txt){
-              //     print('found author ${post.author} - ${post.id}');
-
-              //     await _controller?.showMyLocation(MyLocationOption(
-              //           myLocationType: MyLocationType.Locate,
-              //         ));
-              //   }
-              // });
             }
           },
         ),
@@ -868,4 +517,3 @@ class _HomePageState extends State<HomePage> {
     return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
   }
 }
-

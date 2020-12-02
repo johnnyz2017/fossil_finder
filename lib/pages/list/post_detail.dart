@@ -45,22 +45,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
     if(post == null){
       return Center(child: CircularProgressIndicator());
     }
-    // return StreamBuilder(
-    //   builder: (context, snapshot){
-    //     return Column(
-    //       children: <Widget>[
-    //         Center(child: Text("详情页面"),),
-    //         Expanded(
-    //           child: ListView.builder(
-    //             itemBuilder: (_, index){
-    //               return ListTile(title: Text('title'),);
-    //             }
-    //           ),
-    //         )
-    //     ],);
-    //   },
-    // ); 
-
+   
     return Scaffold(
       appBar: AppBar(
         title: Text("详情页")
@@ -80,8 +65,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         //backgroundColor: Colors.yellow, 
                         color: Colors.blue,
                         fontSize: 30,
-
-                        ),
+                      ),
                     ),
                     Padding(padding: EdgeInsets.only(top: 10)),
                     Container(
@@ -139,11 +123,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     }) 
                   );
 
-                  if(ret == true){
-                    print('post OKKK');
-                    loadPostFromServer();
-                  }
-
+                  ret.then((value){
+                    print('return from navi : ${value}');
+                    if(value == true){
+                      loadPostFromServer();
+                    }
+                  });
                   // AmapService.navigateDrive(LatLng(36.547901, 104.258354));
                 },
                 child: Text('发表评论'),
@@ -156,17 +141,18 @@ class _PostDetailPageState extends State<PostDetailPage> {
             return Container(
               padding: EdgeInsets.all(5),
               child: Card(
-                child: Column(
-                  children: <Widget>[
-                    Text(post.comments[index-1].author),
-                    Text(post.comments[index-1].title),
-                    Text(post.comments[index-1].content),
-                  ],
+                child: ListTile(
+                  leading: Column(
+                    children: <Widget>[
+                      Icon(Icons.account_circle),
+                      Text(post.comments[index-1].author)
+                    ],
+                  ),
+                  title: Text(post.comments[index-1].title),
+                  subtitle: Text(post.comments[index-1].content),
                 ),
               ),
             );
-
-
           }
         }),
     );

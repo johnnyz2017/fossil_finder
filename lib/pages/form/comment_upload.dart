@@ -9,7 +9,6 @@ import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
-import 'package:fossils_finder/utils/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CommentUploadPage extends StatefulWidget {
@@ -24,8 +23,6 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
   final _formKey = GlobalKey<FormState>();
 
   int _pid;
-  String _title;
-  String _content;
   int _categoryId;
 
   TextEditingController _categoryTextController = new TextEditingController();
@@ -72,18 +69,11 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
                 decoration: InputDecoration(
                   labelText: '标题：',
                 ),
-                // initialValue: "回复： ${widget.post.title}",
                 validator: (String value){
                   if(value.isEmpty)
                     return '标题不能为空';
                   return null;
 
-                },
-                onSaved: (String value){
-                  _title = value;
-                },
-                onChanged: (value){
-                  _title = value;
                 },
               ),
 
@@ -94,44 +84,57 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
                     child: TextFormField(
                       controller: _categoryTextController,
                       decoration: InputDecoration(
-                        labelText: "分类： "
+                        labelText: "分类："
                       ),
                       readOnly: true,
-                      validator: (value){
-                        if(value.isEmpty){
-                          return '请选择一个分类';
-                        }
+                      onTap: ()async{
+                        category = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                            return CategorySelector(treeJson: "",);
+                          }) 
+                        );
 
-                        return null;
+                        if(category != null){
+                          print('result: ${category.key} - ${category.label}');
+                          _categoryTextController.text = category.label;
+                          
+                          String _key = category.key;
+                          String _type = _key.split('_')[0];
+                          if(_type.isNotEmpty || _type == "c"){
+                            _categoryId = int.parse(_key.split('_')[1]);
+                            print('got category id ${_categoryId}');
+                          }
+                        }      
                       },
                     ),
                   ),
 
-                  IconButton(
-                    iconSize: 20, 
-                    icon: Icon(Icons.category), 
-                    onPressed: () async {
-                      category = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (BuildContext context) {
-                          return CategorySelector(treeJson: "",);
-                        }) 
-                      );
+                  // IconButton(
+                  //   iconSize: 20, 
+                  //   icon: Icon(Icons.category), 
+                  //   onPressed: () async {
+                  //     category = await Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (BuildContext context) {
+                  //         return CategorySelector(treeJson: "",);
+                  //       }) 
+                  //     );
 
-                      if(category != null){
-                        print('result: ${category.key} - ${category.label}');
-                        _categoryTextController.text = category.label;
+                  //     if(category != null){
+                  //       print('result: ${category.key} - ${category.label}');
+                  //       _categoryTextController.text = category.label;
                         
-                        String _key = category.key;
-                        String _type = _key.split('_')[0];
-                        if(_type.isNotEmpty || _type == "c"){
-                          _categoryId = int.parse(_key.split('_')[1]);
-                          print('got category id ${_categoryId}');
-                        }
+                  //       String _key = category.key;
+                  //       String _type = _key.split('_')[0];
+                  //       if(_type.isNotEmpty || _type == "c"){
+                  //         _categoryId = int.parse(_key.split('_')[1]);
+                  //         print('got category id ${_categoryId}');
+                  //       }
                         
-                      }                  
-                    },
-                  ),
+                  //     }                  
+                  //   },
+                  // ),
 
                   
                 ],
@@ -147,15 +150,9 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
                   maxLines: null,
                   validator: (String value){
                     if(value.isEmpty)
-                      return '内容不能为空';
+                      return '评论内容不能为空';
                     return null;
 
-                  },
-                  onSaved: (String value){
-                    _content = value;
-                  },
-                  onChanged: (value){
-                    _content = value;
                   },
                 ),
               ),
@@ -209,6 +206,7 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
         if (code >= 200) {
           return true;
         }
+        return false;
       },
       headers: {
         HttpHeaders.authorizationHeader : 'Bearer $_token'

@@ -252,16 +252,12 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       child: TextFormField(
                         controller: _categoryTextController,
                         readOnly: true,
-                        validator: (value){
-                          if(value.isEmpty){
-                            return '请选择一个分类';
-                          }
-
-                          return null;
-                        },
-                        onSaved: (value){
-                          //
-                        },
+                        // validator: (value){
+                        //   if(value.isEmpty){
+                        //     return '请选择一个分类';
+                        //   }
+                        //   return null;
+                        // },
                         onTap: () async{
                           category = await Navigator.push(
                             context,
@@ -280,41 +276,10 @@ class _PostUploadPageState extends State<PostUploadPage> {
                               _category = int.parse(_key.split('_')[1]);
                               print('got category id ${_category}');
                             }
-                            
                           }
                         },
                       ),
-                      // child: TextField(
-                      //   controller: _categoryTextController,
-                      //   readOnly: true,
-                      // )
                     ),
-
-                    // IconButton(
-                    //   iconSize: 20, 
-                    //   icon: Icon(Icons.category), 
-                    //   onPressed: () async {
-                    //     category = await Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(builder: (BuildContext context) {
-                    //         return CategorySelector(treeJson: "",);
-                    //       }) 
-                    //     );
-
-                    //     if(category != null){
-                    //       print('result: ${category.key} - ${category.label}');
-                    //       _categoryTextController.text = category.label;
-                          
-                    //       String _key = category.key;
-                    //       String _type = _key.split('_')[0];
-                    //       if(_type.isNotEmpty || _type == "c"){
-                    //         _category = int.parse(_key.split('_')[1]);
-                    //         print('got category id ${_category}');
-                    //       }
-                          
-                    //     }                  
-                    //   },
-                    // )
                   ],
                 ),
 
@@ -332,46 +297,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     )
                   ],
                 ),
-
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //   children: <Widget>[
-                //     RaisedButton(
-                //       onPressed: () {
-                //           _savePost();
-                //       },
-                //       child: Text('存草稿'),
-                //     ),
-                    
-                //     RaisedButton(
-                //       onPressed: () {
-                //         // Validate returns true if the form is valid, otherwise false.
-                //         if (_formKey.currentState.validate()) {
-                //           // If the form is valid, display a snackbar. In the real world,
-                //           // you'd often call a server or save the information in a database.
-
-                //           // Scaffold
-                //           //     .of(context)
-                //           //     .showSnackBar(SnackBar(content: Text('Processing Data')));
-                          
-                //           _submitPost(context);
-                //         }
-                //       },
-                //       child: Text('提交'),
-                //     ),
-                //   ],
-                // )
-
-
-                // Expanded(
-                //   child: 
-                // )
-                // RaisedButton(
-                //   child: Text('Submit Post'),
-                //   onPressed: (){
-                //     _submitPost();
-                //   },
-                // ),
               ],
             ),
           ),
