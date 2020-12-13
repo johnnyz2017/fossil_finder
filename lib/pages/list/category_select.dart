@@ -15,8 +15,8 @@ class CategorySelector extends StatefulWidget {
   _CategorySelectorState createState() => _CategorySelectorState();
 }
 
-class _CategorySelectorState extends State<CategorySelector> {
-
+class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepAliveClientMixin{
+  String categoriesJson = '';
   TreeViewController _treeViewController = TreeViewController();
   CategoryNode cNode;
 
@@ -30,18 +30,18 @@ class _CategorySelectorState extends State<CategorySelector> {
     var _jsonData = jsonDecode(_content.toString());
    
     setState(() {
-      String categoriesJson = jsonEncode(_jsonData['data']['children']);
-      _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
+      categoriesJson = jsonEncode(_jsonData['data']['children']);
     });
   }
 
   @override
   void initState() {
+    loadCategoriesFromServer();
     super.initState();
-    if(widget.treeJson.isNotEmpty)
-      _treeViewController = _treeViewController.loadJSON(json: widget.treeJson);
-    else
-      loadCategoriesFromServer();
+    // if(widget.treeJson.isNotEmpty)
+    //   _treeViewController = _treeViewController.loadJSON(json: widget.treeJson);
+    // else
+    //   loadCategoriesFromServer();
 
   }
   @override
@@ -83,6 +83,7 @@ class _CategorySelectorState extends State<CategorySelector> {
             ),
     );
 
+    _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
     return Scaffold(
       appBar: AppBar(
         title: Text("类别选择"),
@@ -163,4 +164,7 @@ class _CategorySelectorState extends State<CategorySelector> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

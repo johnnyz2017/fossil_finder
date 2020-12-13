@@ -8,12 +8,21 @@ class CategoryPage extends StatefulWidget {
   _CategoryPageState createState() => _CategoryPageState();
 }
 
-class _CategoryPageState extends State<CategoryPage> {
+class _CategoryPageState extends State<CategoryPage> with AutomaticKeepAliveClientMixin{
+
+  final List<Widget> tabPages = [
+    CategoryListView(title: "标本记录列表"),
+    CategoryTreeView(),
+  ];
+
+  int currentIndex = 0;
+  var currentPage;
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
+      initialIndex: 0,
       child: Scaffold(
         appBar: new PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
@@ -28,6 +37,7 @@ class _CategoryPageState extends State<CategoryPage> {
                         new Text("标本记录列表"), 
                         new Text("分类单元")
                       ],
+                      
                     ),
                   ],
                 ),
@@ -56,11 +66,12 @@ class _CategoryPageState extends State<CategoryPage> {
         //     ]
         //   ),
         // ),
+        // body: IndexedStack(
+        //   index: currentIndex,
+        //   children: tabPages,
+        // ),
         body: TabBarView(
-          children: <Widget>[
-            Center(child: CategoryListView(title: "标本记录列表")),
-            Center(child: CategoryTreeView()),
-          ],
+          children: tabPages
         ),
         
       ),

@@ -103,7 +103,6 @@ class LoginScreen extends StatelessWidget {
     
     try {
       Options options = Options(
-        // contentType: ContentType.parse('application/json'),
         contentType: 'application/json',
       );
       Response response = await dio.post('/register',
