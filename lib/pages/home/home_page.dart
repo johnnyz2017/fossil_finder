@@ -435,24 +435,25 @@ class _HomePageState extends State<HomePage> {
         IconButton(
           icon: Icon(Icons.search),
           onPressed: () async {
-            print('search icon clicked ${_filter.text}');
-            String txt = _filter.text;
-            if(txt.isNotEmpty && posts.isNotEmpty){
-              for(var i = 0; i < posts.length; i++){
-                var post = posts[i];
-                print('post : ${post.id} - ${post.author}');
-                if(post.author == txt){
-                  print('found author ${post.author} - ${post.id}');
-                  // await _controller?.setCenterCoordinate(LatLng(post.latitude, post.longitude));
-                  _controller?.setCenterCoordinate(
-                    LatLng(post.coordinateLatitude, post.coordinateLongitude),
-                    zoomLevel: 19,
-                    animated: true,
-                  );
-                  return;
-                }
-              }
-            }
+            showSearch(context: context, delegate: DataSearch());
+            // print('search icon clicked ${_filter.text}');
+            // String txt = _filter.text;
+            // if(txt.isNotEmpty && posts.isNotEmpty){
+            //   for(var i = 0; i < posts.length; i++){
+            //     var post = posts[i];
+            //     print('post : ${post.id} - ${post.author}');
+            //     if(post.author == txt){
+            //       print('found author ${post.author} - ${post.id}');
+            //       // await _controller?.setCenterCoordinate(LatLng(post.latitude, post.longitude));
+            //       _controller?.setCenterCoordinate(
+            //         LatLng(post.coordinateLatitude, post.coordinateLongitude),
+            //         zoomLevel: 19,
+            //         animated: true,
+            //       );
+            //       return;
+            //     }
+            //   }
+            // }
           },
         ),
         IconButton(
@@ -516,4 +517,62 @@ class _HomePageState extends State<HomePage> {
   Color hexToColor(String code) {
     return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
   }
+}
+
+
+class DataSearch extends SearchDelegate<String>{
+  final cities = [
+    'Hhandup',
+    'Mumbai',
+    'Bhopal',
+    'Agra',
+    'Jaipur'
+  ];
+
+  final recentCities = [
+    'Mumbai',
+    'Agra'
+  ];
+  @override
+  List<Widget> buildActions(BuildContext context) {
+      // actions for app bar
+      return [
+        IconButton(icon: Icon(Icons.clear), onPressed: (){
+          query = '';
+        },)
+      ];
+    }
+  
+    @override
+    Widget buildLeading(BuildContext context) {
+      // leading icon on the left of the app bar
+      return IconButton(
+        icon: AnimatedIcon(
+          icon: AnimatedIcons.menu_arrow, 
+          progress: transitionAnimation,
+          ),
+        onPressed: (){
+          close(context, null);
+        },);
+    }
+  
+    @override
+    Widget buildResults(BuildContext context) {
+      // show some result based on the selection
+    }
+  
+    @override
+    Widget buildSuggestions(BuildContext context) {
+    // show when someone searches for something
+    final suggestionList = query.isEmpty? recentCities : cities.where((p) => p.startsWith(query)).toList();
+
+    return ListView.builder(
+      itemBuilder: (context, index) => ListTile(
+        leading: Icon(Icons.local_activity),
+        title: Text(suggestionList[index]),
+      ),
+      itemCount: suggestionList.length,
+      );
+  }
+
 }

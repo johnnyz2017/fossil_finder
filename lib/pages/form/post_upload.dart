@@ -38,6 +38,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
   // File _image;
   Image _image;
   List<String> _imgsPath = [];
+  List<File> _imgsFile = [];
+  Map<String, String> _uploadedPath;
+  Map<String, bool> _uploadedStatus;
   CategoryNode category;
   int _category = -1;
   bool _private = true;
@@ -52,7 +55,12 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    _doUploadImage(image, "");//上传图片
+    setState(() {
+      _imgsFile.add(image);
+      print('images files size: ${_imgsFile.length}');
+    });
+    print('get image ${image.uri} ');
+    // _doUploadImage(image, "");//上传图片
   }
 
   @override
@@ -66,6 +74,11 @@ class _PostUploadPageState extends State<PostUploadPage> {
     //     print('get post list ${noteList.length} ');
     //   });
     // });
+    File f = new File("/Users/johnnyz/Library/Developer/CoreSimulator/Devices/132ABB73-6757-4EF6-B756-F98A551FEBE5/data/Containers/Data/Application/A5EF41B5-85CE-449D-9B93-067374341C1B/tmp/image_picker_35008CE8-0759-4B96-939E-D82F4A752583-77679-0003AD0C9976E1EA.jpg");
+    setState(() {
+      _imgsFile.add(f);
+      print('images files size: ${_imgsFile.length}');
+    });
   }
 
   @override
@@ -102,30 +115,140 @@ class _PostUploadPageState extends State<PostUploadPage> {
                 Container(
                   height: 150,
                   child: Expanded(
-                    child: _imgsPath.length > 0 ? ListView.builder(
+                  //   child: _imgsFile.length > 0 ? ReorderableListView(
+                  //     scrollDirection: Axis.horizontal,
+                  //     onReorder: (oldIndex, newIndex){
+                  //       setState(() {
+                  //         //update
+                  //       });
+                  //     },
+                  //     children: <Widget>[
+                  //       for(final img in _imgsFile)
+                  //         ListTile(
+                  //           key: ValueKey(img),
+                  //           leading: Stack(
+                  //             alignment: Alignment.center,
+                  //             children: <Widget>[
+                  //               Image.file(
+                  //                 img,width: 150, height: 150,
+                  //               ),
+                  //               Positioned(
+                  //                 right: 0,
+                  //                 top: 0,
+                  //                 child: IconButton(
+                  //                   icon: Icon(Icons.delete),
+                  //                   onPressed: (){
+                  //                     print('image remove icon clicked');
+                  //                     setState(() {
+                  //                       //_imgsFile.removeAt(index);
+                  //                     });
+                  //                   },
+                  //                 ),
+                  //               ),
+                  //               CircularProgressIndicator()
+                  //             ],
+                  //           ),
+                  //         )
+                  //     ],
+                  //   ) : Center(child: Text("未上传图片")),
+                    child: _imgsFile.length > 0 ? ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (BuildContext context, int index){
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          // child: Image.network(_imgsPath[index],),
-                          child: CachedNetworkImage(
-                            // height: 150,
-                            // width: 150,
-                            imageUrl: _imgsPath[index],
-                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
-                            // progressIndicatorBuilder: (context, url, downloadProgress) => 
-                            // CircularProgressIndicator(value: downloadProgress.progress),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              Image.file(
+                                _imgsFile[index],width: 150, height: 150,
+                              ),
+                              Positioned(
+                                right: 0,
+                                top: 10.0,
+                                child: IconButton(
+                                  icon: new Image.asset('images/icons/icons8-delete.png'),
+                                  onPressed: (){
+                                    print('image remove icon clicked');
+                                    setState(() {
+                                      _imgsFile.removeAt(index);
+                                    });
+                                  },
+                                ),
+                              ),
+                              CircularProgressIndicator()
+                            ],
                           ),
                         );
                       },
-                      itemCount: _imgsPath.length,
+                      itemCount: _imgsFile.length,
                     ) : Center(child: Text("未上传图片")),
+                    //   child: _imgsPath.length > 0 ? ListView.builder(
+                    //   scrollDirection: Axis.horizontal,
+                    //   itemBuilder: (BuildContext context, int index){
+                    //     return Padding(
+                    //       padding: const EdgeInsets.all(8.0),
+                    //       // child: Image.network(_imgsPath[index],),
+                    //       child: Stack(
+                    //         alignment: Alignment.center,
+                    //         children: <Widget>[
+                    //           // Image.file(),
+                    //           CachedNetworkImage(
+                    //             // height: 150,
+                    //             // width: 150,
+                    //             imageUrl: _imgsPath[index],
+                    //             placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                    //             errorWidget: (context, url, error) => Icon(Icons.error),
+                    //             // progressIndicatorBuilder: (context, url, downloadProgress) => 
+                    //             // CircularProgressIndicator(value: downloadProgress.progress),
+                    //           ),
+                    //           Positioned(
+                    //             right: 0,
+                    //             top: 0,
+                    //             child: IconButton(
+                    //               icon: Icon(Icons.delete),
+                    //               onPressed: (){
+                    //                 print('image remove icon clicked');
+                    //               },
+                    //             ),
+                    //           ),
+                    //           CircularProgressIndicator()
+                    //           // IconButton(
+                    //           //   icon: Icon(Icons.delete),
+                    //           //   onPressed: (){
+                    //           //     print('image remove icon clicked');
+                    //           //   },
+                    //           // ),
+                              
+                    //         ],
+                    //       ),
+                    //     );
+                    //     // return Padding(
+                    //     //   padding: const EdgeInsets.all(8.0),
+                    //     //   // child: Image.network(_imgsPath[index],),
+                    //     //   child: CachedNetworkImage(
+                    //     //     // height: 150,
+                    //     //     // width: 150,
+                    //     //     imageUrl: _imgsPath[index],
+                    //     //     placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                    //     //     errorWidget: (context, url, error) => Icon(Icons.error),
+                    //     //     // progressIndicatorBuilder: (context, url, downloadProgress) => 
+                    //     //     // CircularProgressIndicator(value: downloadProgress.progress),
+                    //     //   ),
+                    //     // );
+                    //   },
+                    //   itemCount: _imgsPath.length,
+                    // ) : Center(child: Text("未上传图片")),
                    
                     ),
                 ),
                 RaisedButton(
-                  child: Text('选择图片上传'),
+                  child: Text('选择图片'),
+                  onPressed: (){
+                    getImage();
+                  },
+                ),
+                RaisedButton(
+                  child: Text('上传'),
                   onPressed: (){
                     getImage();
                   },
@@ -465,8 +588,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
       }
     }
   }
-  
 
+  _uploadImages() async {}
 
   /// 根据配置上传图片
   _doUploadImage(File file, String renameImage) async {

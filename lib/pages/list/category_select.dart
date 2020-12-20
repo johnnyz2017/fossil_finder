@@ -24,6 +24,8 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
   ExpanderType _expanderType = ExpanderType.caret;
   ExpanderModifier _expanderModifier = ExpanderModifier.none;
 
+  bool editmode = false;
+
   Future loadCategoriesFromServer() async{
     var _content = await request(servicePath['categorieswithoutposts']);
     print('get request content: ${_content}');
@@ -89,9 +91,26 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
         title: Text("类别选择"),
         actions: <Widget>[
           IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: (){
+              setState(() {
+                editmode = true;
+              });
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.done),
             onPressed: (){
-              Navigator.pop(context, cNode);
+              if(editmode){
+                setState(() {
+                  editmode = false;
+                  cNode = null;
+                  _treeViewController =
+                        _treeViewController.copyWith(selectedKey: null);
+                });
+              }else{
+                Navigator.pop(context, cNode);
+              }
             },
           )
         ],
@@ -105,7 +124,7 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                 controller: _treeViewController,
                 allowParentSelect: true,
                 supportParentDoubleTap: false,
-                onNodeTap: (key) {                      
+                onNodeTap: (key) {     
                   String label = _treeViewController.getNode(key) == null
                                 ? ''
                                 : _treeViewController.getNode(key).label;
@@ -120,6 +139,12 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                     _treeViewController =
                         _treeViewController.copyWith(selectedKey: key);
                   });
+                  
+                  if(editmode){
+                    debugPrint('in edit mode');
+                  } else{
+                    debugPrint('not edit mode');
+                  }                
                 },
                 onNodeDoubleTap: (key){
                   debugPrint('double tap on ${key}');
@@ -159,6 +184,32 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
           //     Navigator.pop(context, cNode);
           //   },
           // ),
+          Text('Current Selected: '),
+          Visibility(
+            visible: editmode,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text('添加'),
+                  onPressed: (){
+                    debugPrint('add clicked');
+                  }),
+                  RaisedButton(
+                  child: Text('修改'),
+                  onPressed: editmode ? (){
+                    debugPrint('modify clicked');
+                  } : null,
+                  ),
+                  RaisedButton(
+                  child: Text('删除'),
+                  onPressed: editmode ? (){
+                    debugPrint('delete clicked');
+                  } : null,),
+              ],
+            ),
+          ),
+          SizedBox(height: 50,)
                
         ],
       ),
