@@ -39,8 +39,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
   Image _image;
   List<String> _imgsPath = [];
   List<File> _imgsFile = [];
-  Map<String, String> _uploadedPath;
-  Map<String, bool> _uploadedStatus;
+  List<bool> _imgsUploaded = [];
+  Map<String, String> _uploadedPath = new Map();
+  Map<String, bool> _uploadedStatus = new Map();
   CategoryNode category;
   int _category = -1;
   bool _private = true;
@@ -55,12 +56,15 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if(image == null) return;
     setState(() {
       _imgsFile.add(image);
-      print('images files size: ${_imgsFile.length}');
+      _imgsUploaded.add(false);
+      _uploadedStatus[image.path] = false;
+      print('images files size: ${_imgsFile.length}  ${image.path}');
     });
     print('get image ${image.uri} ');
-    // _doUploadImage(image, "");//上传图片
+    _doUploadImage(image, "");//上传图片
   }
 
   @override
@@ -74,11 +78,12 @@ class _PostUploadPageState extends State<PostUploadPage> {
     //     print('get post list ${noteList.length} ');
     //   });
     // });
-    File f = new File("/Users/johnnyz/Library/Developer/CoreSimulator/Devices/132ABB73-6757-4EF6-B756-F98A551FEBE5/data/Containers/Data/Application/A5EF41B5-85CE-449D-9B93-067374341C1B/tmp/image_picker_35008CE8-0759-4B96-939E-D82F4A752583-77679-0003AD0C9976E1EA.jpg");
-    setState(() {
-      _imgsFile.add(f);
-      print('images files size: ${_imgsFile.length}');
-    });
+    // File f = new File("/Users/johnnyz/Library/Developer/CoreSimulator/Devices/132ABB73-6757-4EF6-B756-F98A551FEBE5/data/Containers/Data/Application/A5EF41B5-85CE-449D-9B93-067374341C1B/tmp/image_picker_35008CE8-0759-4B96-939E-D82F4A752583-77679-0003AD0C9976E1EA.jpg");
+    // setState(() {
+    //   _imgsFile.add(f);
+    //   _imgsUploaded.add(false);
+    //   print('images files size: ${_imgsFile.length}');
+    // });
   }
 
   @override
@@ -171,11 +176,14 @@ class _PostUploadPageState extends State<PostUploadPage> {
                                     print('image remove icon clicked');
                                     setState(() {
                                       _imgsFile.removeAt(index);
+                                      _uploadedStatus.remove(_imgsFile[index].path);
                                     });
                                   },
                                 ),
                               ),
-                              CircularProgressIndicator()
+                              // _imgsUploaded[index] ? Image.asset('images/icons/icons8-checkmark.png') : CircularProgressIndicator(),
+                              _uploadedStatus[_imgsFile[index].path] ? Image.asset('images/icons/icons8-checkmark.png') : CircularProgressIndicator(),
+                              // Container(child: ,)
                             ],
                           ),
                         );
@@ -606,6 +614,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
         setState(() {
           // _image = Image.network(uploadedItem.path, height: 200,); //OK
           _imgsPath.add(uploadedItem.path);
+
+          _uploadedStatus[file.path] = true;
         });
         // _view.uploadSuccess(uploadedItem.path);
       } else {
