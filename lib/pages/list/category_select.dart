@@ -5,11 +5,13 @@ import 'package:flutter_treeview/tree_view.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
+import 'package:fossils_finder/pages/form/category_new.dart';
 
 class CategorySelector extends StatefulWidget {
   final String treeJson;
+  final bool editable;
 
-  const CategorySelector({Key key, this.treeJson}) : super(key: key);
+  const CategorySelector({Key key, this.editable = true, this.treeJson}) : super(key: key);
 
   @override
   _CategorySelectorState createState() => _CategorySelectorState();
@@ -33,6 +35,7 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
    
     setState(() {
       categoriesJson = jsonEncode(_jsonData['data']['children']);
+      print('get json :  ${categoriesJson}');
     });
   }
 
@@ -86,17 +89,21 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
     );
 
     _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
+    // _treeViewController.withDeleteNode(key)
     return Scaffold(
       appBar: AppBar(
         title: Text("类别选择"),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: (){
-              setState(() {
-                editmode = true;
-              });
-            },
+          Visibility(
+            visible: widget.editable,
+            child: IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: (){
+                setState(() {
+                  editmode = true;
+                });
+              },
+            ),
           ),
           IconButton(
             icon: Icon(Icons.done),
@@ -194,6 +201,19 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                   child: Text('添加'),
                   onPressed: (){
                     debugPrint('add clicked');
+                    var ret = Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        return CategoryNewPage();
+                      }) 
+                    );
+
+                    ret.then((value){
+                      print('return from navi : ${value}');
+                      if(value == true){
+                        // loadPostFromServer();
+                      }
+                    });
                   }),
                   RaisedButton(
                   child: Text('修改'),

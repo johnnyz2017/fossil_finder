@@ -167,23 +167,28 @@ class _PostUploadPageState extends State<PostUploadPage> {
                               Image.file(
                                 _imgsFile[index],width: 150, height: 150,
                               ),
-                              Positioned(
-                                right: 0,
-                                top: 10.0,
-                                child: IconButton(
-                                  icon: new Image.asset('images/icons/icons8-delete.png'),
-                                  onPressed: (){
-                                    print('image remove icon clicked');
-                                    setState(() {
-                                      _imgsFile.removeAt(index);
-                                      _uploadedStatus.remove(_imgsFile[index].path);
-                                    });
-                                  },
+                              Visibility(
+                                visible: true,
+                                child: Positioned(
+                                  right: 0,
+                                  top: 10.0,
+                                  child: IconButton(
+                                    icon: new Image.asset('images/icons/icons8-delete.png'),
+                                    onPressed: (){
+                                      print('image remove icon clicked');
+                                      setState(() {
+                                        _imgsFile.removeAt(index);
+                                        _uploadedStatus.remove(_imgsFile[index].path);
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
                               // _imgsUploaded[index] ? Image.asset('images/icons/icons8-checkmark.png') : CircularProgressIndicator(),
-                              _uploadedStatus[_imgsFile[index].path] ? Image.asset('images/icons/icons8-checkmark.png') : CircularProgressIndicator(),
-                              // Container(child: ,)
+                              Visibility(
+                                visible: true,
+                                child: _uploadedStatus[_imgsFile[index].path] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
+                              )
                             ],
                           ),
                         );
