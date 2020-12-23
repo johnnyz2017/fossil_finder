@@ -621,6 +621,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
           _imgsPath.add(uploadedItem.path);
 
           _uploadedStatus[file.path] = true;
+          _uploadedPath[file.path] = uploadedItem.path;
         });
         // _view.uploadSuccess(uploadedItem.path);
       } else {

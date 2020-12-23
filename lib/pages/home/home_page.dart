@@ -429,6 +429,12 @@ class _HomePageState extends State<HomePage> {
             color: Colors.white,
             decorationColor: Color(0XFFFFCC00),//Font color change
           ),
+          // onTap: (){
+          //   showSearch(context: context, delegate: DataSearch());
+          // },
+          // onEditingComplete: (){
+          //   showSearch(context: context, delegate: DataSearch());
+          // },
         ),
       ),
       actions: <Widget>[

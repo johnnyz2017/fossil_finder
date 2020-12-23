@@ -32,10 +32,11 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
     var _content = await request(servicePath['categorieswithoutposts']);
     print('get request content: ${_content}');
     var _jsonData = jsonDecode(_content.toString());
+    categoriesJson = jsonEncode(_jsonData['data']['children']);
+    print('get json :  ${categoriesJson}');
    
     setState(() {
-      categoriesJson = jsonEncode(_jsonData['data']['children']);
-      print('get json :  ${categoriesJson}');
+      _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
     });
   }
 
@@ -88,8 +89,11 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
             ),
     );
 
-    _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
+    // _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
+    // _treeViewController.withExpandToNode('c_3');
+    // _treeViewController = _treeViewController.copyWith(selectedKey: 'c_3');
     // _treeViewController.withDeleteNode(key)
+    
     return Scaffold(
       appBar: AppBar(
         title: Text("类别选择"),
@@ -111,9 +115,8 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
               if(editmode){
                 setState(() {
                   editmode = false;
-                  cNode = null;
-                  _treeViewController =
-                        _treeViewController.copyWith(selectedKey: null);
+                  // cNode = null;
+                  // _treeViewController = _treeViewController.copyWith(selectedKey: null);
                 });
               }else{
                 Navigator.pop(context, cNode);
@@ -150,7 +153,7 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                   if(editmode){
                     debugPrint('in edit mode');
                   } else{
-                    debugPrint('not edit mode');
+                    debugPrint('not in edit mode');
                   }                
                 },
                 onNodeDoubleTap: (key){
@@ -219,6 +222,37 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                   child: Text('修改'),
                   onPressed: editmode ? (){
                     debugPrint('modify clicked');
+
+                    
+
+                    setState(() {
+                      debugPrint('modify clicked create');
+
+                      // Node newNode = new Node(key: 'c_100', label: '测试节点', );
+                      // _treeViewController = _treeViewController.withUpdateNode('c_3', newNode);
+
+
+                      // Node newNode = new Node(key: 'c_100', label: '测试节点', );
+                    
+
+                    var ll = _treeViewController.getNode('c_3').children;
+                    Node newNode = new Node(key: 'c_100', label: '测试节点及其子节点',children: ll, expanded: true);
+                    // newNode.copyWith(key: 'c_100', label: '测试节点及其子节点',children: ll, expanded: true);
+                    // _treeViewController = _treeViewController.withUpdateNode('c_3', newNode); //OK
+                    // _treeViewController = _treeViewController.withCollapseToNode('c_100'); //OK
+                    _treeViewController = _treeViewController.withAddNode('c_10', newNode); //OK
+                    _treeViewController = _treeViewController.withCollapseToNode('c_100'); //OK
+                    _treeViewController = _treeViewController.withExpandToNode('c_100'); //OK
+
+                    print("${_treeViewController.getNode('c_100').children}");
+                    print("${_treeViewController.getNode('c_100').isParent}");
+                    print("${_treeViewController.getNode('c_3')}");
+                      
+                      // List<Node<dynamic>> d = _treeViewController.addNode('c_3', newNode);
+                      // _treeViewController.loadMap(d);
+                      // _treeViewController.withUpdateNode('c_3', newNode);
+                      // _treeViewController = _treeViewController.withCollapseToNode('c_3');
+                    });
                   } : null,
                   ),
                   RaisedButton(
