@@ -58,6 +58,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     if(image == null) return;
     setState(() {
+      _imgsPath.add(image.path);
       _imgsFile.add(image);
       _imgsUploaded.add(false);
       _uploadedStatus[image.path] = false;
@@ -78,12 +79,17 @@ class _PostUploadPageState extends State<PostUploadPage> {
     //     print('get post list ${noteList.length} ');
     //   });
     // });
-    // File f = new File("/Users/johnnyz/Library/Developer/CoreSimulator/Devices/132ABB73-6757-4EF6-B756-F98A551FEBE5/data/Containers/Data/Application/A5EF41B5-85CE-449D-9B93-067374341C1B/tmp/image_picker_35008CE8-0759-4B96-939E-D82F4A752583-77679-0003AD0C9976E1EA.jpg");
-    // setState(() {
-    //   _imgsFile.add(f);
-    //   _imgsUploaded.add(false);
-    //   print('images files size: ${_imgsFile.length}');
-    // });
+    //File f = new File("/Users/johnnyz/Library/Developer/CoreSimulator/Devices/132ABB73-6757-4EF6-B756-F98A551FEBE5/data/Containers/Data/Application/A5EF41B5-85CE-449D-9B93-067374341C1B/tmp/image_picker_35008CE8-0759-4B96-939E-D82F4A752583-77679-0003AD0C9976E1EA.jpg");
+    // File f = File.fromUri(Uri(path: 'http://images.tornadory.com/1602602430178.jpg'));
+    // File f = File('http://images.tornadory.com/1602602430178.jpg');
+    // Image g = Image.network('http://images.tornadory.com/1602602430178.jpg');
+    setState(() {
+      // _imgsFile.add(f);
+      _imgsPath.add('http://images.tornadory.com/1602602430178.jpg');
+      // _imgsUploaded.add(true);
+      _uploadedStatus['http://images.tornadory.com/1602602430178.jpg'] = true;
+      print('images files size: ${_imgsFile.length} ');
+    });
   }
 
   @override
@@ -156,7 +162,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   //         )
                   //     ],
                   //   ) : Center(child: Text("未上传图片")),
-                    child: _imgsFile.length > 0 ? ListView.builder(
+                    // child: _imgsFile.length > 0 ? ListView.builder(
+                    child: _imgsPath.length > 0 ? ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (BuildContext context, int index){
                         return Padding(
@@ -164,9 +171,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
                           child: Stack(
                             alignment: Alignment.center,
                             children: <Widget>[
-                              Image.file(
-                                _imgsFile[index],width: 150, height: 150,
-                              ),
+                              _imgsPath[index].startsWith('http')? 
+                                Image.network('${_imgsPath[index]}')
+                                : Image.file(File(_imgsPath[index])),
+                                // : Image.file(
+                                // _imgsFile[index],width: 150, height: 150,
+                                // _imgsFile[index],width: 150, height: 150,
+                              // ),
                               Visibility(
                                 visible: true,
                                 child: Positioned(
@@ -177,8 +188,10 @@ class _PostUploadPageState extends State<PostUploadPage> {
                                     onPressed: (){
                                       print('image remove icon clicked');
                                       setState(() {
-                                        _imgsFile.removeAt(index);
-                                        _uploadedStatus.remove(_imgsFile[index].path);
+                                        // _imgsFile.removeAt(index);
+                                        _imgsPath.removeAt(index);
+                                        // _uploadedStatus.remove(_imgsFile[index].path);
+                                        _uploadedStatus.remove(_imgsPath[index]);
                                       });
                                     },
                                   ),
@@ -187,13 +200,15 @@ class _PostUploadPageState extends State<PostUploadPage> {
                               // _imgsUploaded[index] ? Image.asset('images/icons/icons8-checkmark.png') : CircularProgressIndicator(),
                               Visibility(
                                 visible: true,
-                                child: _uploadedStatus[_imgsFile[index].path] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
+                                // child: _uploadedStatus[_imgsFile[index].path] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
+                                child: _uploadedStatus[_imgsPath[index]] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
                               )
                             ],
                           ),
                         );
                       },
-                      itemCount: _imgsFile.length,
+                      // itemCount: _imgsFile.length,
+                      itemCount: _imgsPath.length,
                     ) : Center(child: Text("未上传图片")),
                     //   child: _imgsPath.length > 0 ? ListView.builder(
                     //   scrollDirection: Axis.horizontal,
@@ -618,10 +633,10 @@ class _PostUploadPageState extends State<PostUploadPage> {
         print('upload success ....');
         setState(() {
           // _image = Image.network(uploadedItem.path, height: 200,); //OK
-          _imgsPath.add(uploadedItem.path);
+          // _imgsPath.add(uploadedItem.path);
 
           _uploadedStatus[file.path] = true;
-          _uploadedPath[file.path] = uploadedItem.path;
+          // _uploadedPath[file.path] = uploadedItem.path;
         });
         // _view.uploadSuccess(uploadedItem.path);
       } else {

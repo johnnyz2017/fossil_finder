@@ -466,7 +466,15 @@ class _HomePageState extends State<HomePage> {
           icon: Icon(Icons.scanner),
           onPressed: (){
             print('scan icon clicked');
-            _scanCode();
+            // _scanCode();
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (BuildContext context) {
+                // return PostDetailPage(post: post,);
+                return PostDetailPage(pid: 10,);
+              }) 
+            );
           },
         )
       ],
