@@ -65,7 +65,19 @@ class _PostUploadPageState extends State<PostUploadPage> {
       print('images files size: ${_imgsFile.length}  ${image.path}');
     });
     print('get image ${image.uri} ');
-    _doUploadImage(image, "");//上传图片
+    //_doUploadImage(image, "");//上传图片
+  }
+
+  Future uploadImages() async{
+    for(int i =0; i < _imgsPath.length; i++){
+      if(_imgsPath[i].startsWith('http')) continue;
+      print('upload ${_imgsPath[i]}');
+      if(_uploadedStatus[_imgsPath[i]]) continue;
+      // _doUploadImage(_imgsPath[i], '');
+      print('try to upload ${_imgsPath[i]}');
+      File f = File(_imgsPath[i]);
+      _doUploadImage(f, '');
+    }
   }
 
   @override
@@ -85,10 +97,10 @@ class _PostUploadPageState extends State<PostUploadPage> {
     // Image g = Image.network('http://images.tornadory.com/1602602430178.jpg');
     setState(() {
       // _imgsFile.add(f);
-      _imgsPath.add('http://images.tornadory.com/1602602430178.jpg');
+      // _imgsPath.add('http://images.tornadory.com/1602602430178.jpg');
       // _imgsUploaded.add(true);
-      _uploadedStatus['http://images.tornadory.com/1602602430178.jpg'] = true;
-      print('images files size: ${_imgsFile.length} ');
+      // _uploadedStatus['http://images.tornadory.com/1602602430178.jpg'] = true;
+      // print('images files size: ${_imgsFile.length} ');
     });
   }
 
@@ -108,7 +120,22 @@ class _PostUploadPageState extends State<PostUploadPage> {
           IconButton(
             icon: Icon(Icons.done),
             onPressed: (){
+              int len = _imgsPath.length;
+                if(len < 1) {
+                  print('no pictures selected');
+                  AlertDialog(title: Text('没有选择图片'),);
+                }
+                for(int i = 0; i < len; i++){
+                  String path = _imgsPath[i];
+                  if(path.startsWith('http')) continue;
+                  if(!_uploadedStatus[path]){
+                    print('still have some not been uploaded');
+                    return;
+                  }
+                }
+
               if (_formKey.currentState.validate()) {
+                
                 _submitPost(context);
               }
             },
@@ -174,10 +201,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                               _imgsPath[index].startsWith('http')? 
                                 Image.network('${_imgsPath[index]}')
                                 : Image.file(File(_imgsPath[index])),
-                                // : Image.file(
-                                // _imgsFile[index],width: 150, height: 150,
-                                // _imgsFile[index],width: 150, height: 150,
-                              // ),
                               Visibility(
                                 visible: true,
                                 child: Positioned(
@@ -188,19 +211,16 @@ class _PostUploadPageState extends State<PostUploadPage> {
                                     onPressed: (){
                                       print('image remove icon clicked');
                                       setState(() {
-                                        // _imgsFile.removeAt(index);
-                                        _imgsPath.removeAt(index);
-                                        // _uploadedStatus.remove(_imgsFile[index].path);
                                         _uploadedStatus.remove(_imgsPath[index]);
+                                        _imgsPath.removeAt(index);
+                                        
                                       });
                                     },
                                   ),
                                 ),
                               ),
-                              // _imgsUploaded[index] ? Image.asset('images/icons/icons8-checkmark.png') : CircularProgressIndicator(),
                               Visibility(
                                 visible: true,
-                                // child: _uploadedStatus[_imgsFile[index].path] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
                                 child: _uploadedStatus[_imgsPath[index]] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
                               )
                             ],
@@ -209,64 +229,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       },
                       // itemCount: _imgsFile.length,
                       itemCount: _imgsPath.length,
-                    ) : Center(child: Text("未上传图片")),
-                    //   child: _imgsPath.length > 0 ? ListView.builder(
-                    //   scrollDirection: Axis.horizontal,
-                    //   itemBuilder: (BuildContext context, int index){
-                    //     return Padding(
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       // child: Image.network(_imgsPath[index],),
-                    //       child: Stack(
-                    //         alignment: Alignment.center,
-                    //         children: <Widget>[
-                    //           // Image.file(),
-                    //           CachedNetworkImage(
-                    //             // height: 150,
-                    //             // width: 150,
-                    //             imageUrl: _imgsPath[index],
-                    //             placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                    //             errorWidget: (context, url, error) => Icon(Icons.error),
-                    //             // progressIndicatorBuilder: (context, url, downloadProgress) => 
-                    //             // CircularProgressIndicator(value: downloadProgress.progress),
-                    //           ),
-                    //           Positioned(
-                    //             right: 0,
-                    //             top: 0,
-                    //             child: IconButton(
-                    //               icon: Icon(Icons.delete),
-                    //               onPressed: (){
-                    //                 print('image remove icon clicked');
-                    //               },
-                    //             ),
-                    //           ),
-                    //           CircularProgressIndicator()
-                    //           // IconButton(
-                    //           //   icon: Icon(Icons.delete),
-                    //           //   onPressed: (){
-                    //           //     print('image remove icon clicked');
-                    //           //   },
-                    //           // ),
-                              
-                    //         ],
-                    //       ),
-                    //     );
-                    //     // return Padding(
-                    //     //   padding: const EdgeInsets.all(8.0),
-                    //     //   // child: Image.network(_imgsPath[index],),
-                    //     //   child: CachedNetworkImage(
-                    //     //     // height: 150,
-                    //     //     // width: 150,
-                    //     //     imageUrl: _imgsPath[index],
-                    //     //     placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                    //     //     errorWidget: (context, url, error) => Icon(Icons.error),
-                    //     //     // progressIndicatorBuilder: (context, url, downloadProgress) => 
-                    //     //     // CircularProgressIndicator(value: downloadProgress.progress),
-                    //     //   ),
-                    //     // );
-                    //   },
-                    //   itemCount: _imgsPath.length,
-                    // ) : Center(child: Text("未上传图片")),
-                   
+                    ) : Center(child: Text("未上传图片")),                   
                     ),
                 ),
                 RaisedButton(
@@ -278,7 +241,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
                 RaisedButton(
                   child: Text('上传'),
                   onPressed: (){
-                    getImage();
+                    // getImage();
+                    uploadImages();
                   },
                 ),
 
