@@ -96,9 +96,9 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
       }
     }
 
-    _latTextController.text = widget.post.coordinateLatitude.toStringAsFixed(6);
-    _lngTextController.text = widget.post.coordinateLongitude.toStringAsFixed(6);
-    _altTextController.text = widget.post.coordinateAltitude.toStringAsFixed(6);
+    _latTextController.text = widget.post.coordinateLatitude?.toStringAsFixed(6);
+    _lngTextController.text = widget.post.coordinateLongitude?.toStringAsFixed(6);
+    _altTextController.text = widget.post.coordinateAltitude?.toStringAsFixed(6);
     _addrTextController.text = widget.post.address;
     _titleTextController.text = widget.post.title;
     _contentTextController.text = widget.post.content;
@@ -131,6 +131,20 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
             icon: Icon(Icons.done),
             onPressed: (){
               // if(!editmode) return;
+              int len = _imgsPath.length;
+              if(len < 1) {
+                print('no pictures selected');
+                AlertDialog(title: Text('没有选择图片'),);
+              }
+              for(int i = 0; i < len; i++){
+                String path = _imgsPath[i];
+                if(path.startsWith('http')) continue;
+                if(!_uploadedStatus[path]){
+                  print('still have some not been uploaded');
+                  return;
+                }
+              }
+
               if (_formKey.currentState.validate()) {
                 _submitPost(context);
               }
@@ -470,9 +484,9 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
       "category_id" : null,
       "final_category_id" : null,
       "final_category_id_from" : null,
-      "coordinate_latitude" : double.parse(_latTextController.text),
-      "coordinate_longitude" : double.parse(_lngTextController.text),
-      "coordinate_altitude" : double.parse(_altTextController.text),
+      "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
+      "coordinate_longitude" : _lngTextController.text == null ? double.parse(_lngTextController.text) : null,
+      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
       "address" : _addrTextController.text,
       "created_at" : null,
       "updated_at" : null,

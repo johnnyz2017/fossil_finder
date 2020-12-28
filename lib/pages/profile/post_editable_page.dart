@@ -179,7 +179,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
                                 Image.network('${_imgsPath[index]}')
                                 : Image.file(File(_imgsPath[index])),
                               Visibility(
-                                visible: true,
+                                visible: editmode,
                                 child: Positioned(
                                   right: 0,
                                   top: 10.0,
@@ -502,9 +502,9 @@ class _PostEditblePageState extends State<PostEditblePage> {
       "images" : _images,
       "title" : _titleTextController.text,
       "content" : _contentTextController.text,
-      "coordinate_latitude" : double.parse(_latTextController.text),
-      "coordinate_longitude" : double.parse(_lngTextController.text),
-      "coordinate_altitude" : double.parse(_altTextController.text),
+      "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
+      "coordinate_longitude" : _lngTextController.text == null ? double.parse(_lngTextController.text) : null,
+      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
       "address" : _addrTextController.text,
       'category_id' : _category,
       'private' : _private ? 1 : 0

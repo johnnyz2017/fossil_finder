@@ -350,7 +350,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       ],
                       //WhitelistingTextInputFormatter(RegExp("[a-z,A-Z,0-9]"))
                       controller: _altTextController,
-                      autovalidate: true,
+                      // autovalidate: true,
                       // validator: (value){
                       //     if(value.isEmpty){
                       //       return '海拔没有填写';
@@ -447,6 +447,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
     }
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
+    print('test ${_altTextController.text }');
 
     Post post = new Post.fromMapObject({
       "user_id" : null,
@@ -461,9 +462,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "category_id" : null,
       "final_category_id" : null,
       "final_category_id_from" : null,
-      "coordinate_latitude" : double.parse(_latTextController.text),
-      "coordinate_longitude" : double.parse(_lngTextController.text),
-      "coordinate_altitude" : double.parse(_altTextController.text),
+      "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
+      "coordinate_longitude" : _lngTextController.text == null ? double.parse(_lngTextController.text) : null,
+      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
       "address" : _addrTextController.text,
       "created_at" : null,
       "updated_at" : null,
