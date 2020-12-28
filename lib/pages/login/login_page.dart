@@ -106,7 +106,7 @@ class LoginScreen extends StatelessWidget {
         contentType: 'application/json',
       );
       Response response = await dio.post('/register',
-          data: {"email": data.name, "password": data.password, "name": "undefined"}, options: options);
+          data: {"email": data.name, "password": data.password, "name": "新用户"}, options: options);
       
       print("status code == ${response.statusCode}");
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -119,11 +119,11 @@ class LoginScreen extends StatelessWidget {
           return null;
         }else{
           print("status != 200");
-          return 'Failed to register';
+          return '注册失败';
         }
       } else if (response.statusCode == 401) {
         // throw Exception("Incorrect Email/Password");
-        return 'Failed to register 401';
+        return '注册失败，请检查网络';
       } else
         // throw Exception('Authentication Error');
         return 'Authentication Error';
@@ -172,14 +172,11 @@ class LoginScreen extends StatelessWidget {
       title: 'Fossil Finder',
       logo: 'images/icons/fossil_icon_512.png',
       onLogin: _login,
-      // onLogin: _authUser, //test
       onSignup: _register,
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          // builder: (context) => HomePage(),
           builder: (context) => IndexPage(),
         ));
-        print("submit and need to navigate to other page");
       },
       onRecoverPassword: _recoverPassword,
     );

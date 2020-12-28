@@ -35,6 +35,10 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
   // File _image;
   Image _image;
   List<String> _imgsPath = [];
+  Map<String, String> _uploadedPath = new Map();
+  Map<String, bool> _uploadedStatus = new Map();
+  Map<String, bool> _uploadingStatus = new Map();
+
   CategoryNode category;
   int _category = -1;
   bool _private = true;
@@ -47,9 +51,30 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
   TextEditingController _contentTextController = new TextEditingController();
   TextEditingController _categoryTextController = new TextEditingController();
 
+  Future uploadImages() async{
+    for(int i =0; i < _imgsPath.length; i++){
+      if(_imgsPath[i].startsWith('http')) continue;
+      print('upload ${_imgsPath[i]}');
+      if(_uploadedStatus[_imgsPath[i]]) continue;
+      // _doUploadImage(_imgsPath[i], '');
+      print('try to upload ${_imgsPath[i]}');
+      File f = File(_imgsPath[i]);
+      _doUploadImage(f, '');
+    }
+  }
+
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if(image == null) return;
+    setState(() {
+      _imgsPath.add(image.path);
+      _uploadedStatus[image.path] = false;
+      _uploadingStatus[image.path] = false;
+      print('images files size: ${_imgsPath.length}  ${image.path}');
+    });
+    print('get image ${image.uri} ');
     // _doUploadImage(image, "");//上传图片
+
   }
 
   @override
@@ -61,6 +86,15 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
     
     _imgsPath = widget.post.images.map((e) => e.url).toList(); //TBD
     print('get image path: ${_imgsPath[0]}');
+    for(int i =0; i < _imgsPath.length; i++){
+      if(_imgsPath[i].startsWith('http')){
+        _uploadedStatus[_imgsPath[i]] = true;
+        _uploadingStatus[_imgsPath[i]] = false;
+      }else{   
+        _uploadedStatus[_imgsPath[i]] = false;
+        _uploadingStatus[_imgsPath[i]] = false;
+      }
+    }
 
     _latTextController.text = widget.post.coordinateLatitude.toStringAsFixed(6);
     _lngTextController.text = widget.post.coordinateLongitude.toStringAsFixed(6);
@@ -70,7 +104,6 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
     _contentTextController.text = widget.post.content;
     _categoryTextController.text = widget.post.categoryId.toString();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -121,13 +154,40 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                       itemBuilder: (BuildContext context, int index){
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          // child: Image.network(_imgsPath[index],),
-                          child: CachedNetworkImage(
-                            // height: 150,
-                            // width: 150,
-                            imageUrl: _imgsPath[index],
-                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              Visibility(
+                                child: LimitedBox(
+                                  maxHeight: 150,
+                                  maxWidth: 150,
+                                  child: _imgsPath[index].startsWith('http')? 
+                                    Image.network('${_imgsPath[index]}')
+                                    : Image.file(File(_imgsPath[index])),
+                                ),),
+                              Visibility(
+                                visible: editmode,
+                                child: Positioned(
+                                  right: 0,
+                                  top: 10.0,
+                                  child: IconButton(
+                                    icon: new Image.asset('images/icons/icons8-delete.png'),
+                                    onPressed: (){
+                                      print('image remove icon clicked');
+                                      setState(() {
+                                        _uploadedStatus.remove(_imgsPath[index]);
+                                        _uploadingStatus.remove(_imgsPath[index]);
+                                        _imgsPath.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: _uploadingStatus[_imgsPath[index]] || _uploadedStatus[_imgsPath[index]],
+                                child: _uploadedStatus[_imgsPath[index]] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
+                              )
+                            ],
                           ),
                         );
                       },
@@ -136,12 +196,25 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                    
                     ),
                 ),
-                RaisedButton(
-                  child: Text('选择图片上传'),
-                  onPressed: (){
-                    if(editmode)
-                      getImage();
-                  },
+                Visibility(
+                  visible: editmode,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text('选择图片'),
+                        onPressed: (){
+                          if(editmode)
+                            getImage();
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text('上传'),
+                        onPressed: (){
+                          uploadImages();
+                        },
+                      ),
+                  ],),
                 ),
 
                 Row(
@@ -236,12 +309,12 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.altitude.toString(),
                       controller: _altTextController,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '海拔没有填写';
-                          }
-                          return null;
-                        },
+                      // validator: (value){
+                      //     if(value.isEmpty){
+                      //       return '海拔没有填写';
+                      //     }
+                      //     return null;
+                      //   },
                       ),)
                   ],
                 ),
@@ -252,12 +325,12 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.address,
                       controller: _addrTextController,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '地址没有填写';
-                          }
-                          return null;
-                        },
+                      // validator: (value){
+                      //     if(value.isEmpty){
+                      //       return '地址没有填写';
+                      //     }
+                      //     return null;
+                      //   },
                       ),)
                   ],
                 ),
@@ -271,12 +344,12 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                         controller: _categoryTextController,
                         readOnly: true,
                         // initialValue: widget.post.category_id.toString(), //TBD
-                        validator: (value){
-                          if(value.isEmpty || value.contains('null')){
-                            return '请选择一个分类';
-                          }
-                          return null;
-                        },
+                        // validator: (value){
+                        //   if(value.isEmpty || value.contains('null')){
+                        //     return '请选择一个分类';
+                        //   }
+                        //   return null;
+                        // },
                         onSaved: (value){
                           //
                         },
@@ -374,6 +447,13 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
 
   //
   _savePost() async{
+    for(int i =0; i < _imgsPath.length; i++){
+      String path = _imgsPath[i];
+      if(path.startsWith('http')) continue;
+      if(_uploadedStatus[_imgsPath[i]]){
+        _imgsPath[i] = _uploadedPath[_imgsPath[i]];
+      }
+    }
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
     Post _post = new Post.fromMapObject({
@@ -418,6 +498,13 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
   }
 
   _submitPost(BuildContext context) async{
+    for(int i =0; i < _imgsPath.length; i++){
+      String path = _imgsPath[i];
+      if(path.startsWith('http')) continue;
+      if(_uploadedStatus[_imgsPath[i]]){
+        _imgsPath[i] = _uploadedPath[_imgsPath[i]];
+      }
+    }
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
 
@@ -540,7 +627,9 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
         print('upload success ....');
         setState(() {
           // _image = Image.network(uploadedItem.path, height: 200,); //OK
-          _imgsPath.add(uploadedItem.path);
+          // _imgsPath.add(uploadedItem.path);
+          _uploadedStatus[file.path] = true;
+          _uploadedPath[file.path] = uploadedItem.path;
         });
         // _view.uploadSuccess(uploadedItem.path);
       } else {

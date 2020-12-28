@@ -1,11 +1,16 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_treeview/tree_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/pages/form/category_new.dart';
+import 'package:fossils_finder/pages/form/category_update.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategorySelector extends StatefulWidget {
   final String treeJson;
@@ -27,6 +32,92 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
   ExpanderModifier _expanderModifier = ExpanderModifier.none;
 
   bool editmode = false;
+
+  Future<bool> editable(int id) async{
+    bool editable = false;
+    var _content = await request(servicePath['categories'] + '/$id/editable');
+    print('get request content: ${_content}');
+    var _jsonData = jsonDecode(_content.toString());
+    int code = _jsonData['code'];
+    if(code == 200)
+      editable = true;
+    return editable;
+  }
+
+  Future<bool> deleteable(int id) async{
+    bool deleteable = false;
+    var _content = await request(servicePath['categories'] + '/$id/deleteable');
+    print('get request content: ${_content}');
+    var _jsonData = jsonDecode(_content.toString());
+    int code = _jsonData['code'];
+    if(code == 200)
+      deleteable = true;
+
+    return deleteable;
+  }
+
+  Future<bool> deleteCategory(int id) async{
+    SharedPreferences localStorage;
+    localStorage = await SharedPreferences.getInstance();
+    String _token = localStorage.get('token');
+
+    BaseOptions baseOptions = BaseOptions(
+      baseUrl: apiUrl,
+      responseType: ResponseType.json,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      validateStatus: (code) {
+        if (code >= 200) {
+          return true;
+        }
+        return false;
+      },
+      headers: {
+        HttpHeaders.authorizationHeader : 'Bearer $_token'
+      }
+    );
+
+    Dio dio = new Dio(baseOptions);
+    Options options = Options(
+        contentType: 'application/json',
+        followRedirects: false,
+        validateStatus: (status) { return status < 500; },
+        headers: {
+          HttpHeaders.authorizationHeader : 'Bearer $_token'
+        }
+    );
+
+    print(apiUrl + servicePath['categories'] + '/$id');
+
+    var respone = await dio.delete<String>(apiUrl + servicePath['categories'] + '/$id', options: options);
+    
+    print(respone);
+    if (respone.statusCode == 200) {
+      var responseJson = json.decode(respone.data);
+      print('response: ${respone.data} - ${responseJson['message']}');
+
+      var status = responseJson['code'] as int;
+      if(status == 200){
+        Fluttertoast.showToast(
+            msg: "提交成功",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.grey);
+        return true;
+      }else{
+        Fluttertoast.showToast(
+            msg: "提交失败！",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.red);
+        return false;
+      }
+    }else{
+      Fluttertoast.showToast(
+        msg: "网络连接失败，检查网络",
+        gravity: ToastGravity.CENTER,
+        textColor: Colors.red);
+      return false;
+    }
+  }
 
   Future loadCategoriesFromServer() async{
     var _content = await request(servicePath['categorieswithoutposts']);
@@ -89,11 +180,6 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
             ),
     );
 
-    // _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
-    // _treeViewController.withExpandToNode('c_3');
-    // _treeViewController = _treeViewController.copyWith(selectedKey: 'c_3');
-    // _treeViewController.withDeleteNode(key)
-    
     return Scaffold(
       appBar: AppBar(
         title: Text("类别选择"),
@@ -141,9 +227,17 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                   
                   debugPrint('Selected: $key - $label');
 
+                  String _type = key.split('_')[0];
+                  int _cateId = -1;
+                  if(_type.isNotEmpty || _type == "c"){
+                    _cateId = int.parse(key.split('_')[1]);
+                    print('got category id ${_cateId}');
+                  }
+
                   cNode = CategoryNode.fromJson({
                     "key" : "$key",
-                    "title" : label
+                    "title" : label,
+                    'id' : _cateId
                   });
                   setState(() {
                     _treeViewController =
@@ -187,14 +281,7 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
               ),
             ),
           ),
-
-          // RaisedButton(
-          //   child: Text("确认"),
-          //   onPressed: (){
-          //     Navigator.pop(context, cNode);
-          //   },
-          // ),
-          Text('Current Selected: '),
+          // Text('Current Selected: '),
           Visibility(
             visible: editmode,
             child: Row(
@@ -214,51 +301,75 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                     ret.then((value){
                       print('return from navi : ${value}');
                       if(value == true){
-                        // loadPostFromServer();
+                        loadCategoriesFromServer();
                       }
                     });
                   }),
                   RaisedButton(
                   child: Text('修改'),
-                  onPressed: editmode ? (){
+                  onPressed: editmode ? () async {
                     debugPrint('modify clicked');
+                    bool _e = await editable(cNode.id);
+                    print('get editable result $_e');
+                    if(_e){
+                      var ret = Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (BuildContext context) {
+                          return CategoryUpdatePage(categoryNode: cNode,);
+                        }) 
+                      );
 
+                      ret.then((value){
+                        print('return from navi : ${value}');
+                        if(value == true){
+                          loadCategoriesFromServer();
+                        }
+                      });
+                      // setState(() {
+                        // debugPrint('modify clicked create');
+                        // var ll = _treeViewController.getNode('c_3').children;
+                        // Node newNode = new Node(key: 'c_100', label: '测试节点及其子节点',children: ll, expanded: true);
+                        
+                        // _treeViewController = _treeViewController.withUpdateNode('c_3', newNode); //OK
+                        // _treeViewController = _treeViewController.withCollapseToNode('c_100'); //OK
+
+                        // _treeViewController = _treeViewController.withAddNode('c_10', newNode); //OK
+                        // _treeViewController = _treeViewController.withCollapseToNode('c_100'); //OK
+                        // _treeViewController = _treeViewController.withExpandToNode('c_100'); //OK
+
+                        // print("${_treeViewController.getNode('c_100').children}");
+                        // print("${_treeViewController.getNode('c_100').isParent}");
+                        // print("${_treeViewController.getNode('c_3')}");
+                      // });
+                    }else{
+                      Fluttertoast.showToast(
+                        msg: "无法编辑该类别",
+                        gravity: ToastGravity.CENTER,
+                        textColor: Colors.red);
+                    }
                     
-
-                    setState(() {
-                      debugPrint('modify clicked create');
-
-                      // Node newNode = new Node(key: 'c_100', label: '测试节点', );
-                      // _treeViewController = _treeViewController.withUpdateNode('c_3', newNode);
-
-
-                      // Node newNode = new Node(key: 'c_100', label: '测试节点', );
-                    
-
-                    var ll = _treeViewController.getNode('c_3').children;
-                    Node newNode = new Node(key: 'c_100', label: '测试节点及其子节点',children: ll, expanded: true);
-                    // newNode.copyWith(key: 'c_100', label: '测试节点及其子节点',children: ll, expanded: true);
-                    // _treeViewController = _treeViewController.withUpdateNode('c_3', newNode); //OK
-                    // _treeViewController = _treeViewController.withCollapseToNode('c_100'); //OK
-                    _treeViewController = _treeViewController.withAddNode('c_10', newNode); //OK
-                    _treeViewController = _treeViewController.withCollapseToNode('c_100'); //OK
-                    _treeViewController = _treeViewController.withExpandToNode('c_100'); //OK
-
-                    print("${_treeViewController.getNode('c_100').children}");
-                    print("${_treeViewController.getNode('c_100').isParent}");
-                    print("${_treeViewController.getNode('c_3')}");
-                      
-                      // List<Node<dynamic>> d = _treeViewController.addNode('c_3', newNode);
-                      // _treeViewController.loadMap(d);
-                      // _treeViewController.withUpdateNode('c_3', newNode);
-                      // _treeViewController = _treeViewController.withCollapseToNode('c_3');
-                    });
                   } : null,
                   ),
                   RaisedButton(
                   child: Text('删除'),
-                  onPressed: editmode ? (){
-                    debugPrint('delete clicked');
+                  onPressed: editmode ? () async {
+                    debugPrint('delete clicked ${cNode}');
+
+                    bool _e = await deleteable(cNode.id);
+                    print('get deleteable result $_e');
+                    if(_e){
+                      bool ret = await deleteCategory(cNode.id);
+                      if(ret)
+                        loadCategoriesFromServer();
+                    }else{
+                      Fluttertoast.showToast(
+                        msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别",
+                        gravity: ToastGravity.CENTER,
+                        textColor: Colors.red);
+                    }
+                    // if(_treeViewController.getNode(cNode.key).isParent){
+                    //   print('current selected is ${cNode.key}-${cNode.label} is parent, can not be deleted');
+                    // }
                   } : null,),
               ],
             ),

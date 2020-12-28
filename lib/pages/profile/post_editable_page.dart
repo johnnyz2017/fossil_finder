@@ -33,6 +33,11 @@ class _PostEditblePageState extends State<PostEditblePage> {
   // File _image;
   Image _image;
   List<String> _imgsPath = [];
+  List<File> _imgsFile = [];
+  List<bool> _imgsUploaded = [];
+  Map<String, String> _uploadedPath = new Map();
+  Map<String, bool> _uploadedStatus = new Map();
+  Map<String, bool> _uploadingStatus = new Map();
   CategoryNode category;
   int _category = -1;
   bool _private = true;
@@ -47,18 +52,51 @@ class _PostEditblePageState extends State<PostEditblePage> {
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    if(image == null) return;
+    setState(() {
+      _imgsPath.add(image.path);
+      _imgsFile.add(image);
+      _imgsUploaded.add(false);
+      _uploadedStatus[image.path] = false;
+      _uploadingStatus[image.path] = false;
+      print('images files size: ${_imgsFile.length}  ${image.path}');
+    });
+    print('get image ${image.uri} ');
     // _doUploadImage(image, "");//上传图片
+  }
+
+  Future uploadImages() async{
+    for(int i =0; i < _imgsPath.length; i++){
+      if(_imgsPath[i].startsWith('http')){
+        setState(() {
+          _uploadingStatus[_imgsPath[i]] = true;
+        });
+        continue;
+      } 
+      print('upload ${_imgsPath[i]}');
+      if(_uploadedStatus[_imgsPath[i]]) continue;
+      // _doUploadImage(_imgsPath[i], '');
+      print('try to upload ${_imgsPath[i]}');
+      setState(() {
+          _uploadingStatus[_imgsPath[i]] = true;
+      });
+      File f = File(_imgsPath[i]);
+      _doUploadImage(f, '');
+    }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _private = widget.post.private;
     _category = widget.post.categoryId;
     
     _imgsPath = widget.post.images.map((e) => e.url).toList(); //TBD
     print('get image path: ${_imgsPath[0]}');
+    for(int i =0; i < _imgsPath.length; i++){
+      _uploadedStatus[_imgsPath[i]] = true;
+      _uploadingStatus[_imgsPath[i]] = false;
+    }
 
     _latTextController.text = widget.post.coordinateLatitude.toStringAsFixed(6);
     _lngTextController.text = widget.post.coordinateLongitude.toStringAsFixed(6);
@@ -90,6 +128,20 @@ class _PostEditblePageState extends State<PostEditblePage> {
             onPressed: (){
               if(!editmode) return;
 
+              int len = _imgsPath.length;
+              if(len < 1) {
+                print('no pictures selected');
+                AlertDialog(title: Text('没有选择图片'),);
+              }
+              for(int i = 0; i < len; i++){
+                String path = _imgsPath[i];
+                if(path.startsWith('http')) continue;
+                if(!_uploadedStatus[path]){
+                  print('still have some not been uploaded');
+                  return;
+                }
+              }
+
               if (_formKey.currentState.validate()) {
                 // If the form is valid, display a snackbar. In the real world,
                 // you'd often call a server or save the information in a database.
@@ -120,31 +172,86 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       itemBuilder: (BuildContext context, int index){
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
-                          // child: Image.network(_imgsPath[index],),
-                          child: CachedNetworkImage(
-                            // height: 150,
-                            // width: 150,
-                            imageUrl: _imgsPath[index],
-                            placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) => Icon(Icons.error),
-                            // progressIndicatorBuilder: (context, url, downloadProgress) => 
-                            // CircularProgressIndicator(value: downloadProgress.progress),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              _imgsPath[index].startsWith('http')? 
+                                Image.network('${_imgsPath[index]}')
+                                : Image.file(File(_imgsPath[index])),
+                              Visibility(
+                                visible: true,
+                                child: Positioned(
+                                  right: 0,
+                                  top: 10.0,
+                                  child: IconButton(
+                                    icon: new Image.asset('images/icons/icons8-delete.png'),
+                                    onPressed: (){
+                                      print('image remove icon clicked');
+                                      setState(() {
+                                        _uploadedStatus.remove(_imgsPath[index]);
+                                        _uploadingStatus.remove(_imgsPath[index]);
+                                        _imgsPath.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: _uploadingStatus[_imgsPath[index]] || _uploadedStatus[_imgsPath[index]],
+                                child: _uploadedStatus[_imgsPath[index]] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
+                              )
+                            ],
                           ),
                         );
                       },
+                      // itemCount: _imgsFile.length,
                       itemCount: _imgsPath.length,
-                    ) : Center(child: Text("未上传图片")),
+                    ) : Center(child: Text("未上传图片")),                   
+                  ),
+                  // child: Expanded(
+                  //   child: _imgsPath.length > 0 ? ListView.builder(
+                  //     scrollDirection: Axis.horizontal,
+                  //     itemBuilder: (BuildContext context, int index){
+                  //       return Padding(
+                  //         padding: const EdgeInsets.all(8.0),
+                  //         // child: Image.network(_imgsPath[index],),
+                  //         child: CachedNetworkImage(
+                  //           // height: 150,
+                  //           // width: 150,
+                  //           imageUrl: _imgsPath[index],
+                  //           placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                  //           errorWidget: (context, url, error) => Icon(Icons.error),
+                  //           // progressIndicatorBuilder: (context, url, downloadProgress) => 
+                  //           // CircularProgressIndicator(value: downloadProgress.progress),
+                  //         ),
+                  //       );
+                  //     },
+                  //     itemCount: _imgsPath.length,
+                  //   ) : Center(child: Text("未上传图片")),
                    
-                    ),
+                  //   ),
                 ),
-                RaisedButton(
-                  child: Text('选择图片上传'),
-                  onPressed: (){
-                    if(editmode)
-                      getImage();
-                  },
+                Visibility(
+                  visible: editmode,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text('选择图片'),
+                        onPressed: (){
+                          if(editmode)
+                            getImage();
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text('上传'),
+                        onPressed: (){
+                          // getImage();
+                          uploadImages();
+                        },
+                      ),
+                  ],),
                 ),
-
                 Row(
                   children: <Widget>[
                     Text('标题: '),
@@ -152,6 +259,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.title,
                       controller: _titleTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '标题没有填写';
@@ -159,7 +267,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
 
                           return null;
                         },
-                      ))
+                      )),
                   ],
                 ),
 
@@ -173,14 +281,14 @@ class _PostEditblePageState extends State<PostEditblePage> {
                         keyboardType: TextInputType.multiline,
                         maxLines: 3,
                         controller: _contentTextController,
+                        autovalidate: true,
                         validator: (value){
                           if(value.isEmpty){
                             return '描述内容没有填写';
                           }
-
                           return null;
                         },
-                        ),
+                      ),
                     )
                   ],
                 ),
@@ -198,6 +306,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.longitude.toString(),
                       controller: _lngTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '经度没有填写';
@@ -213,6 +322,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.latitude.toString(),
                       controller: _latTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '纬度没有填写';
@@ -238,12 +348,12 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.altitude.toString(),
                       controller: _altTextController,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '海拔没有填写';
-                          }
-                          return null;
-                        },
+                      // validator: (value){
+                      //     if(value.isEmpty){
+                      //       return '海拔没有填写';
+                      //     }
+                      //     return null;
+                      //   },
                       ),)
                   ],
                 ),
@@ -254,6 +364,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.address,
                       controller: _addrTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '地址没有填写';
@@ -273,12 +384,12 @@ class _PostEditblePageState extends State<PostEditblePage> {
                         controller: _categoryTextController,
                         readOnly: true,
                         // initialValue: widget.post.category_id.toString(), //TBD
-                        validator: (value){
-                          if(value.isEmpty){
-                            return '请选择一个分类';
-                          }
-                          return null;
-                        },
+                        // validator: (value){
+                        //   if(value.isEmpty){
+                        //     return '请选择一个分类';
+                        //   }
+                        //   return null;
+                        // },
                         onSaved: (value){
                           //
                         },
@@ -357,12 +468,12 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       readOnly: !editmode,
                       initialValue: widget.post.createdAt.toString(),
                       // controller: _altTextController,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '提交时间为空';
-                          }
-                          return null;
-                        },
+                      // validator: (value){
+                      //     if(value.isEmpty){
+                      //       return '提交时间为空';
+                      //     }
+                      //     return null;
+                      //   },
                       ),)
                   ],
                 ),
@@ -377,6 +488,13 @@ class _PostEditblePageState extends State<PostEditblePage> {
   //
 
   _submitPost(BuildContext context) async{
+    for(int i =0; i < _imgsPath.length; i++){
+      String path = _imgsPath[i];
+      if(path.startsWith('http')) continue;
+      if(_uploadedStatus[_imgsPath[i]]){
+        _imgsPath[i] = _uploadedPath[_imgsPath[i]];
+      }
+    }
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
 

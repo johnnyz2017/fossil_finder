@@ -20,9 +20,10 @@ class CategoryNode{
   final String label;
   final String key;
   final int type;
+  final int id;
 
   final List<CategoryNode> children;
-  CategoryNode(this.label, this.key, this.type, this.children);
+  CategoryNode(this.label, this.key, this.type, this.children, this.id);
 
   // CategoryNode(this.label, this.key, this.type);
 
@@ -30,6 +31,7 @@ class CategoryNode{
   : label = json['title'] ?? 'label',
     key = json['key'] ?? 'key',
     type = json['type'] ?? 0 ,
+    id = json['id'] ?? -1,
     children = json['children'] != null ? new List<CategoryNode>.from(json["children"].map((x) => CategoryNode.fromJson(x)).toList()) : []
   ;
 }

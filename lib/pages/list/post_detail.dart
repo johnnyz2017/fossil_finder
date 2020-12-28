@@ -20,7 +20,6 @@ class PostDetailPage extends StatefulWidget {
 }
 
 class _PostDetailPageState extends State<PostDetailPage> {
-  // Future<Post> post;
   Post post;
 
   Future loadPostFromServer() async{

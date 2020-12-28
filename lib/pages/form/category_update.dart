@@ -1,20 +1,27 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:io';
+import 'dart:io';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CategoryNewPage extends StatefulWidget {
+class CategoryUpdatePage extends StatefulWidget {
+  final CategoryNode categoryNode;
+
+  const CategoryUpdatePage({Key key, this.categoryNode}) : super(key: key);
   @override
-  _CategoryNewPageState createState() => _CategoryNewPageState();
+  _CategoryUpdatePageState createState() => _CategoryUpdatePageState();
 }
 
-class _CategoryNewPageState extends State<CategoryNewPage> {
+class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
   final _formKey = GlobalKey<FormState>();
 
   int _categoryId;
@@ -23,7 +30,37 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
   TextEditingController _titleTextController = new TextEditingController();
   TextEditingController _contentTextController = new TextEditingController();
 
-  CategoryNode category;
+  CategoryNode parentCategory;
+
+  CategoryItem categoryItem;
+
+  Future loadPostFromServer() async{
+    var _content = await request('${serviceUrl}/api/v1/categories/${widget.categoryNode.id}');
+    var _jsonData = jsonDecode(_content.toString());
+    print('get json data is  ${_jsonData}');
+    var _categoryJson = _jsonData['data'];
+    CategoryItem _category = CategoryItem.fromJson(_categoryJson);
+
+    var _pContent = await request('${serviceUrl}/api/v1/categories/${_category.parentId}');
+    var _pJsonData = jsonDecode(_pContent.toString());
+    print('get json data is  ${_pJsonData}');
+    var _pCategoryJson = _pJsonData['data'];
+    CategoryItem _pCategory = CategoryItem.fromJson(_pCategoryJson);
+
+    setState(() {
+      categoryItem = _category;
+      _titleTextController.text = categoryItem.title;
+      _contentTextController.text = categoryItem.description;
+      _categoryTextController.text = _pCategory.title;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadPostFromServer();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -74,18 +111,18 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
                       ),
                       readOnly: true,
                       onTap: ()async{
-                        category = await Navigator.push(
+                        parentCategory = await Navigator.push(
                           context,
                           MaterialPageRoute(builder: (BuildContext context) {
                             return CategorySelector(treeJson: "", editable: false,);
                           }) 
                         );
 
-                        if(category != null){
-                          print('result: ${category.key} - ${category.label}');
-                          _categoryTextController.text = category.label;
+                        if(parentCategory != null){
+                          print('result: ${parentCategory.key} - ${parentCategory.label}');
+                          _categoryTextController.text = parentCategory.label;
                           
-                          String _key = category.key;
+                          String _key = parentCategory.key;
                           String _type = _key.split('_')[0];
                           if(_type.isNotEmpty || _type == "c"){
                             _categoryId = int.parse(_key.split('_')[1]);
@@ -124,7 +161,8 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
     FormData formData = new FormData.fromMap({
       "title" : _titleTextController.text ?? "",
       "content" : _contentTextController.text ?? "",
-      'parent_id' : _categoryId
+      'parent_id' : _categoryId,
+      'id' : categoryItem.id
     });
 
     SharedPreferences localStorage;
@@ -157,8 +195,7 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
         }
     );
 
-    print('comments: ${servicePath['comments']}');
-    var respone = await dio.post<String>(servicePath['categories'], data: formData, options: options);
+    var respone = await dio.post<String>(servicePath['categories'] + '/${categoryItem.id}', data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
 

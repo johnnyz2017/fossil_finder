@@ -150,6 +150,8 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
       "description" : _descriptionTextController.text,
     });
 
+    print('submit profile description ${_descriptionTextController.text}');
+
     SharedPreferences localStorage;
     localStorage = await SharedPreferences.getInstance();
     String _token = localStorage.get('token');

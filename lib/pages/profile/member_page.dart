@@ -80,9 +80,16 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
             leading: Icon(Icons.settings),
               title: Text("个人设置"),
               onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(
+                var ret = Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => MemberProfileUpdatePage(user: user,),
                 ));
+
+                ret.then((value){
+                  print('return from navi : ${value}');
+                  if(value == true){
+                    loadUserFromServer();
+                  }
+                });
               },
           ),
           ListTile(

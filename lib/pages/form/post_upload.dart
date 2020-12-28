@@ -35,13 +35,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
   DatabaseHelper dbhelper = DatabaseHelper();
   final _formKey = GlobalKey<FormState>();
-  // File _image;
   Image _image;
   List<String> _imgsPath = [];
   List<File> _imgsFile = [];
   List<bool> _imgsUploaded = [];
   Map<String, String> _uploadedPath = new Map();
   Map<String, bool> _uploadedStatus = new Map();
+  Map<String, bool> _uploadingStatus = new Map();
   CategoryNode category;
   int _category = -1;
   bool _private = true;
@@ -62,6 +62,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
       _imgsFile.add(image);
       _imgsUploaded.add(false);
       _uploadedStatus[image.path] = false;
+      _uploadingStatus[image.path] = false;
       print('images files size: ${_imgsFile.length}  ${image.path}');
     });
     print('get image ${image.uri} ');
@@ -70,11 +71,19 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
   Future uploadImages() async{
     for(int i =0; i < _imgsPath.length; i++){
-      if(_imgsPath[i].startsWith('http')) continue;
+      if(_imgsPath[i].startsWith('http')){
+        // setState(() {
+        //   _uploadingStatus[_imgsPath[i]] = true;
+        // });
+        continue;
+      } 
       print('upload ${_imgsPath[i]}');
       if(_uploadedStatus[_imgsPath[i]]) continue;
       // _doUploadImage(_imgsPath[i], '');
       print('try to upload ${_imgsPath[i]}');
+      setState(() {
+          _uploadingStatus[_imgsPath[i]] = true;
+      });
       File f = File(_imgsPath[i]);
       _doUploadImage(f, '');
     }
@@ -95,13 +104,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
     // File f = File.fromUri(Uri(path: 'http://images.tornadory.com/1602602430178.jpg'));
     // File f = File('http://images.tornadory.com/1602602430178.jpg');
     // Image g = Image.network('http://images.tornadory.com/1602602430178.jpg');
-    setState(() {
+    // setState(() {
       // _imgsFile.add(f);
       // _imgsPath.add('http://images.tornadory.com/1602602430178.jpg');
       // _imgsUploaded.add(true);
       // _uploadedStatus['http://images.tornadory.com/1602602430178.jpg'] = true;
       // print('images files size: ${_imgsFile.length} ');
-    });
+    // });
   }
 
   @override
@@ -121,18 +130,18 @@ class _PostUploadPageState extends State<PostUploadPage> {
             icon: Icon(Icons.done),
             onPressed: (){
               int len = _imgsPath.length;
-                if(len < 1) {
-                  print('no pictures selected');
-                  AlertDialog(title: Text('没有选择图片'),);
+              if(len < 1) {
+                print('no pictures selected');
+                AlertDialog(title: Text('没有选择图片'),);
+              }
+              for(int i = 0; i < len; i++){
+                String path = _imgsPath[i];
+                if(path.startsWith('http')) continue;
+                if(!_uploadedStatus[path]){
+                  print('still have some not been uploaded');
+                  return;
                 }
-                for(int i = 0; i < len; i++){
-                  String path = _imgsPath[i];
-                  if(path.startsWith('http')) continue;
-                  if(!_uploadedStatus[path]){
-                    print('still have some not been uploaded');
-                    return;
-                  }
-                }
+              }
 
               if (_formKey.currentState.validate()) {
                 
@@ -212,15 +221,15 @@ class _PostUploadPageState extends State<PostUploadPage> {
                                       print('image remove icon clicked');
                                       setState(() {
                                         _uploadedStatus.remove(_imgsPath[index]);
+                                        _uploadingStatus.remove(_imgsPath[index]);
                                         _imgsPath.removeAt(index);
-                                        
                                       });
                                     },
                                   ),
                                 ),
                               ),
                               Visibility(
-                                visible: true,
+                                visible: _uploadingStatus[_imgsPath[index]] || _uploadedStatus[_imgsPath[index]],
                                 child: _uploadedStatus[_imgsPath[index]] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
                               )
                             ],
@@ -232,25 +241,28 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     ) : Center(child: Text("未上传图片")),                   
                     ),
                 ),
-                RaisedButton(
-                  child: Text('选择图片'),
-                  onPressed: (){
-                    getImage();
-                  },
-                ),
-                RaisedButton(
-                  child: Text('上传'),
-                  onPressed: (){
-                    // getImage();
-                    uploadImages();
-                  },
-                ),
-
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    RaisedButton(
+                      child: Text('选择图片'),
+                      onPressed: (){
+                          getImage();
+                      },
+                    ),
+                    RaisedButton(
+                      child: Text('上传'),
+                      onPressed: (){
+                        uploadImages();
+                      },
+                    ),
+                  ],),
                 Row(
                   children: <Widget>[
                     Text('标题: '),
                     Expanded(child: TextFormField(
                       controller: _titleTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '标题没有填写';
@@ -270,6 +282,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                         keyboardType: TextInputType.multiline,
                         maxLines: 3,
                         controller: _contentTextController,
+                        autovalidate: true,
                         validator: (value){
                           if(value.isEmpty){
                             return '描述内容没有填写';
@@ -293,6 +306,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                         WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
                       ],
                       controller: _lngTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '经度没有填写';
@@ -306,6 +320,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                         WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
                       ],
                       controller: _latTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '纬度没有填写';
@@ -335,12 +350,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       ],
                       //WhitelistingTextInputFormatter(RegExp("[a-z,A-Z,0-9]"))
                       controller: _altTextController,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '海拔没有填写';
-                          }
-                          return null;
-                        },
+                      autovalidate: true,
+                      // validator: (value){
+                      //     if(value.isEmpty){
+                      //       return '海拔没有填写';
+                      //     }
+                      //     return null;
+                      //   },
                       ),)
                   ],
                 ),
@@ -349,6 +365,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     Text('地址: '),
                     Expanded(child: TextFormField(
                       controller: _addrTextController,
+                      autovalidate: true,
                       validator: (value){
                         if(value.isEmpty){
                           return '地址没有填写';
@@ -421,6 +438,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
   }
 
   _savePost() async{
+    for(int i =0; i < _imgsPath.length; i++){
+      String path = _imgsPath[i];
+      if(path.startsWith('http')) continue;
+      if(_uploadedStatus[_imgsPath[i]]){
+        _imgsPath[i] = _uploadedPath[_imgsPath[i]];
+      }
+    }
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
 
@@ -465,7 +489,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
   }
 
   _submitPost(BuildContext context) async{
-    
+    for(int i =0; i < _imgsPath.length; i++){
+      String path = _imgsPath[i];
+      if(path.startsWith('http')) continue;
+      if(_uploadedStatus[_imgsPath[i]]){
+        _imgsPath[i] = _uploadedPath[_imgsPath[i]];
+      }
+    }
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
 
@@ -581,8 +611,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
     }
   }
 
-  _uploadImages() async {}
-
   /// 根据配置上传图片
   _doUploadImage(File file, String renameImage) async {
     // 读取配置
@@ -600,7 +628,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
           // _imgsPath.add(uploadedItem.path);
 
           _uploadedStatus[file.path] = true;
-          // _uploadedPath[file.path] = uploadedItem.path;
+          _uploadedPath[file.path] = uploadedItem.path;
         });
         // _view.uploadSuccess(uploadedItem.path);
       } else {
