@@ -141,6 +141,12 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                 if(path.startsWith('http')) continue;
                 if(!_uploadedStatus[path]){
                   print('still have some not been uploaded');
+                  
+                  Fluttertoast.showToast(
+                    msg: "还有图片未上传！",
+                    gravity: ToastGravity.CENTER,
+                    textColor: Colors.red);
+                  AlertDialog(title: Text('还有图片未上传'),);
                   return;
                 }
               }
@@ -323,12 +329,12 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.altitude.toString(),
                       controller: _altTextController,
-                      // validator: (value){
-                      //     if(value.isEmpty){
-                      //       return '海拔没有填写';
-                      //     }
-                      //     return null;
-                      //   },
+                      validator: (value){
+                          if(value.isEmpty){
+                            return '海拔没有填写';
+                          }
+                          return null;
+                        },
                       ),)
                   ],
                 ),
@@ -481,7 +487,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
       "content" : _contentTextController.text,
       "private" : _private ? 1 : 0,
       "published" : 0,
-      "category_id" : null,
+      "category_id" : _category == -1 ? null : _category,
       "final_category_id" : null,
       "final_category_id_from" : null,
       "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
@@ -530,7 +536,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
       "coordinate_longitude" : double.parse(_lngTextController.text),
       "coordinate_altitude" : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
-      'category_id' : _category,
+      'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0
     });
 

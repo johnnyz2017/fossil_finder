@@ -70,6 +70,8 @@ dependencies:
   
   cached_network_image:
 
+  geolocation:
+
 
 dev_dependencies:
   flutter_test:

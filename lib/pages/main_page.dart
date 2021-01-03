@@ -8,7 +8,10 @@ class MainPage extends StatelessWidget{
     return MaterialApp(
       title: 'Fossil Finder',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.indigo, accentColor: Colors.blue),
+      // theme: ThemeData(
+      //   primarySwatch: Colors.indigo, 
+      //   accentColor: Colors.blue
+      // ),
       home: LoginScreen(),
     );
   }

@@ -25,9 +25,14 @@ class _CategoryPageState extends State<CategoryPage> with AutomaticKeepAliveClie
       initialIndex: 0,
       child: Scaffold(
         appBar: new PreferredSize(
-            preferredSize: Size.fromHeight(kToolbarHeight),
+            preferredSize: Size.fromHeight(kToolbarHeight - 30), //TBD
             child: new Container(
-              color: Colors.blueAccent,
+              decoration: BoxDecoration(
+                // color: Color.fromARGB(1, 64, 84, 175),
+                color: Colors.blue
+                // gradient: 
+              ),
+              // color: Color.fromARGB(1, 64, 84, 175),
               child: new SafeArea(
                 child: Column(
                   children: <Widget>[

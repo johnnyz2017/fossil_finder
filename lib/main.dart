@@ -79,7 +79,11 @@ class _FossilAppState extends State<FossilApp> {
     return MaterialApp(
       title: "Fossil Finder",
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.indigo, accentColor: Colors.blue),
+      // theme: ThemeData(primarySwatch: Colors.indigo, accentColor: Colors.blue),
+      theme: ThemeData(
+        // primarySwatch: Colors.indigo, 
+        accentColor: Colors.blue
+      ),
       home: isLoggedIn ? IndexPage() : LoginScreen(),
       // home: IndexPage(),
     );

@@ -132,19 +132,25 @@ class _PostUploadPageState extends State<PostUploadPage> {
               int len = _imgsPath.length;
               if(len < 1) {
                 print('no pictures selected');
-                AlertDialog(title: Text('没有选择图片'),);
+                Fluttertoast.showToast(
+                  msg: "没有选择图片！",
+                  gravity: ToastGravity.CENTER,
+                  textColor: Colors.red);
               }
               for(int i = 0; i < len; i++){
                 String path = _imgsPath[i];
                 if(path.startsWith('http')) continue;
                 if(!_uploadedStatus[path]){
                   print('still have some not been uploaded');
+                  Fluttertoast.showToast(
+                    msg: "还有图片未上传！",
+                    gravity: ToastGravity.CENTER,
+                    textColor: Colors.red);
                   return;
                 }
               }
 
               if (_formKey.currentState.validate()) {
-                
                 _submitPost(context);
               }
             },
@@ -350,13 +356,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       ],
                       //WhitelistingTextInputFormatter(RegExp("[a-z,A-Z,0-9]"))
                       controller: _altTextController,
-                      // autovalidate: true,
-                      // validator: (value){
-                      //     if(value.isEmpty){
-                      //       return '海拔没有填写';
-                      //     }
-                      //     return null;
-                      //   },
+                      autovalidate: true,
+                      validator: (value){
+                          if(value.isEmpty){
+                            return '海拔没有填写';
+                          }
+                          return null;
+                        },
                       ),)
                   ],
                 ),
@@ -459,7 +465,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "content" : _contentTextController.text,
       "private" : _private ? 1 : 0,
       "published" : 0,
-      "category_id" : null,
+      "category_id" : _category == -1 ? null : _category,
       "final_category_id" : null,
       "final_category_id_from" : null,
       "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
@@ -504,11 +510,11 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "images" : _images,
       "title" : _titleTextController.text,
       "content" : _contentTextController.text,
-      "coordinate_latitude" : double.parse(_latTextController.text),
-      "coordinate_longitude" : double.parse(_lngTextController.text),
-      "coordinate_altitude" : double.parse(_altTextController.text),
+      "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
+      "coordinate_longitude" : _lngTextController.text == null ? double.parse(_lngTextController.text) : null,
+      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
       "address" : _addrTextController.text,
-      'category_id' : _category,
+      'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0
     });
 

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:geolocation/geolocation.dart';
 
 // import 'package:barcode_scan/barcode_scan.dart';
 // import 'package:qrscan/qrscan.dart' as scanner;
