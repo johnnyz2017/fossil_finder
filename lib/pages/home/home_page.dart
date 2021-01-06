@@ -534,8 +534,31 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+Future<List<Post>> loadPostListFromServer() async{
+    var _content = await request(servicePath['posts']);
+    if(_content.statusCode != 200){
+      if(_content.statusCode == 401){
+        print('#### unauthenticated, need back to login page ${_content.statusCode}');
+      }
+      print('#### Network Connection Failed: ${_content.statusCode}');
+    }
+
+    var _jsonData = jsonDecode(_content.toString());
+    var _listJson;
+    if(_jsonData['paginated']){
+      _listJson = _jsonData['data']['data'];
+    }
+    else{
+      _listJson = _jsonData['data'];
+    }
+    
+    List _jsonList = _listJson as List;
+    List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
+    return postList;
+  }
 
 class DataSearch extends SearchDelegate<String>{
+  
   final cities = [
     'Hhandup',
     'Mumbai',
@@ -550,44 +573,58 @@ class DataSearch extends SearchDelegate<String>{
   ];
   @override
   List<Widget> buildActions(BuildContext context) {
-      // actions for app bar
-      return [
-        IconButton(icon: Icon(Icons.clear), onPressed: (){
-          query = '';
-        },)
-      ];
-    }
+    // actions for app bar
+    return [
+      IconButton(icon: Icon(Icons.clear), onPressed: (){
+        query = '';
+      },)
+    ];
+  }
   
-    @override
-    Widget buildLeading(BuildContext context) {
-      // leading icon on the left of the app bar
-      return IconButton(
-        icon: AnimatedIcon(
-          icon: AnimatedIcons.menu_arrow, 
-          progress: transitionAnimation,
-          ),
-        onPressed: (){
-          close(context, null);
-        },);
-    }
+  @override
+  Widget buildLeading(BuildContext context) {
+    // leading icon on the left of the app bar
+    return IconButton(
+      icon: AnimatedIcon(
+        icon: AnimatedIcons.menu_arrow, 
+        progress: transitionAnimation,
+        ),
+      onPressed: (){
+        close(context, null);
+      },);
+  }
   
-    @override
-    Widget buildResults(BuildContext context) {
-      // show some result based on the selection
-    }
-  
-    @override
-    Widget buildSuggestions(BuildContext context) {
-    // show when someone searches for something
+  @override
+  Widget buildResults(BuildContext context) {
+    // show some result based on the selection
+    // List<Post> posts = await loadPostListFromServer();
     final suggestionList = query.isEmpty? recentCities : cities.where((p) => p.startsWith(query)).toList();
 
     return ListView.builder(
       itemBuilder: (context, index) => ListTile(
         leading: Icon(Icons.local_activity),
         title: Text(suggestionList[index]),
+        onTap: (){
+          print('result item clicked');
+        },
       ),
       itemCount: suggestionList.length,
       );
+  }
+  
+  @override
+  Widget buildSuggestions(BuildContext context) {
+  // show when someone searches for something
+  final suggestionList = query.isEmpty? recentCities : cities.where((p) => p.startsWith(query)).toList();
+
+  // return Center(child: Text('suggestion list items'),);
+  return ListView.builder(
+    itemBuilder: (context, index) => ListTile(
+      leading: Icon(Icons.local_activity),
+      title: Text(suggestionList[index]),
+    ),
+    itemCount: suggestionList.length,
+    );
   }
 
 }

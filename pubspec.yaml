@@ -70,7 +70,7 @@ dependencies:
   
   cached_network_image:
 
-  geolocation:
+  # geolocation:
 
 
 dev_dependencies:
