@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 // import 'package:geolocation/geolocation.dart';
 
 // import 'package:barcode_scan/barcode_scan.dart';
@@ -12,6 +14,7 @@ import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/form/post_upload.dart';
+import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/utils/permission.dart';
@@ -44,7 +47,6 @@ class _HomePageState extends State<HomePage> {
 
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['posts']);
-    // print('get _content ${_content}');
     if(_content.statusCode != 200){
       if(_content.statusCode == 401){
         print('#### unauthenticated, need back to login page ${_content.statusCode}');
@@ -69,7 +71,6 @@ class _HomePageState extends State<HomePage> {
     }
 
     List _jsonList = _listJson as List;
-    print('get list item 0 ${_jsonList[0]}');
     List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
     setState(() {
       posts = postList;
@@ -137,7 +138,6 @@ class _HomePageState extends State<HomePage> {
   init() async{
     localStorage = await SharedPreferences.getInstance();
     String _token = localStorage.get('token');
-    // print('token is ${_token}');
   }
 
   logout() async{
@@ -442,25 +442,58 @@ class _HomePageState extends State<HomePage> {
         IconButton(
           icon: Icon(Icons.search),
           onPressed: () async {
-            showSearch(context: context, delegate: DataSearch());
-            // print('search icon clicked ${_filter.text}');
-            // String txt = _filter.text;
-            // if(txt.isNotEmpty && posts.isNotEmpty){
-            //   for(var i = 0; i < posts.length; i++){
-            //     var post = posts[i];
-            //     print('post : ${post.id} - ${post.author}');
-            //     if(post.author == txt){
-            //       print('found author ${post.author} - ${post.id}');
-            //       // await _controller?.setCenterCoordinate(LatLng(post.latitude, post.longitude));
-            //       _controller?.setCenterCoordinate(
-            //         LatLng(post.coordinateLatitude, post.coordinateLongitude),
-            //         zoomLevel: 19,
-            //         animated: true,
-            //       );
-            //       return;
-            //     }
-            //   }
-            // }
+            var ret = showSearch(context: context, delegate: DataSearch(), query: _filter.text);
+            ret.then((searchedPost) async{
+              if(searchedPost == null) return;
+
+              var existed = false;
+              posts.forEach((post) { 
+                if(post.id == searchedPost.id){
+                  existed = true;
+                  _controller?.setCenterCoordinate(
+                    LatLng(searchedPost.coordinateLatitude, searchedPost.coordinateLongitude),
+                    zoomLevel: 19,
+                    animated: true,
+                  );
+                }
+              });
+
+              if(!existed){
+                final marker1 = await _controller?.addMarker(
+                  MarkerOption(
+                    latLng: LatLng(
+                      searchedPost.coordinateLatitude,
+                      searchedPost.coordinateLongitude,
+                    ),
+                    widget: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text('${searchedPost.title}'),
+                        ClipOval(
+                          child: searchedPost.images.length > 0 ? 
+                              (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50,) : Image.asset(searchedPost.images[0].url, height: 50,))
+                              : Image.asset('images/icons/marker.png', height: 50,)
+                        )
+                      ],
+                    ),
+                    imageConfig: createLocalImageConfiguration(context),
+                    title: '${searchedPost.title}',
+                    snippet: '${searchedPost.content}',
+                    width: 100,
+                    height: 100,
+                    object: '${searchedPost.id}'
+                  ),
+                );
+                _markers.add(marker1);
+                posts.add(searchedPost);
+
+                _controller?.setCenterCoordinate(
+                  LatLng(searchedPost.coordinateLatitude, searchedPost.coordinateLongitude),
+                  zoomLevel: 19,
+                  animated: true,
+                );
+              }
+            });
           },
         ),
         IconButton(
@@ -480,14 +513,6 @@ class _HomePageState extends State<HomePage> {
         )
       ],
     );
-    // return new AppBar(
-    //   centerTitle: true,
-    //   title: _appBarTitle,
-    //   leading: new IconButton(
-    //     icon: _searchIcon,
-    //     onPressed: _searchPressed,
-    //   ),
-    // );
   }
 
   void _searchPressed() {
@@ -534,47 +559,82 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Future<List<Post>> loadPostListFromServer() async{
-    var _content = await request(servicePath['posts']);
-    if(_content.statusCode != 200){
-      if(_content.statusCode == 401){
-        print('#### unauthenticated, need back to login page ${_content.statusCode}');
-      }
-      print('#### Network Connection Failed: ${_content.statusCode}');
-    }
+Future<List<Post>> searchFromServer(String query) async{
+  SharedPreferences localStorage;
+  localStorage = await SharedPreferences.getInstance();
+  String _token = localStorage.get('token');
 
-    var _jsonData = jsonDecode(_content.toString());
-    var _listJson;
-    if(_jsonData['paginated']){
-      _listJson = _jsonData['data']['data'];
+  BaseOptions options = BaseOptions(
+    baseUrl: apiUrl,
+    responseType: ResponseType.json,
+    connectTimeout: 30000,
+    receiveTimeout: 30000,
+    validateStatus: (code) {
+      if (code >= 200) {
+        return true;
+      }
+    },
+    headers: {
+      HttpHeaders.authorizationHeader : 'Bearer $_token',
+      HttpHeaders.acceptHeader : 'application/json'
     }
-    else{
-      _listJson = _jsonData['data'];
+  );
+  Response response;
+  Dio dio = new Dio(options);
+  Options ops = Options(
+    contentType: 'application/json',
+  );
+  String url = apiUrl + '/search?search_key=${query}&type=all';
+  print('search url is $url');
+  response = await dio.get(url, options: ops);
+
+  if(response.statusCode != 200){
+    if(response.statusCode == 401){
+      print('#### unauthenticated, need back to login page ${response.statusCode}');
     }
-    
-    List _jsonList = _listJson as List;
-    List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
-    return postList;
+    print('#### Network Connection Failed: ${response.statusCode}');
   }
 
-class DataSearch extends SearchDelegate<String>{
+  var _jsonData = jsonDecode(response.toString());
+  var _listJson;
+  if(_jsonData['paginated']){
+    _listJson = _jsonData['data']['data'];
+  }
+  else{
+    _listJson = _jsonData['data'];
+  }
   
-  final cities = [
-    'Hhandup',
-    'Mumbai',
-    'Bhopal',
-    'Agra',
-    'Jaipur'
-  ];
+  List _jsonList = _listJson as List;
+  List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
+  return postList;
+}
 
-  final recentCities = [
-    'Mumbai',
-    'Agra'
-  ];
+class DataSearch extends SearchDelegate<Post>{
   @override
   List<Widget> buildActions(BuildContext context) {
     // actions for app bar
     return [
+      IconButton(
+        icon: Icon(Icons.title),
+        onPressed: (){
+          // type = 'title';
+          print('clicked title type');
+        },
+      ),
+      IconButton(
+        icon: Icon(Icons.category),
+        onPressed: (){
+          // type = 'title';
+          print('clicked category type');
+        },
+      ),
+      IconButton(
+        icon: Icon(Icons.people),
+        onPressed: (){
+          // type = 'title';
+          print('clicked author type');
+        },
+      ),
       IconButton(icon: Icon(Icons.clear), onPressed: (){
         query = '';
       },)
@@ -595,36 +655,62 @@ class DataSearch extends SearchDelegate<String>{
   }
   
   @override
-  Widget buildResults(BuildContext context) {
-    // show some result based on the selection
-    // List<Post> posts = await loadPostListFromServer();
-    final suggestionList = query.isEmpty? recentCities : cities.where((p) => p.startsWith(query)).toList();
-
-    return ListView.builder(
-      itemBuilder: (context, index) => ListTile(
-        leading: Icon(Icons.local_activity),
-        title: Text(suggestionList[index]),
-        onTap: (){
-          print('result item clicked');
-        },
-      ),
-      itemCount: suggestionList.length,
-      );
+  Widget buildResults (BuildContext context) {
+    if(query.isEmpty){
+      return Container();
+    }
+    return FutureBuilder(
+      future: searchFromServer(query),
+      builder: (context, snapshot){
+        switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+            default:
+              if (snapshot.hasError) {
+                return Container(
+                  color: Colors.black,
+                  alignment: Alignment.center,
+                  child: Text(
+                    '搜索失败!',
+                    style: TextStyle(fontSize: 28, color: Colors.white),
+                  ),
+                );
+              } else {
+                return buildResultSuccess(snapshot.data);
+              }
+          }
+      }
+    );
   }
   
   @override
   Widget buildSuggestions(BuildContext context) {
-  // show when someone searches for something
-  final suggestionList = query.isEmpty? recentCities : cities.where((p) => p.startsWith(query)).toList();
-
-  // return Center(child: Text('suggestion list items'),);
-  return ListView.builder(
-    itemBuilder: (context, index) => ListTile(
-      leading: Icon(Icons.local_activity),
-      title: Text(suggestionList[index]),
-    ),
-    itemCount: suggestionList.length,
-    );
+    return Container();
   }
+
+
+  Widget buildResultSuccess(List<Post> posts) => ListView.builder(
+    physics: BouncingScrollPhysics(),
+    itemCount: posts.length,
+    itemBuilder: (context, index){
+      final post = posts[index];
+      return ListTile(
+        leading: Text(post.author),
+        title: Text(post.title),
+        subtitle: Text(post.author),
+        onTap: (){
+          print('tile been clicked ${post.categoryId}');
+          Navigator.pop(context, post);
+
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (BuildContext context) {
+          //     return PostDetailPage(pid: post.id,);
+          //   }) 
+          // );
+        },
+      );
+    },
+  );
 
 }
