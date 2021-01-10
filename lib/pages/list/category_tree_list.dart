@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_treeview/tree_view.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
@@ -151,6 +154,92 @@ class _CategoryTreeListViewState extends State<CategoryTreeListView> {
   ExpanderPosition _expanderPosition = ExpanderPosition.start;
   ExpanderType _expanderType = ExpanderType.caret;
   ExpanderModifier _expanderModifier = ExpanderModifier.none;
+
+  Future<bool> editable(int id) async{
+    bool editable = false;
+    var _content = await request(servicePath['categories'] + '/$id/editable');
+    print('get request content: ${_content}');
+    var _jsonData = jsonDecode(_content.toString());
+    int code = _jsonData['code'];
+    if(code == 200)
+      editable = true;
+    return editable;
+  }
+
+  Future<bool> deleteable(int id) async{
+    bool deleteable = false;
+    var _content = await request(servicePath['categories'] + '/$id/deleteable');
+    print('get request content: ${_content}');
+    var _jsonData = jsonDecode(_content.toString());
+    int code = _jsonData['code'];
+    if(code == 200)
+      deleteable = true;
+
+    return deleteable;
+  }
+
+  Future<bool> deleteCategory(int id) async{
+    SharedPreferences localStorage;
+    localStorage = await SharedPreferences.getInstance();
+    String _token = localStorage.get('token');
+
+    BaseOptions baseOptions = BaseOptions(
+      baseUrl: apiUrl,
+      responseType: ResponseType.json,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      validateStatus: (code) {
+        if (code >= 200) {
+          return true;
+        }
+        return false;
+      },
+      headers: {
+        HttpHeaders.authorizationHeader : 'Bearer $_token'
+      }
+    );
+
+    Dio dio = new Dio(baseOptions);
+    Options options = Options(
+        contentType: 'application/json',
+        followRedirects: false,
+        validateStatus: (status) { return status < 500; },
+        headers: {
+          HttpHeaders.authorizationHeader : 'Bearer $_token'
+        }
+    );
+
+    print(apiUrl + servicePath['categories'] + '/$id');
+
+    var respone = await dio.delete<String>(apiUrl + servicePath['categories'] + '/$id', options: options);
+    
+    print(respone);
+    if (respone.statusCode == 200) {
+      var responseJson = json.decode(respone.data);
+      print('response: ${respone.data} - ${responseJson['message']}');
+
+      var status = responseJson['code'] as int;
+      if(status == 200){
+        Fluttertoast.showToast(
+            msg: "提交成功",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.grey);
+        return true;
+      }else{
+        Fluttertoast.showToast(
+            msg: "提交失败！",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.red);
+        return false;
+      }
+    }else{
+      Fluttertoast.showToast(
+        msg: "网络连接失败，检查网络",
+        gravity: ToastGravity.CENTER,
+        textColor: Colors.red);
+      return false;
+    }
+  }
 
   Future loadCategoriesFromServer() async{
     var _content = await request(servicePath['categorieswithposts']);

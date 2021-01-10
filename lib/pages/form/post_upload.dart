@@ -505,6 +505,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
     }
     String _images = list2String(_imgsPath, ',');
     print('get images path string: ${_images}');
+    print('${_latTextController.text} _ ${_lngTextController.text}');
 
     FormData formData = new FormData.fromMap({
       "images" : _images,
@@ -533,7 +534,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
         }
       },
       headers: {
-        HttpHeaders.authorizationHeader : 'Bearer $_token'
+        HttpHeaders.authorizationHeader : 'Bearer $_token',
+        HttpHeaders.acceptHeader : 'application/json'
       }
     );
 
@@ -541,10 +543,12 @@ class _PostUploadPageState extends State<PostUploadPage> {
     Options options = Options(
         contentType: 'application/json',
         headers: {
-          HttpHeaders.authorizationHeader : 'Bearer $_token'
+          HttpHeaders.authorizationHeader : 'Bearer $_token',
+          HttpHeaders.acceptHeader : 'application/json'
         }
     );
-    var respone = await dio.post<String>(servicePath['posts'], data: formData, options: options);
+    String uploadUrl = apiUrl+servicePath['posts'];
+    var respone = await dio.post<String>(uploadUrl, data: formData, options: options);
     print(respone);
     if (respone.statusCode == 200) {
       var responseJson = json.decode(respone.data);
@@ -564,6 +568,11 @@ class _PostUploadPageState extends State<PostUploadPage> {
             gravity: ToastGravity.CENTER,
             textColor: Colors.red);
       }
+    }else{
+      Fluttertoast.showToast(
+          msg: "提交记录失败！",
+          gravity: ToastGravity.CENTER,
+          textColor: Colors.red);
     }
   }
 
