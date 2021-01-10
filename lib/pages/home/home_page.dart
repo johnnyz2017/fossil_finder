@@ -14,7 +14,6 @@ import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/form/post_upload.dart';
-import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/utils/permission.dart';
@@ -338,14 +337,13 @@ class _HomePageState extends State<HomePage> {
                   print('need reload ...........');
                   setState(() {
                     _show = true;
-                    loadPostListFromServer();
                   });
+                  loadPostListFromServer();
                 }
 
                 if(_used) return;
                 _used = true;
               },
-              // child: _show? Icon(Icons.brightness_5) : Icon(Icons.brightness_1),
               child: _show? Icon(Icons.highlight) : Icon(Icons.highlight_off),
               shape: CircleBorder(
               ),
@@ -431,9 +429,6 @@ class _HomePageState extends State<HomePage> {
             decorationColor: Color(0XFFFFCC00),//Font color change
           ),
           // onTap: (){
-          //   showSearch(context: context, delegate: DataSearch());
-          // },
-          // onEditingComplete: (){
           //   showSearch(context: context, delegate: DataSearch());
           // },
         ),
@@ -695,7 +690,7 @@ class DataSearch extends SearchDelegate<Post>{
     itemBuilder: (context, index){
       final post = posts[index];
       return ListTile(
-        leading: Text(post.author),
+        // leading: Text(post.author),
         title: Text(post.title),
         subtitle: Text(post.author),
         onTap: (){
