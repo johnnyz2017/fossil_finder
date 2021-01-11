@@ -491,21 +491,21 @@ class _HomePageState extends State<HomePage> {
             });
           },
         ),
-        IconButton(
-          icon: Icon(Icons.scanner),
-          onPressed: (){
-            print('scan icon clicked');
-            // _scanCode();
+        // IconButton(
+        //   icon: Icon(Icons.scanner),
+        //   onPressed: (){
+        //     print('scan icon clicked');
+        //     // _scanCode();
 
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (BuildContext context) {
-                // return PostDetailPage(post: post,);
-                return PostDetailPage(pid: 10,);
-              }) 
-            );
-          },
-        )
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (BuildContext context) {
+        //         // return PostDetailPage(post: post,);
+        //         return PostDetailPage(pid: 10,);
+        //       }) 
+        //     );
+        //   },
+        // )
       ],
     );
   }
@@ -609,27 +609,27 @@ class DataSearch extends SearchDelegate<Post>{
   List<Widget> buildActions(BuildContext context) {
     // actions for app bar
     return [
-      IconButton(
-        icon: Icon(Icons.title),
-        onPressed: (){
-          // type = 'title';
-          print('clicked title type');
-        },
-      ),
-      IconButton(
-        icon: Icon(Icons.category),
-        onPressed: (){
-          // type = 'title';
-          print('clicked category type');
-        },
-      ),
-      IconButton(
-        icon: Icon(Icons.people),
-        onPressed: (){
-          // type = 'title';
-          print('clicked author type');
-        },
-      ),
+      // IconButton(
+      //   icon: Icon(Icons.title),
+      //   onPressed: (){
+      //     // type = 'title';
+      //     print('clicked title type');
+      //   },
+      // ),
+      // IconButton(
+      //   icon: Icon(Icons.category),
+      //   onPressed: (){
+      //     // type = 'title';
+      //     print('clicked category type');
+      //   },
+      // ),
+      // IconButton(
+      //   icon: Icon(Icons.people),
+      //   onPressed: (){
+      //     // type = 'title';
+      //     print('clicked author type');
+      //   },
+      // ),
       IconButton(icon: Icon(Icons.clear), onPressed: (){
         query = '';
       },)

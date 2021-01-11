@@ -166,7 +166,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
-      title: 'Fossil Finder',
+      title: 'Fossil Hunter',
       logo: 'images/icons/fossil_icon_512.png',
       onLogin: _login,
       onSignup: _register,

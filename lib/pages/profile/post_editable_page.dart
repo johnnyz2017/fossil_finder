@@ -98,9 +98,9 @@ class _PostEditblePageState extends State<PostEditblePage> {
       _uploadingStatus[_imgsPath[i]] = false;
     }
 
-    _latTextController.text = widget.post.coordinateLatitude.toStringAsFixed(6);
-    _lngTextController.text = widget.post.coordinateLongitude.toStringAsFixed(6);
-    _altTextController.text = widget.post.coordinateAltitude.toStringAsFixed(6);
+    _latTextController.text = widget.post.coordinateLatitude?.toStringAsFixed(6);
+    _lngTextController.text = widget.post.coordinateLongitude?.toStringAsFixed(6);
+    _altTextController.text = widget.post.coordinateAltitude?.toStringAsFixed(6);
     _addrTextController.text = widget.post.address;
     _titleTextController.text = widget.post.title;
     _contentTextController.text = widget.post.content;
@@ -353,12 +353,12 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.altitude.toString(),
                       controller: _altTextController,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '海拔没有填写';
-                          }
-                          return null;
-                        },
+                      // validator: (value){
+                      //     if(value.isEmpty){
+                      //       return '海拔没有填写';
+                      //     }
+                      //     return null;
+                      //   },
                       ),)
                   ],
                 ),
@@ -369,13 +369,13 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.address,
                       controller: _addrTextController,
-                      autovalidate: true,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '地址没有填写';
-                          }
-                          return null;
-                        },
+                      // autovalidate: true,
+                      // validator: (value){
+                      //     if(value.isEmpty){
+                      //       return '地址没有填写';
+                      //     }
+                      //     return null;
+                      //   },
                       ),)
                   ],
                 ),
@@ -507,9 +507,9 @@ class _PostEditblePageState extends State<PostEditblePage> {
       "images" : _images,
       "title" : _titleTextController.text,
       "content" : _contentTextController.text,
-      "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
-      "coordinate_longitude" : _lngTextController.text == null ? double.parse(_lngTextController.text) : null,
-      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
+      "coordinate_latitude" : (_latTextController.text == null || _latTextController.text.isEmpty) ? null : double.parse(_latTextController.text),
+      "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
+      "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
       'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0

@@ -151,7 +151,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
               }
 
               if (_formKey.currentState.validate()) {
-                _submitPost2(context);
+                _submitPost(context);
               }
             },
           )
@@ -356,13 +356,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       ],
                       //WhitelistingTextInputFormatter(RegExp("[a-z,A-Z,0-9]"))
                       controller: _altTextController,
-                      autovalidate: true,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '海拔没有填写';
-                          }
-                          return null;
-                        },
+                      // autovalidate: true,
+                      // validator: (value){
+                      //   if(value.isEmpty){
+                      //     return '海拔没有填写';
+                      //   }
+                      //   return null;
+                      // },
                       ),)
                   ],
                 ),
@@ -371,13 +371,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     Text('地址: '),
                     Expanded(child: TextFormField(
                       controller: _addrTextController,
-                      autovalidate: true,
-                      validator: (value){
-                        if(value.isEmpty){
-                          return '地址没有填写';
-                        }
-                        return null;
-                      },
+                      // autovalidate: true,
+                      // validator: (value){
+                      //   if(value.isEmpty){
+                      //     return '地址没有填写';
+                      //   }
+                      //   return null;
+                      // },
                     ),)
                   ],
                 ),
@@ -468,9 +468,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "category_id" : _category == -1 ? null : _category,
       "final_category_id" : null,
       "final_category_id_from" : null,
-      "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
-      "coordinate_longitude" : _lngTextController.text == null ? double.parse(_lngTextController.text) : null,
-      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
+      "coordinate_latitude" : (_latTextController.text == null || _latTextController.text.isEmpty) ? null : double.parse(_latTextController.text),
+      "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
+      "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
       "created_at" : null,
       "updated_at" : null,
@@ -510,9 +510,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "images" : _images,
       "title" : _titleTextController.text,
       "content" : _contentTextController.text,
-      "coordinate_latitude" : double.parse(_latTextController.text),
-      "coordinate_longitude" : double.parse(_lngTextController.text),
-      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
+      "coordinate_latitude" : (_latTextController.text == null || _latTextController.text.isEmpty) ? null : double.parse(_latTextController.text),
+      "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
+      "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
       'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0
@@ -586,9 +586,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "images" : _images,
       "title" : _titleTextController.text,
       "content" : _contentTextController.text,
-      "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
-      "coordinate_longitude" : _lngTextController.text == null ? double.parse(_lngTextController.text) : null,
-      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
+      "coordinate_latitude" : (_latTextController.text == null || _latTextController.text.isEmpty) ? null : double.parse(_latTextController.text),
+      "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
+      "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
       'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0

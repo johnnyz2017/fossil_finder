@@ -244,6 +244,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.title,
                       controller: _titleTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '标题没有填写';
@@ -265,6 +266,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                         keyboardType: TextInputType.multiline,
                         maxLines: 3,
                         controller: _contentTextController,
+                        autovalidate: true,
                         validator: (value){
                           if(value.isEmpty){
                             return '描述内容没有填写';
@@ -289,6 +291,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.longitude.toString(),
                       controller: _lngTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '经度没有填写';
@@ -304,6 +307,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.latitude.toString(),
                       controller: _latTextController,
+                      autovalidate: true,
                       validator: (value){
                           if(value.isEmpty){
                             return '纬度没有填写';
@@ -329,12 +333,12 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                       readOnly: !editmode,
                       // initialValue: widget.post.altitude.toString(),
                       controller: _altTextController,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '海拔没有填写';
-                          }
-                          return null;
-                        },
+                      // validator: (value){
+                      //     if(value.isEmpty){
+                      //       return '海拔没有填写';
+                      //     }
+                      //     return null;
+                      //   },
                       ),)
                   ],
                 ),
@@ -457,6 +461,20 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                 //       ),)
                 //   ],
                 // ),
+                RaisedButton(
+                  color: Colors.redAccent,
+                  child: Text('删除记录'),
+                  onPressed: (){
+                    Fluttertoast.showToast(
+                        msg: "删除成功",
+                        gravity: ToastGravity.CENTER,
+                        textColor: Colors.grey);
+
+                    dbhelper.deletePost(widget.post.id);
+
+                    Navigator.pop(context, true);
+                  }
+                )
               ],
             ),
           ),
@@ -490,9 +508,9 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
       "category_id" : _category == -1 ? null : _category,
       "final_category_id" : null,
       "final_category_id_from" : null,
-      "coordinate_latitude" : _latTextController.text == null ? double.parse(_latTextController.text) : null,
-      "coordinate_longitude" : _lngTextController.text == null ? double.parse(_lngTextController.text) : null,
-      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
+      "coordinate_latitude" : (_latTextController.text == null || _latTextController.text.isEmpty) ? null : double.parse(_latTextController.text),
+      "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
+      "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
       "created_at" : null,
       "updated_at" : null,
@@ -532,9 +550,9 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
       "images" : _images,
       "title" : _titleTextController.text,
       "content" : _contentTextController.text,
-      "coordinate_latitude" : double.parse(_latTextController.text),
-      "coordinate_longitude" : double.parse(_lngTextController.text),
-      "coordinate_altitude" : double.parse(_altTextController.text),
+      "coordinate_latitude" : (_latTextController.text == null || _latTextController.text.isEmpty) ? null : double.parse(_latTextController.text),
+      "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
+      "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
       'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0
