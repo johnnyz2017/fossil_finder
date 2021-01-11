@@ -151,7 +151,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
               }
 
               if (_formKey.currentState.validate()) {
-                _submitPost(context);
+                _submitPost2(context);
               }
             },
           )
@@ -492,6 +492,81 @@ class _PostUploadPageState extends State<PostUploadPage> {
           msg: "本地保存失败，请检查表单各属性，程序权限授予等。",
           gravity: ToastGravity.CENTER,
           textColor: Colors.red);
+    }
+  }
+
+  _submitPost2(BuildContext context) async{
+    for(int i =0; i < _imgsPath.length; i++){
+      String path = _imgsPath[i];
+      if(path.startsWith('http')) continue;
+      if(_uploadedStatus[_imgsPath[i]]){
+        _imgsPath[i] = _uploadedPath[_imgsPath[i]];
+      }
+    }
+    String _images = list2String(_imgsPath, ',');
+    print('get images path string: ${_images}');
+
+    FormData formData = new FormData.fromMap({
+      "images" : _images,
+      "title" : _titleTextController.text,
+      "content" : _contentTextController.text,
+      "coordinate_latitude" : double.parse(_latTextController.text),
+      "coordinate_longitude" : double.parse(_lngTextController.text),
+      "coordinate_altitude" : _altTextController.text == null ? double.parse(_altTextController.text) : null,
+      "address" : _addrTextController.text,
+      'category_id' : _category == -1 ? null : _category,
+      'private' : _private ? 1 : 0
+    });
+
+    SharedPreferences localStorage;
+    localStorage = await SharedPreferences.getInstance();
+    String _token = localStorage.get('token');
+
+    BaseOptions baseOptions = BaseOptions(
+      baseUrl: apiUrl,
+      responseType: ResponseType.json,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      validateStatus: (code) {
+        if (code >= 200) {
+          return true;
+        }
+      },
+      headers: {
+        HttpHeaders.authorizationHeader : 'Bearer $_token',
+        HttpHeaders.acceptHeader : 'application/json'
+      }
+    );
+
+    Dio dio = new Dio(baseOptions);
+    Options options = Options(
+        contentType: 'application/json',
+        headers: {
+          HttpHeaders.authorizationHeader : 'Bearer $_token',
+          HttpHeaders.acceptHeader : 'application/json'
+        }
+    );
+    String updateUrl = apiUrl+servicePath['posts'];
+    var respone = await dio.post<String>(updateUrl, data: formData, options: options);
+    print(respone);
+    if (respone.statusCode == 200) {
+      var responseJson = json.decode(respone.data);
+      print('response: ${respone.data} - ${responseJson['message']}');
+
+      var status = responseJson['code'] as int;
+      if(status == 200){
+        Fluttertoast.showToast(
+            msg: "发布成功",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.grey);
+
+        Navigator.pop(context, true);
+      }else{
+        Fluttertoast.showToast(
+            msg: "发布失败，继续保存在本地数据库中！",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.red);
+      }
     }
   }
 
