@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
@@ -26,11 +27,22 @@ class _PostDetailPageState extends State<PostDetailPage> {
     var _content = await request('${serviceUrl}/api/v1/posts/${widget.pid}');
     var _jsonData = jsonDecode(_content.toString());
     print('get json data is  ${_jsonData}');
-    var _postJson = _jsonData['data'];
-    Post _post = Post.fromJson(_postJson);
-    setState(() {
-      post = _post;
-    });
+    var status = _jsonData['code'] as int;
+    if(status == 200){
+      var _postJson = _jsonData['data'];
+      Post _post = Post.fromJson(_postJson);
+      setState(() {
+        post = _post;
+      });
+    }else{
+      print('no post get, return');
+      Fluttertoast.showToast(
+        msg: "获取记录失败，请检查网络或者记录ID是否正确",
+        gravity: ToastGravity.CENTER,
+        textColor: Colors.red);
+      Navigator.pop(context, true);
+    }
+    
   }
 
   @override

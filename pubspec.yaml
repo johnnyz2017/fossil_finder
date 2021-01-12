@@ -60,7 +60,13 @@ dependencies:
   fluttertoast:
 
   # barcode_scan: ^3.0.1
-  # qrscan:
+  qrscan: ^0.2.18
+
+  #scan QR Code
+  flutter_barcode_scanner: ^1.0.1
+
+  #create QR Code
+  barcode_widget: ^1.5.0
 
   #icons
   flutter_icons:
@@ -106,6 +112,7 @@ flutter:
     - images/icons/map-google.png
     - images/icons/icons8-delete.png
     - images/icons/icons8-checkmark.png
+    - images/icons/scanning.png
     - images/others/hs001.jpeg
     - images/others/hs002.jpeg
     - images/others/hs003.jpeg
