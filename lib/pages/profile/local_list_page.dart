@@ -37,9 +37,7 @@ class _LocalPostsPageState extends State<LocalPostsPage> {
   @override
   void initState() {
     super.initState();
-
     loadPostListFromDB();
-    
   }
   
   @override

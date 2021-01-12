@@ -482,6 +482,13 @@ class _PostEditblePageState extends State<PostEditblePage> {
                       ),)
                   ],
                 ),
+                RaisedButton(
+                  color: Colors.redAccent,
+                  child: Text('删除记录'),
+                  onPressed: (){
+                    _deletePost();
+                  }
+                )
               ],
             ),
           ),
@@ -490,7 +497,72 @@ class _PostEditblePageState extends State<PostEditblePage> {
     );
   }
 
-  //
+  _deletePost() async{
+    SharedPreferences localStorage;
+    localStorage = await SharedPreferences.getInstance();
+    String _token = localStorage.get('token');
+
+    BaseOptions baseOptions = BaseOptions(
+      baseUrl: apiUrl,
+      responseType: ResponseType.json,
+      connectTimeout: 30000,
+      receiveTimeout: 30000,
+      validateStatus: (code) {
+        if (code >= 200) {
+          return true;
+        }else{
+          return false;
+        }
+      },
+      headers: {
+        HttpHeaders.authorizationHeader : 'Bearer $_token',
+        HttpHeaders.acceptHeader : 'application/json'
+      }
+    );
+
+    Dio dio = new Dio(baseOptions);
+    Options options = Options(
+        contentType: 'application/json',
+        headers: {
+          HttpHeaders.authorizationHeader : 'Bearer $_token',
+          HttpHeaders.acceptHeader : 'application/json'
+        }
+    );
+    String deletePostUrl = apiUrl+servicePath['posts']+'/${widget.post.id}';
+    var response = await dio.delete(deletePostUrl, options: options);
+    print(response.data);
+    if (response.statusCode == 200) {
+      // var responseJson = json.decode(response.data);
+      // print('response: ${response.data} - ${responseJson['message']}');
+
+      Fluttertoast.showToast(
+        msg: "删除成功",
+        gravity: ToastGravity.CENTER,
+        textColor: Colors.grey);
+      
+      Navigator.pop(context, true);
+
+      // var status = responseJson['code'] as int;
+      // if(status == 200){
+      //   Fluttertoast.showToast(
+      //     msg: "删除成功",
+      //     gravity: ToastGravity.CENTER,
+      //     textColor: Colors.grey);
+        
+      //   Navigator.pop(context, true);
+      // }else{
+      //   Fluttertoast.showToast(
+      //     msg: "删除失败，请检查网络或者权限相关信息",
+      //     gravity: ToastGravity.CENTER,
+      //     textColor: Colors.red);
+      // }
+    }else{
+      Fluttertoast.showToast(
+        msg: "删除失败，请检查网络或者权限相关信息",
+        gravity: ToastGravity.CENTER,
+        textColor: Colors.red);
+    }
+  }
 
   _submitPost(BuildContext context) async{
     for(int i =0; i < _imgsPath.length; i++){
@@ -527,6 +599,8 @@ class _PostEditblePageState extends State<PostEditblePage> {
       validateStatus: (code) {
         if (code >= 200) {
           return true;
+        }else{
+          return false;
         }
       },
       headers: {
