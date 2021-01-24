@@ -23,6 +23,8 @@ import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'package:http/http.dart' as http;
+
 class PostUploadPage extends StatefulWidget {
   final LatLng center;
 
@@ -53,6 +55,81 @@ class _PostUploadPageState extends State<PostUploadPage> {
   TextEditingController _titleTextController = new TextEditingController();
   TextEditingController _contentTextController = new TextEditingController();
   TextEditingController _categoryTextController = new TextEditingController();
+
+  List statesList;
+  String _myState;
+
+  String stateInfoUrl = 'http://cleanions.bestweb.my/api/location/get_state';
+  Future<String> _getStateList() async {
+    await http.post(stateInfoUrl, headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }, body: {
+      "api_key": '25d55ad283aa400af464c76d713c07ad',
+    }).then((response) {
+      var data = json.decode(response.body);
+
+     print(data);
+      setState(() {
+        statesList = data['state'];
+      });
+    });
+  }
+
+  // Get State information by API
+  List citiesList;
+  String _myCity;
+
+  String cityInfoUrl =
+      'http://cleanions.bestweb.my/api/location/get_city_by_state_id';
+  Future<String> _getCitiesList() async {
+    await http.post(cityInfoUrl, headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }, body: {
+      "api_key": '25d55ad283aa400af464c76d713c07ad',
+      "state_id": _myState,
+    }).then((response) {
+      var data = json.decode(response.body);
+      print('cities: ${data}');
+      setState(() {
+        citiesList = data['cities'];
+      });
+    });
+  }
+
+  Future _getStateListFromJson() async{
+    // PostService.getPost();
+    String _content = await rootBundle.loadString('assets/data/system_series_stage_table.json');
+    print('get states from json  ${_content}');
+    var _jsonContent = json.decode(_content);
+    // print("after json decode list size is: ${_jsonContent}"); //OK
+    // print(_jsonContent);
+    // List<Post> postList = _jsonContent.map((item) => Post.fromJson(item)).toList();
+    setState(() {
+      statesList = _jsonContent['state'];
+    });
+  }
+
+  Future _getCitiesListFromJson(int sid) async{
+    // PostService.getPost();
+    String _content = await rootBundle.loadString('assets/data/system_series_stage_table.json');
+    print('get states from json  ${_content}');
+    var _jsonContent = json.decode(_content);
+    var _cList = _jsonContent['cities'];
+    print('cites : ${_cList}');
+    // var _cities = _jsonContent['cities'].filter((item) => item.state_id == sid);
+    //AllMovies.where((i) => i.isAnimated).toList();
+    // _jsonContent['cities'].where((item) => item.state_id == sid);
+    // var _cities = _jsonContent['cities'].where((item) => item.state_id == sid).toList();
+    _cList.forEach((item) => print('${item["id"]}'));
+    var _cities = _cList.where((item) => item['state_id'] == sid).toList();
+    print('_cities: ${_cities}');
+    // List<Post> postList = _jsonContent.map((item) => Post.fromJson(item)).toList();
+
+    setState(() {
+      // statesList = _cities;
+      citiesList = _cities;
+    });
+  }
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -111,6 +188,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       // _uploadedStatus['http://images.tornadory.com/1602602430178.jpg'] = true;
       // print('images files size: ${_imgsFile.length} ');
     // });
+
+    // _getStateList();
+    _getStateListFromJson();
   }
 
   @override
@@ -419,6 +499,102 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       ),
                     ),
                   ],
+                ),
+
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: <Widget>[
+                //     Text('分类: '),
+                //     Expanded(
+                //       child: 
+                //     ),
+                //   ],
+                // ),
+
+                Container(
+                  // padding: EdgeInsets.only(left: 8, right: 8, top: 5),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text('State: '),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton<String>(
+                              value: _myState,
+                              // value: 'No',
+                              iconSize: 30,
+                              icon: (null),
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 16,
+                              ),
+                              hint: Text('Select State'),
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  _myState = newValue;
+                                  int sid = int.parse(_myState);
+                                  print('_mystate ${_myState}');
+                                  _getCitiesListFromJson(sid);
+                                });
+                              },
+                              items: statesList?.map((item) {
+                                    return new DropdownMenuItem(
+                                      child: new Text(item['name']),
+                                      value: item['id'].toString(),
+                                    );
+                                  })?.toList() ??
+                                  [],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Container(
+                  // padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      // Text('City: '),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton<String>(
+                              value: _myCity,
+                              iconSize: 30,
+                              icon: (null),
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 16,
+                              ),
+                              hint: Text('Select City'),
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  _myCity = newValue;
+                                  print(_myCity);
+                                });
+                              },
+                              items: citiesList?.map((item) {
+                                    print("map item ${item}");
+                                    return new DropdownMenuItem(
+                                      child: new Text(item['name']),
+                                      value: item['id'].toString(),
+                                    );
+                                  })?.toList() ??
+                                  [],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 Row(

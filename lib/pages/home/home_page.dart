@@ -7,10 +7,10 @@ import 'package:dio/dio.dart';
 // import 'package:geolocation/geolocation.dart';
 
 // import 'package:barcode_scan/barcode_scan.dart';
-import 'package:qrscan/qrscan.dart' as scanner;
+// import 'package:qrscan/qrscan.dart' as scanner;
+// import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
@@ -527,25 +527,27 @@ class _HomePageState extends State<HomePage> {
     var status = await PermissionUtils.requestCemera();
     if (status == PermissionStatus.granted) {
       print('permission granted');
-      final String qrCode = await scanner.scan();
+      
       // final String qrCode = await FlutterBarcodeScanner.scanBarcode(
       //   '#ff6666', 
       //   '取消', 
       //   true, 
       //   ScanMode.QR);
-      print('qr code result : ${qrCode}');
-      if(qrCode.contains('${serviceUrl}/posts')){
-        print('found post link, try to convert to post detail page');
-        List<String> _splitRet = qrCode.split('/');
-        int _pid = int.parse(_splitRet[_splitRet.length - 1]);
+      
+      // final String qrCode = await scanner.scan();
+      // print('qr code result : ${qrCode}');
+      // if(qrCode.contains('${serviceUrl}/posts')){
+      //   print('found post link, try to convert to post detail page');
+      //   List<String> _splitRet = qrCode.split('/');
+      //   int _pid = int.parse(_splitRet[_splitRet.length - 1]);
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (BuildContext context) {
-            return PostDetailPage(pid: _pid,);
-          }) 
-        );
-      }
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (BuildContext context) {
+      //       return PostDetailPage(pid: _pid,);
+      //     }) 
+      //   );
+      // }
     } else {
       PermissionUtils.showPermissionDialog(context);
     }

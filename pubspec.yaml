@@ -60,13 +60,13 @@ dependencies:
   fluttertoast:
 
   # barcode_scan: ^3.0.1
-  qrscan: ^0.2.18
+  # qrscan: ^0.2.18
 
   #scan QR Code
-  flutter_barcode_scanner: ^1.0.1
+  # flutter_barcode_scanner: ^1.0.1
 
   #create QR Code
-  barcode_widget: ^1.5.0
+  # barcode_widget: ^1.5.0
 
   #icons
   flutter_icons:
@@ -126,6 +126,7 @@ flutter:
     - images/others/hs011.jpeg
     - assets/data/posts.json
     - assets/data/qiniu.json
+    - assets/data/system_series_stage_table.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

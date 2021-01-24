@@ -59,7 +59,13 @@ class _PostDetailPageState extends State<PostDetailPage> {
    
     return Scaffold(
       appBar: AppBar(
-        title: Text("详情页")
+        title: Text("详情页"),
+        // actions: <Widget>[
+        //   IconButton(
+        //     // icon: ,
+        //     onPressed: (){},
+        //   )
+        // ],
       ),
       body: ListView.builder(
         itemCount: post.comments.length + 2,

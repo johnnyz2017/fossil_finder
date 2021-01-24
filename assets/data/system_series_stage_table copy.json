@@ -1,0 +1,157 @@
+{
+    "state": [
+        {
+            "id": 1, 
+            "name": "Penang Mainland"
+        }, 
+        {
+            "id": 2, 
+            "name": "Penang Island"
+        }, 
+        {
+            "id": 3, 
+            "name": "Kuala Lumpur"
+        }, 
+        {
+            "id": 4, 
+            "name": "Selangor"
+        }, 
+        {
+            "id": 5, 
+            "name": "Johor"
+        }, 
+        {
+            "id": 6, 
+            "name": "Perak"
+        }, 
+        {
+            "id": 7, 
+            "name": "Trengganu"
+        }, 
+        {
+            "id": 8, 
+            "name": "Pahang"
+        }, 
+        {
+            "id": 9, 
+            "name": "Kedah"
+        }, 
+        {
+            "id": 10, 
+            "name": "Kelantan"
+        }, 
+        {
+            "id": 11, 
+            "name": "Negeri Sembilan"
+        }, 
+        {
+            "id": 12, 
+            "name": "Perlis"
+        }, 
+        {
+            "id": 13, 
+            "name": "Malacca"
+        }, 
+        {
+            "id": 14, 
+            "name": "Sabah"
+        }, 
+        {
+            "id": 15, 
+            "name": "Serawak"
+        }
+    ],
+
+    "cities": [
+        {
+            "id": 1, 
+            "state_id": 2, 
+            "name": "Ayer Itam"
+        }, 
+        {
+            "id": 2, 
+            "state_id": 2, 
+            "name": "Batu Feringgi"
+        }, 
+        {
+            "id": 3, 
+            "state_id": 2, 
+            "name": "Bayan Baru"
+        }, 
+        {
+            "id": 4, 
+            "state_id": 2, 
+            "name": "Bayan Lepas"
+        }, 
+        {
+            "id": 5, 
+            "state_id": 2, 
+            "name": "Bukit Jambul"
+        }, 
+        {
+            "id": 6, 
+            "state_id": 2, 
+            "name": "Gelugor"
+        }, 
+        {
+            "id": 7, 
+            "state_id": 2, 
+            "name": "Georgetown"
+        }, 
+        {
+            "id": 8, 
+            "state_id": 2, 
+            "name": "Jelutong"
+        }, 
+        {
+            "id": 9, 
+            "state_id": 2, 
+            "name": "Sungai Ara"
+        }, 
+        {
+            "id": 10, 
+            "state_id": 2, 
+            "name": "Sungai Nibong"
+        }, 
+        {
+            "id": 11, 
+            "state_id": 2, 
+            "name": "Tanjung Bungah"
+        }, 
+        {
+            "id": 12, 
+            "state_id": 2, 
+            "name": "Tanjung Tokong"
+        }, 
+        {
+            "id": 13, 
+            "state_id": 2, 
+            "name": "Teluk Kumbar"
+        }, 
+        {
+            "id": 14, 
+            "state_id": 2, 
+            "name": "Balik Pulau"
+        }, 
+        {
+            "id": 15, 
+            "state_id": 2, 
+            "name": "Teluk Bahang"
+        }, 
+        {
+            "id": 16, 
+            "state_id": 2, 
+            "name": "Batu Maung"
+        },
+        {
+            "id": 17, 
+            "state_id": 1, 
+            "name": "Bukit Mertajam"
+        }, 
+        {
+            "id": 18, 
+            "state_id": 1, 
+            "name": "Batu Kawan"
+        }
+    ]
+}
