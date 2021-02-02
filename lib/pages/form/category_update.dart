@@ -114,7 +114,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
                         parentCategory = await Navigator.push(
                           context,
                           MaterialPageRoute(builder: (BuildContext context) {
-                            return CategorySelector(treeJson: "", editable: false,);
+                            return CategorySelector(treeJson: "", editable: false, sid: widget.categoryNode.id,);
                           }) 
                         );
 

@@ -65,17 +65,17 @@
     "cities": [
         {
             "id": 1, 
-            "state_id": 2, 
+            "state_id": 3, 
             "name": "Ayer Itam"
         }, 
         {
             "id": 2, 
-            "state_id": 2, 
+            "state_id": 4, 
             "name": "Batu Feringgi"
         }, 
         {
             "id": 3, 
-            "state_id": 2, 
+            "state_id": 4, 
             "name": "Bayan Baru"
         }, 
         {

@@ -15,8 +15,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CategorySelector extends StatefulWidget {
   final String treeJson;
   final bool editable;
+  final int sid;
 
-  const CategorySelector({Key key, this.editable = true, this.treeJson}) : super(key: key);
+  const CategorySelector({Key key, this.editable = true, this.sid = -1, this.treeJson }) : super(key: key);
 
   @override
   _CategorySelectorState createState() => _CategorySelectorState();
@@ -205,7 +206,16 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                   // _treeViewController = _treeViewController.copyWith(selectedKey: null);
                 });
               }else{
-                Navigator.pop(context, cNode);
+                if(cNode.id == widget.sid){
+                  print('select wrong id ${cNode.id}');
+                  Fluttertoast.showToast(
+                    msg: "不能选择自己！",
+                    gravity: ToastGravity.CENTER,
+                    textColor: Colors.red);
+                }
+                else{
+                  Navigator.pop(context, cNode);
+                }
               }
             },
           )

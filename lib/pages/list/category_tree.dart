@@ -17,56 +17,6 @@ import 'package:fossils_finder/pages/list/post_detail.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-List<Node> nodes = [
-  Node(
-    label: 'Documents',
-    key: 'docs',
-    expanded: true,
-    icon: NodeIcon(
-      codePoint:Icons.folder_open.codePoint,
-          // docsOpen ? Icons.folder_open.codePoint : Icons.folder.codePoint,
-      color: "blue",
-    ),
-    children: [
-      Node(
-          label: 'Job Search',
-          key: 'd3',
-          icon: NodeIcon.fromIconData(Icons.input),
-          children: [
-            Node(
-                label: 'Resume.docx',
-                key: 'pd1',
-                icon: NodeIcon.fromIconData(Icons.insert_drive_file)),
-            Node(
-                label: 'Cover Letter.docx',
-                key: 'pd2',
-                icon: NodeIcon.fromIconData(Icons.insert_drive_file)),
-          ]),
-      Node(
-        label: 'Inspection.docx',
-        key: 'd1',
-      ),
-      Node(
-          label: 'Invoice.docx',
-          key: 'd2',
-          icon: NodeIcon.fromIconData(Icons.insert_drive_file)),
-    ],
-  ),
-  // Node(
-  //     label: 'MeetingReport.xls',
-  //     key: 'mrxls',
-  //     icon: NodeIcon.fromIconData(Icons.insert_drive_file)),
-  // Node(
-  //     label: 'MeetingReport.pdf',
-  //     key: 'mrpdf',
-  //     icon: NodeIcon.fromIconData(Icons.insert_drive_file)),
-  // Node(
-  //     label: 'Demo.zip',
-  //     key: 'demo',
-  //     icon: NodeIcon.fromIconData(Icons.archive)),
-];
-
 class CategoryTreeView extends StatefulWidget {
   @override
   _CategoryTreeViewState createState() => _CategoryTreeViewState();
@@ -79,7 +29,7 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
   
   CategoryItem _category;
 
-  TreeViewController _treeViewController = TreeViewController(children: nodes);
+  TreeViewController _treeViewController = TreeViewController();
   CategoryNode cNode;
   bool editmode = false;
 
@@ -337,18 +287,57 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
     return Scaffold(
       appBar: AppBar(
         title: _category != null ? Text(_category.title) : Text('请选择分类'),
+        actions: <Widget>[
+          Visibility(
+            visible: editmode,
+            child: IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: (){},
+            ),
+          ),
+          Visibility(
+            visible: editmode,
+            child: IconButton(
+              icon: Icon(Icons.add),
+              onPressed: (){
+                debugPrint('add clicked');
+                  var ret = Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return CategoryNewPage();
+                    }) 
+                  );
+
+                  ret.then((value){
+                    print('return from navi : ${value}');
+                    if(value == true){
+                      loadCategoriesFromServer();
+                    }
+                  });
+              },
+            ),
+          ),
+          Visibility(
+            visible: editmode,
+            child: IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: (){},
+            ),
+          ),
+          IconButton(
+            icon: editmode ? Icon(Icons.done) : Icon(Icons.edit),
+            onPressed: (){
+              setState(() {
+                editmode = !editmode;
+                print('edit mode = ${editmode}');
+              });
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: Column(
           children: <Widget>[
-            // RaisedButton(
-            //   child: Text('Reload'),
-            //   onPressed: (){
-            //     // loadCategoriesOnlyFromServer();
-            //     getCategoryFromServer(10);
-            //     Navigator.pop(context);
-            //   },
-            // ),
             Expanded(
               child: Container(
                 child: TreeView(
@@ -465,56 +454,173 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
           ],
         ),
       ),
-      body: _category == null ? Center(child:Text('滑动左侧分类菜单选择分类'))
-            : ListView.separated(
-                controller: scrollController,
-                itemBuilder: (BuildContext context, int index){
-                  if(posts.length == 0){
-                    if(_loadingPost) //loading
-                      return Container(
-                        decoration: new BoxDecoration(
-                          color: Colors.grey,
-                        ),
-                        padding: const EdgeInsets.all(30.0),
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator());
-                    else
-                      return Container(
-                        decoration: new BoxDecoration(
-                          color: Colors.grey,
-                        ),
-                        padding: const EdgeInsets.all(30.0),
-                        alignment: Alignment.center,
-                        child: Text('无记录'));
-                  }
-                  Post post = posts[index];
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: Container(
+              child: TreeView(
+                theme: _treeViewTheme,
+                controller: _treeViewController,
+                allowParentSelect: true,
+                supportParentDoubleTap: false,
+                
+                // onExpansionChanged: _expandNodeHandler,
+                onNodeTap: (key) {
+                  debugPrint('debug print select key: $key');
+                  setState(() {
+                    _treeViewController =
+                        _treeViewController.copyWith(selectedKey: key);
+                  });
 
-                  return InkWell(
-                    onTap: (){
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (BuildContext context) {
-                          return PostDetailPage(pid: post.id,);
-                        }) 
-                      );
-                    },
-                    child: CustomListItem(
-                      user: post.author,
-                      viewCount: post.comments.length,
-                      thumbnail: Container(
-                        height: 100,
-                        decoration: const BoxDecoration(color: Colors.grey),
-                        child: post.images.length > 0 ? (post.images[0].url.startsWith('http')? Image.network(post.images[0].url) : Image.asset(post.images[0].url)) : Text('NO IMAGE'),
-                      ),
-                      title: post.title,
-                    ),
-                  );
-                }, 
-                separatorBuilder: (context, index) => Divider(
-                  height: 30,
-                ), 
-                itemCount: posts?.length > 0 ? posts.length : 1
+                  var _key = "${key}";
+                  String type = _key.split('_')[0];
+                  if(type.isEmpty || type == "p") return;
+                  
+                  int cid = int.parse(_key.split('_')[1]);
+
+                  print('${_key} - ${cid}');
+
+                  getCategoryFromServer(cid);
+                  setState(() {
+                    _loadingPost = true;  
+                  });
+                  loadPostsViaCategoryFromServer(cid);
+
+                  // Navigator.pop(context);
+                },
+              ),
             ),
+          ),
+          SizedBox(height: 100,),
+          Visibility(
+          visible: editmode,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              RaisedButton(
+                child: Text('添加'),
+                onPressed: (){
+                  debugPrint('add clicked');
+                  var ret = Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return CategoryNewPage();
+                    }) 
+                  );
+
+                  ret.then((value){
+                    print('return from navi : ${value}');
+                    if(value == true){
+                      loadCategoriesFromServer();
+                    }
+                  });
+                }),
+                RaisedButton(
+                child: Text('修改'),
+                onPressed: editmode ? () async {
+                  debugPrint('modify clicked');
+                  bool _e = await editable(cNode.id);
+                  print('get editable result $_e');
+                  if(_e){
+                    var ret = Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (BuildContext context) {
+                        return CategoryUpdatePage(categoryNode: cNode,);
+                      }) 
+                    );
+
+                    ret.then((value){
+                      print('return from navi : ${value}');
+                      if(value == true){
+                        loadCategoriesFromServer();
+                      }
+                    });
+                  }else{
+                    Fluttertoast.showToast(
+                      msg: "无法编辑该类别",
+                      gravity: ToastGravity.CENTER,
+                      textColor: Colors.red);
+                  }
+                  
+                } : null,
+                ),
+                RaisedButton(
+                child: Text('删除'),
+                onPressed: editmode ? () async {
+                  debugPrint('delete clicked ${cNode}');
+
+                  bool _e = await deleteable(cNode.id);
+                  print('get deleteable result $_e');
+                  if(_e){
+                    bool ret = await deleteCategory(cNode.id);
+                    if(ret)
+                      loadCategoriesFromServer();
+                  }else{
+                    Fluttertoast.showToast(
+                      msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别",
+                      gravity: ToastGravity.CENTER,
+                      textColor: Colors.red);
+                  }
+                  // if(_treeViewController.getNode(cNode.key).isParent){
+                  //   print('current selected is ${cNode.key}-${cNode.label} is parent, can not be deleted');
+                  // }
+                } : null,),
+            ],
+          ),
+        ),
+        SizedBox(height: 50,)
+        ],
+      ),
+      // body: _category == null ? Center(child:Text('滑动左侧分类菜单选择分类'))
+      //       : ListView.separated(
+      //           controller: scrollController,
+      //           itemBuilder: (BuildContext context, int index){
+      //             if(posts.length == 0){
+      //               if(_loadingPost) //loading
+      //                 return Container(
+      //                   decoration: new BoxDecoration(
+      //                     color: Colors.grey,
+      //                   ),
+      //                   padding: const EdgeInsets.all(30.0),
+      //                   alignment: Alignment.center,
+      //                   child: CircularProgressIndicator());
+      //               else
+      //                 return Container(
+      //                   decoration: new BoxDecoration(
+      //                     color: Colors.grey,
+      //                   ),
+      //                   padding: const EdgeInsets.all(30.0),
+      //                   alignment: Alignment.center,
+      //                   child: Text('无记录'));
+      //             }
+      //             Post post = posts[index];
+
+      //             return InkWell(
+      //               onTap: (){
+      //                 Navigator.push(
+      //                   context,
+      //                   MaterialPageRoute(builder: (BuildContext context) {
+      //                     return PostDetailPage(pid: post.id,);
+      //                   }) 
+      //                 );
+      //               },
+      //               child: CustomListItem(
+      //                 user: post.author,
+      //                 viewCount: post.comments.length,
+      //                 thumbnail: Container(
+      //                   height: 100,
+      //                   decoration: const BoxDecoration(color: Colors.grey),
+      //                   child: post.images.length > 0 ? (post.images[0].url.startsWith('http')? Image.network(post.images[0].url) : Image.asset(post.images[0].url)) : Text('NO IMAGE'),
+      //                 ),
+      //                 title: post.title,
+      //               ),
+      //             );
+      //           }, 
+      //           separatorBuilder: (context, index) => Divider(
+      //             height: 30,
+      //           ), 
+      //           itemCount: posts?.length > 0 ? posts.length : 1
+      //       ),
     );
   }
 

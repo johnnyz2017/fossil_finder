@@ -400,9 +400,10 @@ class _HomePageState extends State<HomePage> {
         child: new TextFormField(
           autofocus: false,
           controller: _filter,
+          
           decoration: InputDecoration(
             // icon: Icon(Icons.search),
-            labelText: "Input for Search",
+            // labelText: "Input for Search",
             // focusColor: Colors.white,
             fillColor: Colors.white,      
             // border: new OutlineInputBorder(
@@ -417,6 +418,13 @@ class _HomePageState extends State<HomePage> {
                 width: 1.5,
               ),
             ),
+            // focusedBorder: OutlineInputBorder(
+            //   borderRadius: BorderRadius.circular(5.0),
+            //   borderSide: BorderSide(
+            //     color: Colors.white,
+            //     width: 1.5,
+            //   ),
+            // ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5.0),
               borderSide: BorderSide(
@@ -427,7 +435,7 @@ class _HomePageState extends State<HomePage> {
           ),
           style: TextStyle(
             color: Colors.white,
-            decorationColor: Color(0XFFFFCC00),//Font color change
+            decorationColor: Color(0XFFFFCC11),//Font color change
           ),
           // onTap: (){
           //   showSearch(context: context, delegate: DataSearch());

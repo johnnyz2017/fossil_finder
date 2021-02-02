@@ -538,6 +538,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                                   int sid = int.parse(_myState);
                                   print('_mystate ${_myState}');
                                   _getCitiesListFromJson(sid);
+                                  // _myCity = "";
                                 });
                               },
                               items: statesList?.map((item) {
@@ -561,7 +562,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      // Text('City: '),
+                      Text('City: '),
                       Expanded(
                         child: DropdownButtonHideUnderline(
                           child: ButtonTheme(
@@ -581,14 +582,15 @@ class _PostUploadPageState extends State<PostUploadPage> {
                                   print(_myCity);
                                 });
                               },
-                              items: citiesList?.map((item) {
-                                    print("map item ${item}");
-                                    return new DropdownMenuItem(
-                                      child: new Text(item['name']),
-                                      value: item['id'].toString(),
-                                    );
-                                  })?.toList() ??
-                                  [],
+                              items: [],
+                              // items: citiesList?.map((item) {
+                              //       print("map item ${item}");
+                              //       return new DropdownMenuItem(
+                              //         child: new Text(item['name']),
+                              //         value: item['id'].toString(),
+                              //       );
+                              //     })?.toList() ??
+                              //     [],
                             ),
                           ),
                         ),
