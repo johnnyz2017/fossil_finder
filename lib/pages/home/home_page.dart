@@ -199,19 +199,16 @@ class _HomePageState extends State<HomePage> {
                         // _controller?.setMapType(MapType.Standard);
                       },
                     ),
-                    Text("高德视图")
+                    Text("高德地图")
                   ],),),
                   Expanded(child: Column(children: <Widget>[
                     IconButton(
                       iconSize: 50,
                       icon: ClipOval(child: Image.asset('images/icons/map-google.png', width: 50,),),
                       focusColor: Colors.blue,
-                      onPressed: (){
-                        print('google mode');
-                        // _controller?.setMapType(MapType.Satellite);
-                      },
+                      onPressed: null,
                     ),
-                    Text("谷歌视图")
+                    Text("谷歌地图")
                   ],))
                 ],
               ),

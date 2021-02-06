@@ -22,6 +22,9 @@ class Post {
         this._coordinateLatitude,
         this._coordinateAltitude,
         this._address,
+        this._system,
+        this._series,
+        this._stage,
         this._createdAt,
         this._updatedAt,
         this._author,
@@ -46,6 +49,9 @@ class Post {
         this._coordinateLatitude,
         this._coordinateAltitude,
         this._address,
+        this._system,
+        this._series,
+        this._stage,
         this._createdAt,
         this._updatedAt,
         this._author,
@@ -70,6 +76,9 @@ class Post {
     double _coordinateLatitude;
     double _coordinateAltitude;
     String _address;
+    String _system;
+    String _series;
+    String _stage;
     DateTime _createdAt;
     DateTime _updatedAt;
     String _author;
@@ -93,6 +102,9 @@ class Post {
     double get coordinateLatitude => _coordinateLatitude;
     double get coordinateAltitude => _coordinateAltitude;
     String get address => _address;
+    String get system => _system;
+    String get series => _series;
+    String get stage => _stage;
     DateTime get createdAt => _createdAt;
     DateTime get updatedAt => _updatedAt;
     String get author => _author;
@@ -118,6 +130,9 @@ class Post {
         _coordinateAltitude = json["coordinate_altitude"]?.toDouble(),
         // _coordinateAltitude = json["coordinate_altitude"] == null? 0.0: json["coordinate_altitude"].toDouble(),
         _address = json["address"],
+        _system = json["system"],
+        _series = json["series"],
+        _stage = json["stage"],
         _createdAt = DateTime.parse(json["created_at"]),
         _updatedAt = DateTime.parse(json["updated_at"]),
         _author = json["author"],
@@ -166,6 +181,9 @@ class Post {
         "coordinate_latitude": _coordinateLatitude,
         "coordinate_altitude": _coordinateAltitude,
         "address": _address,
+        "system": _system,
+        "series": _series,
+        "stage": _stage,
         "created_at": _createdAt == null ? '' : _createdAt.toIso8601String(),
         "updated_at": _updatedAt == null ? '' : _updatedAt.toIso8601String(),
         "author": _author,
@@ -202,6 +220,9 @@ class Post {
       map['coordinate_latitude'] = _coordinateLatitude;
       map['coordinate_altitude'] = _coordinateAltitude;
       map['address'] = _address;
+      map['system'] = _system;
+      map['series'] = _series;
+      map['stage'] = _stage;
       map['created_at'] = _createdAt == null ? '' : _createdAt.toIso8601String();
       map['updated_at'] = _updatedAt == null ? '' : _updatedAt.toIso8601String();
       map['author'] = _author;
@@ -237,6 +258,9 @@ class Post {
       this._coordinateLatitude = map['coordinate_latitude'];
       this._coordinateAltitude = map['coordinate_altitude'];
       this._address = map['address'];
+      this._system = map['system'];
+      this._series = map['series'];
+      this._stage = map['stage'];
       if(map['created_at'] != null && map['created_at'].toString().isNotEmpty){
         this._createdAt = DateTime.parse(map['created_at']);
       }

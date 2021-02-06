@@ -56,42 +56,53 @@ class _PostUploadPageState extends State<PostUploadPage> {
   TextEditingController _contentTextController = new TextEditingController();
   TextEditingController _categoryTextController = new TextEditingController();
 
-  List statesList;
-  String _myState;
+  List systemList;
+  String _currentSystem;
+  String _currentSystemName;
 
-  String stateInfoUrl = 'http://cleanions.bestweb.my/api/location/get_state';
-  Future<String> _getStateList() async {
-    await http.post(stateInfoUrl, headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }, body: {
-      "api_key": '25d55ad283aa400af464c76d713c07ad',
+  String stateInfoUrl = '${apiUrl}/system';
+  Future<String> _getSystemList() async {
+    await http.get(stateInfoUrl, headers: {
+      'Accept': 'application/json'
     }).then((response) {
       var data = json.decode(response.body);
 
      print(data);
       setState(() {
-        statesList = data['state'];
+        systemList = data['data'];
       });
     });
   }
 
   // Get State information by API
-  List citiesList;
-  String _myCity;
-
-  String cityInfoUrl =
-      'http://cleanions.bestweb.my/api/location/get_city_by_state_id';
-  Future<String> _getCitiesList() async {
-    await http.post(cityInfoUrl, headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }, body: {
-      "api_key": '25d55ad283aa400af464c76d713c07ad',
-      "state_id": _myState,
+  List seriesList;
+  String _currentSeries;
+  String _currentSeriesName;
+  Future<String> _getSeriesList(int id) async {
+    String cityInfoUrl = '${apiUrl}/system/${id}/series';
+    await http.get(cityInfoUrl, headers: {
+      'Accept': 'application/json'
     }).then((response) {
       var data = json.decode(response.body);
-      print('cities: ${data}');
+      print('series: ${data}');
       setState(() {
-        citiesList = data['cities'];
+        seriesList = data['data'];
+      });
+    });
+  }
+
+  List stagesList;
+  String _currentStage;
+  String _currentStageName;
+  Future<String> _getStagesList(int id) async {
+    String cityInfoUrl = '${apiUrl}/series/${id}/stages';
+    await http.get(cityInfoUrl, headers: {
+      'Accept': 'application/json'
+    }).then((response) {
+      var data = json.decode(response.body);
+      print('stages: ${data}');
+      setState(() {
+        stagesList = data['data'];
       });
     });
   }
@@ -101,11 +112,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
     String _content = await rootBundle.loadString('assets/data/system_series_stage_table.json');
     print('get states from json  ${_content}');
     var _jsonContent = json.decode(_content);
-    // print("after json decode list size is: ${_jsonContent}"); //OK
-    // print(_jsonContent);
-    // List<Post> postList = _jsonContent.map((item) => Post.fromJson(item)).toList();
     setState(() {
-      statesList = _jsonContent['state'];
+      systemList = _jsonContent['state'];
     });
   }
 
@@ -126,8 +134,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
     // List<Post> postList = _jsonContent.map((item) => Post.fromJson(item)).toList();
 
     setState(() {
-      // statesList = _cities;
-      citiesList = _cities;
+      seriesList = _cities;
     });
   }
 
@@ -190,7 +197,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
     // });
 
     // _getStateList();
-    _getStateListFromJson();
+    _getSystemList();
+    // _getStateListFromJson();
   }
 
   @override
@@ -517,31 +525,37 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text('State: '),
+                      Container(
+                        // alignment: Alignment.centerRight,
+                        width: 100,
+                        child: Text('System / Period: ')),
                       Expanded(
                         child: DropdownButtonHideUnderline(
                           child: ButtonTheme(
                             alignedDropdown: true,
                             child: DropdownButton<String>(
-                              value: _myState,
-                              // value: 'No',
+                              disabledHint: Text('DISABLED'),
+                              value: _currentSystem,
                               iconSize: 30,
                               icon: (null),
                               style: TextStyle(
                                 color: Colors.black54,
                                 fontSize: 16,
                               ),
-                              hint: Text('Select State'),
+                              hint: Text('Select System'),
                               onChanged: (String newValue) {
                                 setState(() {
-                                  _myState = newValue;
-                                  int sid = int.parse(_myState);
-                                  print('_mystate ${_myState}');
-                                  _getCitiesListFromJson(sid);
-                                  // _myCity = "";
+                                  _currentSystem = newValue;
+                                  int sid = int.parse(_currentSystem);
+                                  var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
+                                    return null;
+                                  },);
+                                  _currentSystemName = item['name'];
+                                  // print('_currentSystem ${_currentSystemName} - name : ${systemList.where((element) => element['id'] == sid)}');
+                                  _getSeriesList(sid);
                                 });
                               },
-                              items: statesList?.map((item) {
+                              items: systemList?.map((item) {
                                     return new DropdownMenuItem(
                                       child: new Text(item['name']),
                                       value: item['id'].toString(),
@@ -562,35 +576,92 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text('City: '),
+                      Container(
+                        // alignment: Alignment.centerRight,
+                        width: 100,
+                        child: Text('Series / Epoch: ')),
                       Expanded(
                         child: DropdownButtonHideUnderline(
                           child: ButtonTheme(
                             alignedDropdown: true,
                             child: DropdownButton<String>(
-                              value: _myCity,
+                              value: _currentSeries,
                               iconSize: 30,
                               icon: (null),
                               style: TextStyle(
                                 color: Colors.black54,
                                 fontSize: 16,
                               ),
-                              hint: Text('Select City'),
+                              hint: Text('Select Series'),
                               onChanged: (String newValue) {
                                 setState(() {
-                                  _myCity = newValue;
-                                  print(_myCity);
+                                  _currentSeries = newValue;
+                                  int _sid = int.parse(_currentSeries);
+                                  var item = seriesList.firstWhere((element) => element['id'] == _sid, orElse: () {
+                                    return null;
+                                  },);
+                                  _currentSeriesName = item['name'];
+                                  print(_currentSeries);
+                                  _getStagesList(_sid);
                                 });
                               },
-                              items: [],
-                              // items: citiesList?.map((item) {
-                              //       print("map item ${item}");
-                              //       return new DropdownMenuItem(
-                              //         child: new Text(item['name']),
-                              //         value: item['id'].toString(),
-                              //       );
-                              //     })?.toList() ??
-                              //     [],
+                              items: seriesList?.map((item) {
+                                    print("map item ${item}");
+                                    return new DropdownMenuItem(
+                                      child: new Text(item['name']),
+                                      value: item['id'].toString(),
+                                    );
+                                  })?.toList() ??
+                                  [],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  // padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        // alignment: Alignment.centerRight,
+                        width: 100,
+                        child: Text('Stage / Age: ')),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton<String>(
+                              value: _currentStage,
+                              iconSize: 30,
+                              icon: (null),
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 16,
+                              ),
+                              hint: Text('Select Stage'),
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  _currentStage = newValue;
+                                  int sid = int.parse(_currentStage);
+                                  var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
+                                    return null;
+                                  },);
+                                  _currentStageName = item['name'];
+                                  print(_currentStage);
+                                });
+                              },
+                              items: stagesList?.map((item) {
+                                    print("map item ${item}");
+                                    return new DropdownMenuItem(
+                                      child: new Text(item['name']),
+                                      value: item['id'].toString(),
+                                    );
+                                  })?.toList() ??
+                                  [],
                             ),
                           ),
                         ),
@@ -650,6 +721,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
       "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
+      "system" : _currentSystemName,
+      "series" : _currentSeriesName,
+      "stage" : _currentStageName,
       "created_at" : null,
       "updated_at" : null,
       "author" : 'test author' //TBD get from local
@@ -692,6 +766,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
       "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
+      "system" : _currentSystemName,
+      "series" : _currentSeriesName,
+      "stage" : _currentStageName,
       'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0
     });
@@ -768,6 +845,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
       "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
+      "system" : _currentSystemName,
+      "series" : _currentSeriesName,
+      "stage" : _currentStageName,
       'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0
     });

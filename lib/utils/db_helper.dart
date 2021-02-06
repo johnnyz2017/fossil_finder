@@ -27,6 +27,9 @@ class DatabaseHelper {
   String colCoordinateLatitude = 'coordinate_latitude';
   String colCoordinateAltitude = 'coordinate_altitude';
   String colAddress = 'address';
+  String colSystem = 'system';
+  String colSeries = 'series';
+  String colStage = 'stage';
   String colCreatedAt = 'created_at';
   String colUpdatedAt = 'updated_at';
   String colAuthor = 'author';
@@ -64,7 +67,7 @@ class DatabaseHelper {
         'CREATE TABLE $postTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colUserId INTEGER, $colAuthUserId INTEGER, $colTempId TEXT, $colPermId TEXT, $colTitle TEXT, '
         '$colContent TEXT, $colPrivate INTEGER, $colPublished INTEGER, $colImages TEXT, $colCategoryId INTEGER, $colFinalCategoryId INTEGER, $colFinalCategoryIdFrom INTEGER, '
         '$colCoordinateLongitude DOUBLE, $colCoordinateLatitude DOUBLE, $colCoordinateAltitude DOUBLE, '
-        '$colAddress TEXT, $colCreatedAt TEXT, $colUpdatedAt TEXT, $colAuthor TEXT)');
+        '$colAddress TEXT, $colSystem TEXT, $colSeries TEXT, $colStage TEXT, $colCreatedAt TEXT, $colUpdatedAt TEXT, $colAuthor TEXT)');
   }
 
   // Fetch Operation: Get all post objects from database

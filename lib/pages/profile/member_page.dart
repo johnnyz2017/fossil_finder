@@ -134,24 +134,56 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
       color: Colors.grey,
       child: Column(
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(top: 20),
-            child: ClipOval(
-              child: 
-                profileUrl.startsWith('http') ? CachedNetworkImage(
-                        height: 100,
-                        width: 100,
-                        imageUrl: profileUrl,
-                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                      )
-                 : Image.asset(profileUrl, height: 100, width: 100,),
-            )
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 10),
-            child: Text(userName),
-          )
+          Row(children: <Widget>[
+            Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(top: 20),
+                  child: ClipOval(
+                    child: 
+                      profileUrl.startsWith('http') ? CachedNetworkImage(
+                              height: 100,
+                              width: 100,
+                              imageUrl: profileUrl,
+                              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
+                            )
+                      : Image.asset(profileUrl, height: 100, width: 100,),
+                  )
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  child: Text(userName),
+                )
+              ],
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text('记录发布数：'),
+                      Text('0')
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text('类别发布数：'),
+                      Text('0')
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Text('评论发布数：'),
+                      Text('0')
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],) 
         ],
       ),
     );
