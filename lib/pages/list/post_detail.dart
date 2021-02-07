@@ -84,6 +84,21 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         fontSize: 30,
                       ),
                     ),
+                    // Row(
+                    //   children: <Widget>[
+                    //     Expanded(
+                    //       child: Text('${post.finalCategoryId}',
+                    //         style: TextStyle(
+                    //           color: Colors.blue,
+                    //           fontSize: 25
+                    //         ),                          
+                    //       ),
+                    //     ),
+                    //     RaisedButton(
+                    //       onPressed: (){},
+                    //     )
+                    //   ],
+                    // ),
                     Padding(padding: EdgeInsets.only(top: 10)),
                     Container(
                       height: 200,
@@ -106,19 +121,67 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         Text('无图片'),
                     ),
                     Padding(padding: EdgeInsets.only(top: 10)),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    Row(
+                      children: <Widget>[
+                        Text('采集地点: '),
+                        Expanded(child: Text('${post.coordinateLongitude}, ${post.coordinateLatitude}'),),
+                        IconButton(
+                          icon: Icon(Icons.gps_fixed),
+                          onPressed: (){
+                            print('采集地点 clicked');
+                          },
+                        )
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 5)),
+                    Row(
+                      children: <Widget>[
+                        Text('采集地址: '),
+                        Expanded(child: Text('${post.address}'),)
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 5)),
+                    Row(
+                      children: <Widget>[
+                        Text('临时标本号: '),
+                        Expanded(child: Text('${post.tempId}'),)
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 5)),
+                    Row(
+                      children: <Widget>[
+                        Text('永久标本号: '),
+                        Expanded(child: Text('${post.permId}'),)
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 5)),
+                    Row(
+                      children: <Widget>[
+                        Text('采集时间: '),
+                        Expanded(child: Text('${post.createdAt.toString()}'),)
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 5)),
+                    Row(
+                      children: <Widget>[
+                        Text('详细描述: '),
+                        Expanded(child: Text('${post.content}'),)
+                      ],
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 10)),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
                       
-                      child: Text(
-                        post.content,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.lightBlue,
+                    //   child: Text(
+                    //     post.content,
+                    //     style: TextStyle(
+                    //       fontSize: 20,
+                    //       color: Colors.lightBlue,
 
-                        ),
-                        textAlign: TextAlign.start,
-                      ),
-                    )
+                    //     ),
+                    //     textAlign: TextAlign.start,
+                    //   ),
+                    // )
                   ],
                 ),
               ),
@@ -165,7 +228,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       Text(post.comments[index-1].author)
                     ],
                   ),
-                  title: Text(post.comments[index-1].title),
+                  title: InkWell(
+                    child: Text('鉴定类别： ${post.comments[index-1].title}'),
+                    onTap: (){
+                      print('鉴定类别 clicked');
+                    },
+                  ),
                   subtitle: Text(post.comments[index-1].content),
                 ),
               ),

@@ -486,7 +486,36 @@ class _PostEditblePageState extends State<PostEditblePage> {
                   color: Colors.redAccent,
                   child: Text('删除记录'),
                   onPressed: (){
-                    _deletePost();
+                    showDialog(
+                      context: context,
+                      builder: (context){
+                        return AlertDialog(
+                          title: Text("提示信息"),
+                          content: Text("您确定要删除吗"),
+                          actions: <Widget>[
+                            RaisedButton(
+                              child: Text("取消"),
+                              color: Colors.blue,
+                              textColor: Colors.white,
+                              onPressed: (){
+                                print("取消");
+                                Navigator.pop(context);
+                              },
+                            ),
+                            RaisedButton(
+                              child: Text("确定"),
+                              color: Colors.blue,
+                              textColor: Colors.white,
+                              onPressed: ()async{
+                                print("确定");
+                                Navigator.pop(context,"ok");
+                                _deletePost();
+                              },
+                            ),
+                          ],
+                        );
+                      }
+                    );
                   }
                 )
               ],

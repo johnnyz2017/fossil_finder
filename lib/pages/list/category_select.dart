@@ -368,9 +368,38 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                     bool _e = await deleteable(cNode.id);
                     print('get deleteable result $_e');
                     if(_e){
-                      bool ret = await deleteCategory(cNode.id);
-                      if(ret)
-                        loadCategoriesFromServer();
+                      showDialog(
+                        context: context,
+                        builder: (context){
+                          return AlertDialog(
+                            title: Text("提示信息"),
+                            content: Text("您确定要删除吗"),
+                            actions: <Widget>[
+                              RaisedButton(
+                                child: Text("取消"),
+                                color: Colors.blue,
+                                textColor: Colors.white,
+                                onPressed: (){
+                                  print("取消");
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              RaisedButton(
+                                child: Text("确定"),
+                                color: Colors.blue,
+                                textColor: Colors.white,
+                                onPressed: ()async{
+                                  print("确定");
+                                  Navigator.pop(context,"ok");
+                                  var ret = await deleteCategory(cNode.id);
+                                  if(ret)
+                                    loadCategoriesFromServer();
+                                },
+                              ),
+                            ],
+                          );
+                        }
+                      );                   
                     }else{
                       Fluttertoast.showToast(
                         msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别",

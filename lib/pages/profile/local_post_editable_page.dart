@@ -465,14 +465,43 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                   color: Colors.redAccent,
                   child: Text('删除记录'),
                   onPressed: (){
-                    Fluttertoast.showToast(
-                        msg: "删除成功",
-                        gravity: ToastGravity.CENTER,
-                        textColor: Colors.grey);
+                    showDialog(
+                      context: context,
+                      builder: (context){
+                        return AlertDialog(
+                          title: Text("提示信息"),
+                          content: Text("您确定要删除吗"),
+                          actions: <Widget>[
+                            RaisedButton(
+                              child: Text("取消"),
+                              color: Colors.blue,
+                              textColor: Colors.white,
+                              onPressed: (){
+                                print("取消");
+                                Navigator.pop(context);
+                              },
+                            ),
+                            RaisedButton(
+                              child: Text("确定"),
+                              color: Colors.blue,
+                              textColor: Colors.white,
+                              onPressed: ()async{
+                                print("确定");
+                                Navigator.pop(context,"ok");
+                                Fluttertoast.showToast(
+                                    msg: "删除成功",
+                                    gravity: ToastGravity.CENTER,
+                                    textColor: Colors.grey);
 
-                    dbhelper.deletePost(widget.post.id);
+                                dbhelper.deletePost(widget.post.id);
 
-                    Navigator.pop(context, true);
+                                Navigator.pop(context, true);
+                              },
+                            ),
+                          ],
+                        );
+                      }
+                    );
                   }
                 )
               ],

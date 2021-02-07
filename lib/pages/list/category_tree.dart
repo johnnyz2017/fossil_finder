@@ -12,6 +12,7 @@ import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/form/category_new.dart';
 import 'package:fossils_finder/pages/form/category_update.dart';
+import 'package:fossils_finder/pages/list/category_posts.dart';
 import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
@@ -24,9 +25,7 @@ class CategoryTreeView extends StatefulWidget {
 
 class _CategoryTreeViewState extends State<CategoryTreeView> {
   List<Post> posts = new List<Post>();
-  bool _loadingPost = false;
-  final ScrollController scrollController = ScrollController();
-  
+  final ScrollController scrollController = ScrollController();  
   CategoryItem _category;
 
   TreeViewController _treeViewController = TreeViewController();
@@ -152,7 +151,6 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
     List _jsonList = _listJson as List;
     List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
     setState(() {
-      _loadingPost = false;
       posts = postList;
     });
     print('after get posts ${posts.length} - ${scrollController.offset}');
@@ -286,13 +284,39 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: _category != null ? Text(_category.title) : Text('请选择分类'),
+        // title: _category != null ? Text(_category.title) : Text('请选择分类'),
+        title: editmode ? Text('编辑模式') : Text('选择分类查看'),
         actions: <Widget>[
           Visibility(
             visible: editmode,
             child: IconButton(
               icon: Icon(Icons.edit),
-              onPressed: (){},
+              onPressed: () async{
+                debugPrint('modify clicked ${cNode.id}');
+                if(cNode == null) return;
+                bool _e = await editable(cNode.id);
+                print('get editable result $_e');
+                if(_e){
+                  var ret = Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return CategoryUpdatePage(categoryNode: cNode,);
+                    }) 
+                  );
+
+                  ret.then((value){
+                    print('return from navi : ${value}');
+                    if(value == true){
+                      loadCategoriesOnlyFromServer();
+                    }
+                  });
+                }else{
+                  Fluttertoast.showToast(
+                    msg: "无法编辑该类别",
+                    gravity: ToastGravity.CENTER,
+                    textColor: Colors.red);
+                }
+              },
             ),
           ),
           Visibility(
@@ -301,19 +325,19 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
               icon: Icon(Icons.add),
               onPressed: (){
                 debugPrint('add clicked');
-                  var ret = Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                      return CategoryNewPage();
-                    }) 
-                  );
+                var ret = Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return CategoryNewPage();
+                  }) 
+                );
 
-                  ret.then((value){
-                    print('return from navi : ${value}');
-                    if(value == true){
-                      loadCategoriesFromServer();
-                    }
-                  });
+                ret.then((value){
+                  print('return from navi : ${value}');
+                  if(value == true){
+                    loadCategoriesOnlyFromServer();
+                  }
+                });
               },
             ),
           ),
@@ -321,7 +345,52 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
             visible: editmode,
             child: IconButton(
               icon: Icon(Icons.delete),
-              onPressed: (){},
+              onPressed: () async{
+                debugPrint('delete clicked ${cNode}');
+                if(cNode == null) return;
+
+                bool _e = await deleteable(cNode.id);
+                print('get deleteable result $_e');
+                if(_e){
+                  showDialog(
+                    context: context,
+                    builder: (context){
+                      return AlertDialog(
+                        title: Text("提示信息"),
+                        content: Text("您确定要删除吗"),
+                        actions: <Widget>[
+                          RaisedButton(
+                            child: Text("取消"),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                            onPressed: (){
+                              print("取消");
+                              Navigator.pop(context);
+                            },
+                          ),
+                          RaisedButton(
+                            child: Text("确定"),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                            onPressed: ()async{
+                              print("确定");
+                              Navigator.pop(context,"ok");
+                              var ret = await deleteCategory(cNode.id);
+                              if(ret)
+                                loadCategoriesFromServer();
+                            },
+                          ),
+                        ],
+                      );
+                    }
+                  );
+                }else{
+                  Fluttertoast.showToast(
+                    msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别",
+                    gravity: ToastGravity.CENTER,
+                    textColor: Colors.red);
+                }
+              },
             ),
           ),
           IconButton(
@@ -335,125 +404,6 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                child: TreeView(
-                  theme: _treeViewTheme,
-                  controller: _treeViewController,
-                  allowParentSelect: true,
-                  supportParentDoubleTap: false,
-                  
-                  // onExpansionChanged: _expandNodeHandler,
-                  onNodeTap: (key) {
-                    debugPrint('debug print select key: $key');
-                    setState(() {
-                      _treeViewController =
-                          _treeViewController.copyWith(selectedKey: key);
-                    });
-
-                    var _key = "${key}";
-                    String type = _key.split('_')[0];
-                    if(type.isEmpty || type == "p") return;
-                    
-                    int cid = int.parse(_key.split('_')[1]);
-
-                    print('${_key} - ${cid}');
-
-                    getCategoryFromServer(cid);
-                    setState(() {
-                      _loadingPost = true;  
-                    });
-                    loadPostsViaCategoryFromServer(cid);
-
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ),
-            SizedBox(height: 100,),
-            Visibility(
-            visible: editmode,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                RaisedButton(
-                  child: Text('添加'),
-                  onPressed: (){
-                    debugPrint('add clicked');
-                    var ret = Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                        return CategoryNewPage();
-                      }) 
-                    );
-
-                    ret.then((value){
-                      print('return from navi : ${value}');
-                      if(value == true){
-                        loadCategoriesFromServer();
-                      }
-                    });
-                  }),
-                  RaisedButton(
-                  child: Text('修改'),
-                  onPressed: editmode ? () async {
-                    debugPrint('modify clicked');
-                    bool _e = await editable(cNode.id);
-                    print('get editable result $_e');
-                    if(_e){
-                      var ret = Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (BuildContext context) {
-                          return CategoryUpdatePage(categoryNode: cNode,);
-                        }) 
-                      );
-
-                      ret.then((value){
-                        print('return from navi : ${value}');
-                        if(value == true){
-                          loadCategoriesFromServer();
-                        }
-                      });
-                    }else{
-                      Fluttertoast.showToast(
-                        msg: "无法编辑该类别",
-                        gravity: ToastGravity.CENTER,
-                        textColor: Colors.red);
-                    }
-                    
-                  } : null,
-                  ),
-                  RaisedButton(
-                  child: Text('删除'),
-                  onPressed: editmode ? () async {
-                    debugPrint('delete clicked ${cNode}');
-
-                    bool _e = await deleteable(cNode.id);
-                    print('get deleteable result $_e');
-                    if(_e){
-                      bool ret = await deleteCategory(cNode.id);
-                      if(ret)
-                        loadCategoriesFromServer();
-                    }else{
-                      Fluttertoast.showToast(
-                        msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别",
-                        gravity: ToastGravity.CENTER,
-                        textColor: Colors.red);
-                    }
-                    // if(_treeViewController.getNode(cNode.key).isParent){
-                    //   print('current selected is ${cNode.key}-${cNode.label} is parent, can not be deleted');
-                    // }
-                  } : null,),
-              ],
-            ),
-          ),
-          SizedBox(height: 50,)
-          ],
-        ),
-      ),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -464,13 +414,11 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
                 allowParentSelect: true,
                 supportParentDoubleTap: false,
                 
-                // onExpansionChanged: _expandNodeHandler,
                 onNodeTap: (key) {
                   debugPrint('debug print select key: $key');
-                  setState(() {
-                    _treeViewController =
-                        _treeViewController.copyWith(selectedKey: key);
-                  });
+                  String label = _treeViewController.getNode(key) == null
+                                ? ''
+                                : _treeViewController.getNode(key).label;
 
                   var _key = "${key}";
                   String type = _key.split('_')[0];
@@ -479,148 +427,33 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
                   int cid = int.parse(_key.split('_')[1]);
 
                   print('${_key} - ${cid}');
-
-                  getCategoryFromServer(cid);
-                  setState(() {
-                    _loadingPost = true;  
+                  cNode = CategoryNode.fromJson({
+                    "key" : "$key",
+                    "title" : label,
+                    'id' : cid
                   });
-                  loadPostsViaCategoryFromServer(cid);
+                  
+                  setState(() {
+                    _treeViewController =
+                        _treeViewController.copyWith(selectedKey: key);
+                  });
 
-                  // Navigator.pop(context);
+                  if(editmode) {
+                    getCategoryFromServer(cid);
+                    return;
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                      return CategoryPostsPage(cid:cid);
+                    }) 
+                  );
                 },
               ),
             ),
           ),
-          SizedBox(height: 100,),
-          Visibility(
-          visible: editmode,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              RaisedButton(
-                child: Text('添加'),
-                onPressed: (){
-                  debugPrint('add clicked');
-                  var ret = Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                      return CategoryNewPage();
-                    }) 
-                  );
-
-                  ret.then((value){
-                    print('return from navi : ${value}');
-                    if(value == true){
-                      loadCategoriesFromServer();
-                    }
-                  });
-                }),
-                RaisedButton(
-                child: Text('修改'),
-                onPressed: editmode ? () async {
-                  debugPrint('modify clicked');
-                  bool _e = await editable(cNode.id);
-                  print('get editable result $_e');
-                  if(_e){
-                    var ret = Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                        return CategoryUpdatePage(categoryNode: cNode,);
-                      }) 
-                    );
-
-                    ret.then((value){
-                      print('return from navi : ${value}');
-                      if(value == true){
-                        loadCategoriesFromServer();
-                      }
-                    });
-                  }else{
-                    Fluttertoast.showToast(
-                      msg: "无法编辑该类别",
-                      gravity: ToastGravity.CENTER,
-                      textColor: Colors.red);
-                  }
-                  
-                } : null,
-                ),
-                RaisedButton(
-                child: Text('删除'),
-                onPressed: editmode ? () async {
-                  debugPrint('delete clicked ${cNode}');
-
-                  bool _e = await deleteable(cNode.id);
-                  print('get deleteable result $_e');
-                  if(_e){
-                    bool ret = await deleteCategory(cNode.id);
-                    if(ret)
-                      loadCategoriesFromServer();
-                  }else{
-                    Fluttertoast.showToast(
-                      msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别",
-                      gravity: ToastGravity.CENTER,
-                      textColor: Colors.red);
-                  }
-                  // if(_treeViewController.getNode(cNode.key).isParent){
-                  //   print('current selected is ${cNode.key}-${cNode.label} is parent, can not be deleted');
-                  // }
-                } : null,),
-            ],
-          ),
-        ),
-        SizedBox(height: 50,)
         ],
       ),
-      // body: _category == null ? Center(child:Text('滑动左侧分类菜单选择分类'))
-      //       : ListView.separated(
-      //           controller: scrollController,
-      //           itemBuilder: (BuildContext context, int index){
-      //             if(posts.length == 0){
-      //               if(_loadingPost) //loading
-      //                 return Container(
-      //                   decoration: new BoxDecoration(
-      //                     color: Colors.grey,
-      //                   ),
-      //                   padding: const EdgeInsets.all(30.0),
-      //                   alignment: Alignment.center,
-      //                   child: CircularProgressIndicator());
-      //               else
-      //                 return Container(
-      //                   decoration: new BoxDecoration(
-      //                     color: Colors.grey,
-      //                   ),
-      //                   padding: const EdgeInsets.all(30.0),
-      //                   alignment: Alignment.center,
-      //                   child: Text('无记录'));
-      //             }
-      //             Post post = posts[index];
-
-      //             return InkWell(
-      //               onTap: (){
-      //                 Navigator.push(
-      //                   context,
-      //                   MaterialPageRoute(builder: (BuildContext context) {
-      //                     return PostDetailPage(pid: post.id,);
-      //                   }) 
-      //                 );
-      //               },
-      //               child: CustomListItem(
-      //                 user: post.author,
-      //                 viewCount: post.comments.length,
-      //                 thumbnail: Container(
-      //                   height: 100,
-      //                   decoration: const BoxDecoration(color: Colors.grey),
-      //                   child: post.images.length > 0 ? (post.images[0].url.startsWith('http')? Image.network(post.images[0].url) : Image.asset(post.images[0].url)) : Text('NO IMAGE'),
-      //                 ),
-      //                 title: post.title,
-      //               ),
-      //             );
-      //           }, 
-      //           separatorBuilder: (context, index) => Divider(
-      //             height: 30,
-      //           ), 
-      //           itemCount: posts?.length > 0 ? posts.length : 1
-      //       ),
     );
   }
 
