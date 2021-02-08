@@ -721,9 +721,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
       "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
-      "system" : _currentSystemName,
-      "series" : _currentSeriesName,
-      "stage" : _currentStageName,
+      "system" : _currentSystem,
+      "series" : _currentSeries,
+      "stage" : _currentStage,
       "created_at" : null,
       "updated_at" : null,
       "author" : 'test author' //TBD get from local
@@ -766,9 +766,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
       "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
-      "system" : _currentSystemName,
-      "series" : _currentSeriesName,
-      "stage" : _currentStageName,
+      "system" : _currentSystem,
+      "series" : _currentSeries,
+      "stage" : _currentStage,
       'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0
     });
@@ -845,9 +845,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
       "coordinate_longitude" : (_lngTextController.text == null || _lngTextController.text.isEmpty ) ? null : double.parse(_lngTextController.text),
       "coordinate_altitude" : (_altTextController.text == null || _altTextController.text.isEmpty) ? null : double.parse(_altTextController.text),
       "address" : _addrTextController.text,
-      "system" : _currentSystemName,
-      "series" : _currentSeriesName,
-      "stage" : _currentStageName,
+      "system" : _currentSystem,
+      "series" : _currentSeries,
+      "stage" : _currentStage,
       'category_id' : _category == -1 ? null : _category,
       'private' : _private ? 1 : 0
     });

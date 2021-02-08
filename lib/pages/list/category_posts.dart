@@ -83,7 +83,7 @@ class _CategoryPostsPageState extends State<CategoryPostsPage> {
       _loadingPost = false;
       posts = postList;
     });
-    print('after get posts ${posts.length} - ${scrollController.offset}');
+    // print('after get posts ${posts.length} - ${scrollController.offset}');
   }
   
   @override

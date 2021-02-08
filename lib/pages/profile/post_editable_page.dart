@@ -17,6 +17,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:path/path.dart' as path;
+import 'package:http/http.dart' as http;
 
 class PostEditblePage extends StatefulWidget {
   final Post post;
@@ -49,6 +50,57 @@ class _PostEditblePageState extends State<PostEditblePage> {
   TextEditingController _titleTextController = new TextEditingController();
   TextEditingController _contentTextController = new TextEditingController();
   TextEditingController _categoryTextController = new TextEditingController();
+
+  List systemList;
+  String _currentSystem;
+  String _currentSystemName;
+
+  String stateInfoUrl = '${apiUrl}/system';
+  Future<String> _getSystemList() async {
+    await http.get(stateInfoUrl, headers: {
+      'Accept': 'application/json'
+    }).then((response) {
+      var data = json.decode(response.body);
+
+     print(data);
+      setState(() {
+        systemList = data['data'];
+      });
+    });
+  }
+
+  // Get State information by API
+  List seriesList;
+  String _currentSeries;
+  String _currentSeriesName;
+  Future<String> _getSeriesList(int id) async {
+    String cityInfoUrl = '${apiUrl}/system/${id}/series';
+    await http.get(cityInfoUrl, headers: {
+      'Accept': 'application/json'
+    }).then((response) {
+      var data = json.decode(response.body);
+      print('series: ${data}');
+      setState(() {
+        seriesList = data['data'];
+      });
+    });
+  }
+
+  List stagesList;
+  String _currentStage;
+  String _currentStageName;
+  Future<String> _getStagesList(int id) async {
+    String cityInfoUrl = '${apiUrl}/series/${id}/stages';
+    await http.get(cityInfoUrl, headers: {
+      'Accept': 'application/json'
+    }).then((response) {
+      var data = json.decode(response.body);
+      print('stages: ${data}');
+      setState(() {
+        stagesList = data['data'];
+      });
+    });
+  }
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -90,8 +142,12 @@ class _PostEditblePageState extends State<PostEditblePage> {
     super.initState();
     _private = widget.post.private;
     _category = widget.post.categoryId;
-    
-    _imgsPath = widget.post.images.map((e) => e.url).toList(); //TBD
+
+    _getSystemList();
+
+    print('images: ${widget.post.images[0].url}');
+        
+    _imgsPath = widget.post.images == null ? [] : widget.post.images.map((e) => e.url).toList(); //TBD
     print('get image path: ${_imgsPath[0]}');
     for(int i =0; i < _imgsPath.length; i++){
       _uploadedStatus[_imgsPath[i]] = true;
@@ -105,6 +161,18 @@ class _PostEditblePageState extends State<PostEditblePage> {
     _titleTextController.text = widget.post.title;
     _contentTextController.text = widget.post.content;
     _categoryTextController.text = widget.post.categoryId.toString();
+
+    print('system: ${widget.post.system} - ${widget.post.series} - ${widget.post.stage}');
+    if(widget.post.system != null){
+      _currentSystem = widget.post.system;
+      _currentSeries = widget.post.series;
+      _currentStage = widget.post.stage;
+      int systemId = int.parse(_currentSystem);
+      _getSeriesList(systemId);
+      int stageId = int.parse(_currentSeries);
+      _getStagesList(stageId);
+    }
+    
   }
 
 
@@ -450,6 +518,159 @@ class _PostEditblePageState extends State<PostEditblePage> {
                     //   },
                     // )
                   ],
+                ),
+
+                Container(
+                  // padding: EdgeInsets.only(left: 8, right: 8, top: 5),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        // alignment: Alignment.centerRight,
+                        width: 100,
+                        child: Text('System / Period: ')),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton<String>(
+                              disabledHint: Text('非编辑模式或空列表'),
+                              value: _currentSystem,
+                              iconSize: 30,
+                              icon: (null),
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 16,
+                              ),
+                              hint: Text('Select System'),
+                              onChanged: !editmode ? null : (String newValue) {
+                                setState(() {
+                                  _currentSystem = newValue;
+                                  int sid = int.parse(_currentSystem);
+                                  var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
+                                    return null;
+                                  },);
+                                  _currentSystemName = item['name'];
+                                  // print('_currentSystem ${_currentSystemName} - name : ${systemList.where((element) => element['id'] == sid)}');
+                                  _getSeriesList(sid);
+                                });
+                              },
+                              items: systemList?.map((item) {
+                                    return new DropdownMenuItem(
+                                      child: new Text(item['name']),
+                                      value: item['id'].toString(),
+                                    );
+                                  })?.toList() ??
+                                  [],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                Container(
+                  // padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        // alignment: Alignment.centerRight,
+                        width: 100,
+                        child: Text('Series / Epoch: ')),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton<String>(
+                              disabledHint: Text('非编辑模式或空列表'),
+                              value: _currentSeries,
+                              iconSize: 30,
+                              icon: (null),
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 16,
+                              ),
+                              hint: Text('Select Series'),
+                              onChanged: !editmode ? null : (String newValue) {
+                                setState(() {
+                                  _currentSeries = newValue;
+                                  int _sid = int.parse(_currentSeries);
+                                  var item = seriesList.firstWhere((element) => element['id'] == _sid, orElse: () {
+                                    return null;
+                                  },);
+                                  _currentSeriesName = item['name'];
+                                  print(_currentSeries);
+                                  _getStagesList(_sid);
+                                });
+                              },
+                              items: seriesList?.map((item) {
+                                    print("map item ${item}");
+                                    return new DropdownMenuItem(
+                                      child: new Text(item['name']),
+                                      value: item['id'].toString(),
+                                    );
+                                  })?.toList() ??
+                                  [],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  // padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        // alignment: Alignment.centerRight,
+                        width: 100,
+                        child: Text('Stage / Age: ')),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton<String>(
+                              disabledHint: Text('非编辑模式或空列表'),
+                              value: _currentStage,
+                              iconSize: 30,
+                              icon: (null),
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 16,
+                              ),
+                              hint: Text('Select Stage'),
+                              onChanged: !editmode ? null : (String newValue) {
+                                setState(() {
+                                  _currentStage = newValue;
+                                  int sid = int.parse(_currentStage);
+                                  var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
+                                    return null;
+                                  },);
+                                  _currentStageName = item['name'];
+                                  print(_currentStage);
+                                });
+                              },
+                              items: stagesList?.map((item) {
+                                    print("map item ${item}");
+                                    return new DropdownMenuItem(
+                                      child: new Text(item['name']),
+                                      value: item['id'].toString(),
+                                    );
+                                  })?.toList() ??
+                                  [],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 Row(

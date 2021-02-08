@@ -377,7 +377,7 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
                               Navigator.pop(context,"ok");
                               var ret = await deleteCategory(cNode.id);
                               if(ret)
-                                loadCategoriesFromServer();
+                                loadCategoriesOnlyFromServer();
                             },
                           ),
                         ],

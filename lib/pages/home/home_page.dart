@@ -15,6 +15,8 @@ import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/form/post_upload.dart';
+import 'package:fossils_finder/pages/list/category_posts.dart';
+import 'package:fossils_finder/pages/list/category_select.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/utils/permission.dart';
@@ -44,6 +46,84 @@ class _HomePageState extends State<HomePage> {
 
   bool _used = false;
   bool _show = true;
+
+  Future loadPostListViaCategoryFromServer(int cid) async{
+    var _content = await request(servicePath['categories'] + '/${cid}/posts');
+    if(_content.statusCode != 200){
+      if(_content.statusCode == 401){
+        print('#### unauthenticated, need back to login page ${_content.statusCode}');
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.remove('token');
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ));
+      }
+      print('#### Network Connection Failed: ${_content.statusCode}');
+
+      return;
+    }
+
+    var _jsonData = jsonDecode(_content.toString());
+    var _listJson;
+    if(_jsonData['paginated']){
+      _listJson = _jsonData['data']['data'];
+    }
+    else{
+      _listJson = _jsonData['data'];
+    }
+
+    List _jsonList = _listJson as List;
+    List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
+    setState(() {
+      posts = postList;
+    });
+
+    await Future.forEach(posts, (post) async { 
+      print('post ${post.id} ${post.author}');
+      
+      final marker1 = await _controller?.addMarker(
+        MarkerOption(
+          latLng: LatLng(
+            post.coordinateLatitude,
+            post.coordinateLongitude,
+          ),
+          widget: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('${post.title}'),
+              // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
+              ClipOval(
+                child: post.images.length > 0 ? 
+                    (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50,) : Image.asset(post.images[0].url, height: 50,))
+                    : Image.asset('images/icons/marker.png', height: 50,)
+                // child: Image.asset('images/icons/marker.png', height: 50,)
+              )
+            ],
+          ),
+          imageConfig: createLocalImageConfiguration(context),
+          title: '${post.title}',
+          snippet: '${post.content}',
+          width: 100,
+          height: 100,
+          object: '${post.id}'
+        ),
+      );
+      _markers.add(marker1);
+    }); //foreach
+
+    _controller?.setMarkerClickedListener((marker) async {
+      String id = await marker.object;
+      int pid = int.parse(id);
+      print('marker clicked ${pid}');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) {
+          return PostDetailPage(pid: pid,);
+        }) 
+      );
+      return true;
+    });
+  }
 
   Future loadPostListFromServer() async{
     var _content = await request(servicePath['posts']);
@@ -303,12 +383,73 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: Stack(
         children: <Widget>[
           Positioned(
+            bottom: 220.0,
+            right: 10.0,
+            child: FloatingActionButton(
+              heroTag: 'class',
+              onPressed: () async{
+                print('markers size: ${_markers.length}');
+                print('posts ${posts.length} - ${posts[0].images[0].url}');
+
+                var parentCategory = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return CategorySelector(treeJson: "", editable: false);
+                    // return CategoryPostsPage(cid: 1,);
+                  }) 
+                );
+
+                print('parent as: ${parentCategory}');
+
+                if(parentCategory != null){
+                  print('result: ${parentCategory.key} - ${parentCategory.label}');
+                  
+                  if(_markers.isNotEmpty){
+                    for(var marker in _markers){
+                      print('marker ${marker.toString()}');                    
+                      marker.remove();
+                    }
+                  }
+                  String _key = parentCategory.key;
+                  String _type = _key.split('_')[0];
+                  if(_type.isNotEmpty || _type == "c"){
+                    var _categoryId = int.parse(_key.split('_')[1]);
+                    print('got category id ${_categoryId}');
+                    loadPostListViaCategoryFromServer(_categoryId);
+                  }
+                }
+              },
+              child: Icon(Icons.call_missed_outgoing),
+              shape: CircleBorder(
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 150.0,
+            right: 10.0,
+            child: FloatingActionButton(
+              heroTag: 'add',
+              onPressed: () async{
+                final center = await _controller?.getCenterCoordinate();
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return PostUploadPage(center: center,);
+                  }) 
+                );
+              },
+              child: Icon(Icons.add),
+              shape: CircleBorder(
+              ),
+            ),
+          ),
+          Positioned(
             bottom: 80.0,
             right: 10.0,
             child: FloatingActionButton(
               heroTag: 'show',
               onPressed: () async{
-
                 print('markers size: ${_markers.length}');
                 print('posts ${posts.length} - ${posts[0].images[0].url}');
 
@@ -343,26 +484,6 @@ class _HomePageState extends State<HomePage> {
                 _used = true;
               },
               child: _show? Icon(Icons.highlight) : Icon(Icons.highlight_off),
-              shape: CircleBorder(
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 150.0,
-            right: 10.0,
-            child: FloatingActionButton(
-              heroTag: 'add',
-              onPressed: () async{
-                final center = await _controller?.getCenterCoordinate();
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (BuildContext context) {
-                    return PostUploadPage(center: center,);
-                  }) 
-                );
-              },
-              child: Icon(Icons.add),
               shape: CircleBorder(
               ),
             ),

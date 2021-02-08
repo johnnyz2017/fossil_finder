@@ -68,7 +68,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
         // ],
       ),
       body: ListView.builder(
-        itemCount: post.comments.length + 2,
+        itemCount: post.comments.length + 1,
         itemBuilder: (BuildContext context, int index){
           if(index == 0){                                            // post content
             return Container(
@@ -76,29 +76,47 @@ class _PostDetailPageState extends State<PostDetailPage> {
               child: Card(
                 child: Column(
                   children: <Widget>[
-                    Text(
-                      post.title, 
-                      style: TextStyle(
-                        //backgroundColor: Colors.yellow, 
-                        color: Colors.blue,
-                        fontSize: 30,
-                      ),
-                    ),
-                    // Row(
-                    //   children: <Widget>[
-                    //     Expanded(
-                    //       child: Text('${post.finalCategoryId}',
-                    //         style: TextStyle(
-                    //           color: Colors.blue,
-                    //           fontSize: 25
-                    //         ),                          
-                    //       ),
-                    //     ),
-                    //     RaisedButton(
-                    //       onPressed: (){},
-                    //     )
-                    //   ],
+                    // Text(
+                    //   post.title, 
+                    //   style: TextStyle(
+                    //     //backgroundColor: Colors.yellow, 
+                    //     color: Colors.blue,
+                    //     fontSize: 30,
+                    //   ),
                     // ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text('鉴定类别: ${post.title}',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 25
+                            ),                          
+                          ),
+                        ),
+                        RaisedButton(
+                          child: Text('添加鉴定'),
+                          onPressed: (){
+                            print('submit comment button clicked');
+
+                            var ret = Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (BuildContext context) {
+                                //return CommentSubmitPage(post: post,);
+                                return CommentUploadPage(post: post,);
+                              }) 
+                            );
+
+                            ret.then((value){
+                              print('return from navi : ${value}');
+                              if(value == true){
+                                loadPostFromServer();
+                              }
+                            });
+                          },
+                        )
+                      ],
+                    ),
                     Padding(padding: EdgeInsets.only(top: 10)),
                     Container(
                       height: 200,
@@ -121,54 +139,59 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         Text('无图片'),
                     ),
                     Padding(padding: EdgeInsets.only(top: 10)),
-                    Row(
-                      children: <Widget>[
-                        Text('采集地点: '),
-                        Expanded(child: Text('${post.coordinateLongitude}, ${post.coordinateLatitude}'),),
-                        IconButton(
-                          icon: Icon(Icons.gps_fixed),
-                          onPressed: (){
-                            print('采集地点 clicked');
-                          },
-                        )
-                      ],
+                    Card(
+                      child: Column(children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Text('采集地点: '),
+                              Expanded(child: Text('${post.coordinateLongitude}, ${post.coordinateLatitude}'),),
+                              IconButton(
+                                icon: Icon(Icons.gps_fixed),
+                                onPressed: (){
+                                  print('采集地点 clicked');
+                                },
+                              )
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Row(
+                            children: <Widget>[
+                              Text('采集地址: '),
+                              Expanded(child: Text('${post.address}'),)
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Row(
+                            children: <Widget>[
+                              Text('临时标本号: '),
+                              Expanded(child: Text('${post.tempId}'),)
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Row(
+                            children: <Widget>[
+                              Text('永久标本号: '),
+                              Expanded(child: Text('${post.permId}'),)
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Row(
+                            children: <Widget>[
+                              Text('采集时间: '),
+                              Expanded(child: Text('${post.createdAt.toString()}'),)
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Row(
+                            children: <Widget>[
+                              Text('详细描述: '),
+                              Expanded(child: Text('${post.content}'),)
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 10)),
+                      ],),
                     ),
-                    Padding(padding: EdgeInsets.only(top: 5)),
-                    Row(
-                      children: <Widget>[
-                        Text('采集地址: '),
-                        Expanded(child: Text('${post.address}'),)
-                      ],
-                    ),
-                    Padding(padding: EdgeInsets.only(top: 5)),
-                    Row(
-                      children: <Widget>[
-                        Text('临时标本号: '),
-                        Expanded(child: Text('${post.tempId}'),)
-                      ],
-                    ),
-                    Padding(padding: EdgeInsets.only(top: 5)),
-                    Row(
-                      children: <Widget>[
-                        Text('永久标本号: '),
-                        Expanded(child: Text('${post.permId}'),)
-                      ],
-                    ),
-                    Padding(padding: EdgeInsets.only(top: 5)),
-                    Row(
-                      children: <Widget>[
-                        Text('采集时间: '),
-                        Expanded(child: Text('${post.createdAt.toString()}'),)
-                      ],
-                    ),
-                    Padding(padding: EdgeInsets.only(top: 5)),
-                    Row(
-                      children: <Widget>[
-                        Text('详细描述: '),
-                        Expanded(child: Text('${post.content}'),)
-                      ],
-                    ),
-                    Padding(padding: EdgeInsets.only(top: 10)),
+                    // Padding(padding: EdgeInsets.only(top: 10)),
                     // Padding(
                     //   padding: const EdgeInsets.all(8.0),
                       
@@ -188,36 +211,36 @@ class _PostDetailPageState extends State<PostDetailPage> {
             );
 
 
-          }else if(index == post.comments.length + 1){     // submit button
-            return Container(
-              padding: EdgeInsets.all(5),
-              child: RaisedButton(
-                onPressed: (){
-                  print('submit comment button clicked');
+          }
+          // else if(index == post.comments.length + 1){     // submit button
+          //   return Container(
+          //     padding: EdgeInsets.all(5),
+          //     child: RaisedButton(
+          //       onPressed: (){
+          //         print('submit comment button clicked');
 
-                  var ret = Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (BuildContext context) {
-                      //return CommentSubmitPage(post: post,);
-                      return CommentUploadPage(post: post,);
-                    }) 
-                  );
+          //         var ret = Navigator.push(
+          //           context,
+          //           MaterialPageRoute(builder: (BuildContext context) {
+          //             //return CommentSubmitPage(post: post,);
+          //             return CommentUploadPage(post: post,);
+          //           }) 
+          //         );
 
-                  ret.then((value){
-                    print('return from navi : ${value}');
-                    if(value == true){
-                      loadPostFromServer();
-                    }
-                  });
-                  // AmapService.navigateDrive(LatLng(36.547901, 104.258354));
-                },
-                child: Text('发表评论'),
-                textColor: Colors.green,
-              ),
-            );
-
-
-          }else{                                                  // comments
+          //         ret.then((value){
+          //           print('return from navi : ${value}');
+          //           if(value == true){
+          //             loadPostFromServer();
+          //           }
+          //         });
+          //         // AmapService.navigateDrive(LatLng(36.547901, 104.258354));
+          //       },
+          //       child: Text('发表评论'),
+          //       textColor: Colors.green,
+          //     ),
+          //   );
+          // }
+          else{                                                  // comments
             return Container(
               padding: EdgeInsets.all(5),
               child: Card(

@@ -157,6 +157,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
                 )
               ],
             ),
+            SizedBox(width: 50,),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -165,19 +166,19 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
                   Row(
                     children: <Widget>[
                       Text('记录发布数：'),
-                      Text('0')
+                      Text('${user.postsCount}')
                     ],
                   ),
                   Row(
                     children: <Widget>[
                       Text('类别发布数：'),
-                      Text('0')
+                      Text('${user.categoriesCount}')
                     ],
                   ),
                   Row(
                     children: <Widget>[
                       Text('评论发布数：'),
-                      Text('0')
+                      Text('${user.commentsCount}')
                     ],
                   ),
                 ],
