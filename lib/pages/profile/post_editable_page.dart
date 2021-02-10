@@ -11,11 +11,13 @@ import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
+import 'package:fossils_finder/pages/map/map_show.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:fossils_finder/utils/strings.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
 
@@ -406,8 +408,24 @@ class _PostEditblePageState extends State<PostEditblePage> {
                     IconButton(
                       iconSize: 20, 
                       icon: Icon(Icons.my_location), 
-                      onPressed: () async {
-                      },
+                      onPressed: editmode ? () async {
+                        var pos = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                            return MapShowPage(
+                              coord: LatLng(widget.post.coordinateLatitude, widget.post.coordinateLongitude),
+                              selectable: true,
+                            );
+                          })
+                        );
+                        if(pos != null){
+                          print('pos get: ${pos.latitude} - ${pos.longitude}');
+                          setState(() {
+                            _latTextController.text = pos.latitude.toStringAsFixed(6);
+                            _lngTextController.text = pos.longitude.toStringAsFixed(6);
+                          });
+                        }
+                      } : null,
                     )
                   ],
                 ),

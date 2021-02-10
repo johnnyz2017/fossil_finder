@@ -44,10 +44,8 @@ class _CategoryPostsPageState extends State<CategoryPostsPage> {
     var _jsonData = jsonDecode(_content.toString());
    
     setState(() {
-      // String categoryJson = jsonEncode(_jsonData['data']);
       _category = CategoryItem.fromJson(_jsonData['data']);
     });
-
     return _category;
   }
 
@@ -63,7 +61,6 @@ class _CategoryPostsPageState extends State<CategoryPostsPage> {
         ));
       }
       print('#### Network Connection Failed: ${_content.statusCode}');
-
       return;
     }
 
@@ -75,7 +72,6 @@ class _CategoryPostsPageState extends State<CategoryPostsPage> {
     else{
       _listJson = _jsonData['data'];
     }
-    // print('get json data is  ${_jsonData}');
     
     List _jsonList = _listJson as List;
     List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
@@ -83,7 +79,6 @@ class _CategoryPostsPageState extends State<CategoryPostsPage> {
       _loadingPost = false;
       posts = postList;
     });
-    // print('after get posts ${posts.length} - ${scrollController.offset}');
   }
   
   @override

@@ -100,13 +100,13 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
       var status = responseJson['code'] as int;
       if(status == 200){
         Fluttertoast.showToast(
-            msg: "提交成功",
+            msg: "删除成功",
             gravity: ToastGravity.CENTER,
             textColor: Colors.grey);
         return true;
       }else{
         Fluttertoast.showToast(
-            msg: "提交失败！",
+            msg: "删除失败！",
             gravity: ToastGravity.CENTER,
             textColor: Colors.red);
         return false;
@@ -136,11 +136,6 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
   void initState() {
     loadCategoriesFromServer();
     super.initState();
-    // if(widget.treeJson.isNotEmpty)
-    //   _treeViewController = _treeViewController.loadJSON(json: widget.treeJson);
-    // else
-    //   loadCategoriesFromServer();
-
   }
   @override
   Widget build(BuildContext context) {
@@ -389,11 +384,39 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                                 color: Colors.blue,
                                 textColor: Colors.white,
                                 onPressed: ()async{
-                                  print("确定");
-                                  Navigator.pop(context,"ok");
-                                  var ret = await deleteCategory(cNode.id);
-                                  if(ret)
-                                    loadCategoriesFromServer();
+                                  
+                                  showDialog(
+                                    context: context,
+                                    builder: (context){
+                                      return AlertDialog(
+                                        title: Text("提示信息"),
+                                        content: Text("您确定要删除吗"),
+                                        actions: <Widget>[
+                                          RaisedButton(
+                                            child: Text("取消"),
+                                            color: Colors.blue,
+                                            textColor: Colors.white,
+                                            onPressed: (){
+                                              print("取消");
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                          RaisedButton(
+                                            child: Text("确定"),
+                                            color: Colors.blue,
+                                            textColor: Colors.white,
+                                            onPressed: ()async{
+                                              print("确定");
+                                              var ret = await deleteCategory(cNode.id);
+                                              if(ret)
+                                                loadCategoriesFromServer();                                            
+                                              Navigator.pop(context,"ok");
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    }
+                                  );
                                 },
                               ),
                             ],

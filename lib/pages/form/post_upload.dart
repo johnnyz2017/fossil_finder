@@ -11,6 +11,7 @@ import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
+import 'package:fossils_finder/pages/map/map_show.dart';
 import 'package:fossils_finder/utils/db_helper.dart';
 import 'package:fossils_finder/utils/image_upload.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
@@ -199,6 +200,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
     // _getStateList();
     _getSystemList();
     // _getStateListFromJson();
+
+    _latTextController.text = widget.center.latitude.toStringAsFixed(6);
+    _lngTextController.text = widget.center.longitude.toStringAsFixed(6);
   }
 
   @override
@@ -427,10 +431,26 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       icon: Icon(Icons.my_location), 
                       onPressed: () async { 
                         //AmapService.navigateDrive(LatLng(36.547901, 104.258354));
-                        setState(() {
-                          _latTextController.text = widget.center.latitude.toStringAsFixed(6);
-                          _lngTextController.text = widget.center.longitude.toStringAsFixed(6);
-                        });
+                        // setState(() {
+                          // _latTextController.text = widget.center.latitude.toStringAsFixed(6);
+                          // _lngTextController.text = widget.center.longitude.toStringAsFixed(6);
+                        // });
+                        var pos = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                            return MapShowPage(
+                              coord: LatLng(widget.center.latitude, widget.center.longitude),
+                              selectable: true,
+                            );
+                          })
+                        );
+                        if(pos != null){
+                          print('pos get: ${pos.latitude} - ${pos.longitude}');
+                          setState(() {
+                            _latTextController.text = pos.latitude.toStringAsFixed(6);
+                            _lngTextController.text = pos.longitude.toStringAsFixed(6);
+                          });
+                        }
                       },
                     )
                   ],

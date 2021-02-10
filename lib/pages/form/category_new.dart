@@ -29,7 +29,7 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("发表评论"),
+        title: Text("发表鉴定"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.done),

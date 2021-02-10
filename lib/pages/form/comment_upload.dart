@@ -43,7 +43,7 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("发表评论"),
+        title: Text("发表鉴定"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.done),
@@ -150,7 +150,7 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
                   maxLines: null,
                   validator: (String value){
                     if(value.isEmpty)
-                      return '评论内容不能为空';
+                      return '鉴定内容不能为空';
                     return null;
 
                   },

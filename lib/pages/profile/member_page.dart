@@ -68,14 +68,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
         children: <Widget>[
           _topHeader(),
           _actionList(),
-          // Divider(),
-          // Expanded(
-          //   child: Align(
-          //     alignment: FractionalOffset.bottomCenter,
-          //     child: 
-          //   ),
-          // ),
-          SizedBox(height: 200,),
+          SizedBox(height: 100,),
           ListTile(
             leading: Icon(Icons.settings),
               title: Text("个人设置"),
@@ -127,64 +120,68 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
   Widget _topHeader(){
     String userName = user == null ? "未命名" : user.name;
     String profileUrl = user == null ? 'images/icons/user.png' : user.avatar;
+    String userEmail = user == null ? '' : user.email;
 
-    return Container(
-      // width: MediaQuery.of(context),
-      padding: EdgeInsets.all(20),
-      color: Colors.grey,
+    return Card(
+      color: Colors.white60,
       child: Column(
         children: <Widget>[
-          Row(children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+            Container(
+              child: ClipOval(
+                child: 
+                  profileUrl.startsWith('http') ? CachedNetworkImage(
+                          height: 100,
+                          width: 100,
+                          imageUrl: profileUrl,
+                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                        )
+                  : Image.asset(profileUrl, height: 100, width: 100,),
+              )
+            ),
+            SizedBox(width: 20,),
             Column(
               children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(top: 20),
-                  child: ClipOval(
-                    child: 
-                      profileUrl.startsWith('http') ? CachedNetworkImage(
-                              height: 100,
-                              width: 100,
-                              imageUrl: profileUrl,
-                              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                              errorWidget: (context, url, error) => Icon(Icons.error),
-                            )
-                      : Image.asset(profileUrl, height: 100, width: 100,),
+                Text(
+                  userName, 
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold
                   )
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 10),
-                  child: Text(userName),
-                )
+
+                Text(userEmail, style: TextStyle(fontStyle: FontStyle.italic),)
               ],
             ),
-            SizedBox(width: 50,),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text('记录发布数：'),
-                      Text('${user.postsCount}')
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text('类别发布数：'),
-                      Text('${user.categoriesCount}')
-                    ],
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Text('评论发布数：'),
-                      Text('${user.commentsCount}')
-                    ],
-                  ),
-                ],
-              ),
+          ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+            Column(
+              children: <Widget>[
+                Text('${user.postsCount}'),
+                Text('记录'),
+              ],
             ),
-          ],) 
+            Column(
+              children: <Widget>[
+                Text('${user.categoriesCount}'),
+                Text('类别'),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                Text('${user.commentsCount}'),
+                Text('鉴定'),
+              ],
+            ),
+          ],)
         ],
       ),
     );

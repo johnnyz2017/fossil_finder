@@ -49,32 +49,6 @@ class _CategoryPageState extends State<CategoryPage> with AutomaticKeepAliveClie
               ),
           ),
         ),
-        // drawer: Drawer(
-        //   child: ,
-        // ),
-        // appBar: new TabBar(
-        //     tabs: <Widget>[
-        //       Tab(text: "列表",),
-        //       Tab(text: "分类",)
-        //       // Tab(text: "List", icon: Icon(Icons.list),),
-        //       // Tab(text: "Tree", icon: Icon(Icons.traffic))
-        //     ]
-        // ),
-        // appBar: AppBar(
-        //   title: Text(""),
-        //   bottom: TabBar(
-        //     tabs: <Widget>[
-        //       Tab(text: "列表",),
-        //       Tab(text: "分类",)
-        //       // Tab(text: "List", icon: Icon(Icons.list),),
-        //       // Tab(text: "Tree", icon: Icon(Icons.traffic))
-        //     ]
-        //   ),
-        // ),
-        // body: IndexedStack(
-        //   index: currentIndex,
-        //   children: tabPages,
-        // ),
         body: TabBarView(
           children: tabPages
         ),

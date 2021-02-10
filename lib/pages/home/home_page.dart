@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 // import 'package:geolocation/geolocation.dart';
@@ -11,6 +12,8 @@ import 'package:dio/dio.dart';
 // import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/post.dart';
@@ -42,6 +45,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  FocusNode _inputFocus = FocusNode();
   List<Post> posts = new List<Post>();
 
   bool _used = false;
@@ -344,65 +348,68 @@ class _HomePageState extends State<HomePage> {
         )
       ),
       body: Stack(
-              children: <Widget>[
-                  AmapView(
-                    mapType: MapType.Standard,
-                    showZoomControl: false,
-                    zoomLevel: 10,
-                    maskDelay: Duration(milliseconds: 500),
-                    onMapCreated: (controller) async {
-                      _controller = controller;
+        children: <Widget>[
+            AmapView(
+              mapType: MapType.Standard,
+              showZoomControl: false,
+              zoomLevel: 10,
+              maskDelay: Duration(milliseconds: 500),
+              onMapClicked: (value) async{
+                _inputFocus.unfocus();
+                print('ampa clicked with ${value.latitude - value.longitude}');
+              },
+              onMapCreated: (controller) async {
+                _controller = controller;
 
-                      bool status = await Permission.locationAlways.isGranted;
-                      if(!status){
-                        print("need to get locationAlways permission first");
-                        status = await Permission.locationAlways.request().isGranted;
-                        if(status){
-                          await _controller?.showMyLocation(MyLocationOption(
-                            myLocationType: MyLocationType.Locate,
-                          ));
-                        }else{
-                          print("need to grant the location permission first");
-                        }
-                      }else{
-                        await _controller?.showMyLocation(MyLocationOption(
-                          myLocationType: MyLocationType.Locate,
-                        ));
-                      }
+                bool status = await Permission.locationAlways.isGranted;
+                if(!status){
+                  print("need to get locationAlways permission first");
+                  status = await Permission.locationAlways.request().isGranted;
+                  if(status){
+                    await _controller?.showMyLocation(MyLocationOption(
+                      myLocationType: MyLocationType.Locate,
+                    ));
+                  }else{
+                    print("need to grant the location permission first");
+                  }
+                }else{
+                  await _controller?.showMyLocation(MyLocationOption(
+                    myLocationType: MyLocationType.Locate,
+                  ));
+                }
 
-                      // _controller?.showZoomControl(true); //OK
-                      // _controller?.showCompass(true); //NO
-                      // _controller?.showLocateControl(true); //NO
-                      _controller?.showScaleControl(true); //OK
-                      
-                      loadPostListFromServer(); //load posts after amap init
-                  },
-                ),
-              ]
+                // _controller?.showZoomControl(true); //OK
+                // _controller?.showCompass(true); //NO
+                // _controller?.showLocateControl(true); //NO
+                _controller?.showScaleControl(true); //OK
+                
+                loadPostListFromServer(); //load posts after amap init
+            },
+          ),
+        ]
       ),
       floatingActionButton: Stack(
         children: <Widget>[
           Positioned(
-            bottom: 220.0,
+            top: 150.0,
             right: 10.0,
             child: FloatingActionButton(
               heroTag: 'class',
               onPressed: () async{
+                _inputFocus.unfocus();
                 print('markers size: ${_markers.length}');
-                print('posts ${posts.length} - ${posts[0].images[0].url}');
 
-                var parentCategory = await Navigator.push(
+                var selectedCategory = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) {
                     return CategorySelector(treeJson: "", editable: false);
-                    // return CategoryPostsPage(cid: 1,);
                   }) 
                 );
 
-                print('parent as: ${parentCategory}');
+                print('parent as: ${selectedCategory}');
 
-                if(parentCategory != null){
-                  print('result: ${parentCategory.key} - ${parentCategory.label}');
+                if(selectedCategory != null){
+                  print('result: ${selectedCategory.key} - ${selectedCategory.label}');
                   
                   if(_markers.isNotEmpty){
                     for(var marker in _markers){
@@ -410,7 +417,7 @@ class _HomePageState extends State<HomePage> {
                       marker.remove();
                     }
                   }
-                  String _key = parentCategory.key;
+                  String _key = selectedCategory.key;
                   String _type = _key.split('_')[0];
                   if(_type.isNotEmpty || _type == "c"){
                     var _categoryId = int.parse(_key.split('_')[1]);
@@ -419,7 +426,7 @@ class _HomePageState extends State<HomePage> {
                   }
                 }
               },
-              child: Icon(Icons.call_missed_outgoing),
+              child: Icon(Icons.select_all),
               shape: CircleBorder(
               ),
             ),
@@ -430,6 +437,7 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               heroTag: 'add',
               onPressed: () async{
+                _inputFocus.unfocus();
                 final center = await _controller?.getCenterCoordinate();
 
                 Navigator.push(
@@ -450,8 +458,9 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               heroTag: 'show',
               onPressed: () async{
+                _inputFocus.unfocus();
                 print('markers size: ${_markers.length}');
-                print('posts ${posts.length} - ${posts[0].images[0].url}');
+                // print('posts ${posts.length} - ${posts[0].images[0].url}');
 
                 setState(() {
                   _show = !_show;
@@ -494,6 +503,7 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               heroTag: 'close',
               onPressed: () async {
+                _inputFocus.unfocus();
                 await _controller?.showMyLocation(MyLocationOption(
                   myLocationType: MyLocationType.Locate,
                 ));
@@ -516,19 +526,11 @@ class _HomePageState extends State<HomePage> {
         // color: Colors.blueAccent,
         padding: EdgeInsets.only(top: 10.0),
         child: new TextFormField(
+          focusNode: _inputFocus,
           autofocus: false,
           controller: _filter,
-          
           decoration: InputDecoration(
-            // icon: Icon(Icons.search),
-            // labelText: "Input for Search",
-            // focusColor: Colors.white,
             fillColor: Colors.white,      
-            // border: new OutlineInputBorder(
-            //   // borderRadius: new BorderRadius.circular(5.0),
-            //   borderSide: new BorderSide(),
-            //   gapPadding: 10.0,
-            // ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5.0),
               borderSide: BorderSide(
@@ -536,13 +538,6 @@ class _HomePageState extends State<HomePage> {
                 width: 1.5,
               ),
             ),
-            // focusedBorder: OutlineInputBorder(
-            //   borderRadius: BorderRadius.circular(5.0),
-            //   borderSide: BorderSide(
-            //     color: Colors.white,
-            //     width: 1.5,
-            //   ),
-            // ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(5.0),
               borderSide: BorderSide(
@@ -564,6 +559,7 @@ class _HomePageState extends State<HomePage> {
         IconButton(
           icon: Icon(Icons.search),
           onPressed: () async {
+            _inputFocus.unfocus();
             var ret = showSearch(context: context, delegate: DataSearch(), query: _filter.text);
             ret.then((searchedPost) async{
               if(searchedPost == null) return;
@@ -622,7 +618,9 @@ class _HomePageState extends State<HomePage> {
           icon: new Image.asset('images/icons/scanning.png'),
           onPressed: (){
             print('scan icon clicked');
-            _scanCode();
+            _inputFocus.unfocus();
+            // _scanCode();
+            _scan();
           },
         )
       ],
@@ -649,7 +647,73 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  _scanCode() async {
+  Future _scan() async {
+    var status = await PermissionUtils.requestCemera();
+    if (status == PermissionStatus.granted) {
+      print('permission granted');
+      
+      try {
+        String barcode = await BarcodeScanner.scan();
+        print('got string : ${barcode}');
+        if(barcode.contains('${serviceUrl}/posts')){
+          print('found post link, try to convert to post detail page');
+          List<String> _splitRet = barcode.split('/');
+          int _pid = int.parse(_splitRet[_splitRet.length - 1]);
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return PostDetailPage(pid: _pid,);
+            }) 
+          );
+        }else{
+          Fluttertoast.showToast(
+            msg: "解析失败，请确认扫描的是否为记录相关的二维码，扫描结果为： ${barcode}",
+            gravity: ToastGravity.CENTER,
+            textColor: Colors.red,
+            toastLength: Toast.LENGTH_LONG
+            );
+        }
+      } on PlatformException catch (e) {
+        if (e.code == BarcodeScanner.CameraAccessDenied) {
+          print('The user did not grant the camera permission!');
+        } else {
+          print('Unknown error: $e');
+        }
+      } on FormatException{
+        print('null (User returned using the "back"-button before scanning anything. Result)');
+      } catch (e) {
+        print('Unknown error: $e');
+      }
+      
+      // final String qrCode = await FlutterBarcodeScanner.scanBarcode(
+      //   '#ff6666', 
+      //   '取消', 
+      //   true, 
+      //   ScanMode.QR);
+      
+      // final String qrCode = await scanner.scan();
+      // print('qr code result : ${qrCode}');
+      // if(qrCode.contains('${serviceUrl}/posts')){
+      //   print('found post link, try to convert to post detail page');
+      //   List<String> _splitRet = qrCode.split('/');
+      //   int _pid = int.parse(_splitRet[_splitRet.length - 1]);
+
+      //   Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (BuildContext context) {
+      //       return PostDetailPage(pid: _pid,);
+      //     }) 
+      //   );
+      // }
+    } else {
+      PermissionUtils.showPermissionDialog(context);
+    }
+
+    
+  }
+
+  Future _scanCode() async {
     var status = await PermissionUtils.requestCemera();
     if (status == PermissionStatus.granted) {
       print('permission granted');

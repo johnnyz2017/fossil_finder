@@ -78,7 +78,7 @@ class _VideoDescription extends StatelessWidget {
           ),
           const Padding(padding: EdgeInsets.symmetric(vertical: 1.0)),
           Text(
-            '$viewCount 评论',
+            '$viewCount 鉴定',
             style: const TextStyle(fontSize: 10.0),
           ),
         ],

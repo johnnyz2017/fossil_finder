@@ -66,7 +66,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("发表评论"),
+        title: Text("发表鉴定"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.done),
@@ -89,7 +89,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
                 controller: _titleTextController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                  labelText: '分类标题：',
+                  labelText: '鉴定标题：',
                 ),
                 validator: (String value){
                   if(value.isEmpty)
@@ -139,7 +139,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
                 child: TextFormField(
                   controller: _contentTextController,
                   decoration: InputDecoration(
-                    labelText: '分类描述：',
+                    labelText: '鉴定描述：',
                   ),
                   keyboardType: TextInputType.multiline,
                   maxLines: null,

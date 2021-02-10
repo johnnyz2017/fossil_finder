@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
@@ -8,7 +9,12 @@ import 'package:fossils_finder/model/post.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fossils_finder/pages/form/comment_upload.dart';
 import 'package:fossils_finder/pages/list/comment_submit.dart';
+import 'package:fossils_finder/config/global_config.dart';
 
+import 'package:fossils_finder/pages/map/map_show.dart';
+import 'package:fossils_finder/utils/qr_generate_page.dart';
+import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+import 'package:share/share.dart';
 // import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 
 class PostDetailPage extends StatefulWidget {
@@ -60,12 +66,33 @@ class _PostDetailPageState extends State<PostDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("详情页"),
-        // actions: <Widget>[
-        //   IconButton(
-        //     // icon: ,
-        //     onPressed: (){},
-        //   )
-        // ],
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: (){
+              String content = '${serviceUrl}/post/${post.id}';
+              // ClipboardData data = new ClipboardData(text: content);
+              // Clipboard.setData(data);
+              Share.share('记录链接分享： ${content}');
+              // Share.shareFiles(paths)
+              // Fluttertoast.showToast(
+              //   msg: "分享链接已经复制到剪贴板，请到需要到地方粘贴即可。",
+              //   gravity: ToastGravity.CENTER,
+              //   textColor: Colors.grey);
+            },
+          ),
+          IconButton(
+            icon: new Image.asset('images/icons/qrcode.png'),
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return QrCodeGeneratePage(qrString: '${serviceUrl}/post/${post.id}',);
+                }) 
+              );
+            },
+          )
+        ],
       ),
       body: ListView.builder(
         itemCount: post.comments.length + 1,
@@ -95,6 +122,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           ),
                         ),
                         RaisedButton(
+                          color: Colors.white70,
+                          textColor: Colors.black87,
                           child: Text('添加鉴定'),
                           onPressed: (){
                             print('submit comment button clicked');
@@ -147,8 +176,15 @@ class _PostDetailPageState extends State<PostDetailPage> {
                               Expanded(child: Text('${post.coordinateLongitude}, ${post.coordinateLatitude}'),),
                               IconButton(
                                 icon: Icon(Icons.gps_fixed),
-                                onPressed: (){
+                                onPressed: () async{
                                   print('采集地点 clicked');
+                                  var pos = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (BuildContext context) {
+                                      return MapShowPage(coord: LatLng(post.coordinateLatitude, post.coordinateLongitude));
+                                    })
+                                  );
+                                  print('pos get: $pos');
                                 },
                               )
                             ],
@@ -191,20 +227,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           Padding(padding: EdgeInsets.only(top: 10)),
                       ],),
                     ),
-                    // Padding(padding: EdgeInsets.only(top: 10)),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                      
-                    //   child: Text(
-                    //     post.content,
-                    //     style: TextStyle(
-                    //       fontSize: 20,
-                    //       color: Colors.lightBlue,
-
-                    //     ),
-                    //     textAlign: TextAlign.start,
-                    //   ),
-                    // )
                   ],
                 ),
               ),
@@ -235,7 +257,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           //         });
           //         // AmapService.navigateDrive(LatLng(36.547901, 104.258354));
           //       },
-          //       child: Text('发表评论'),
+          //       child: Text('发表鉴定'),
           //       textColor: Colors.green,
           //     ),
           //   );
