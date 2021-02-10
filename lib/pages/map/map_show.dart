@@ -63,6 +63,10 @@ class _MapShowPageState extends State<MapShowPage> {
                 await _controller?.showMyLocation(MyLocationOption(
                   myLocationType: MyLocationType.Locate,
                 ));
+
+                _controller?.showScaleControl(true); //OK          
+                _controller.setCenterCoordinate(selectedPos);
+                _controller.addCircle(CircleOption(center: selectedPos, radius: 20, fillColor: Colors.green));
               }else{
                 print("need to grant the location permission first");
               }
@@ -75,9 +79,9 @@ class _MapShowPageState extends State<MapShowPage> {
             // _controller?.showZoomControl(true); //OK
             // _controller?.showCompass(true); //NO
             // _controller?.showLocateControl(true); //NO
-            _controller?.showScaleControl(true); //OK          
-            _controller.setCenterCoordinate(selectedPos);
-            _controller.addCircle(CircleOption(center: selectedPos, radius: 20, fillColor: Colors.green));
+            // _controller?.showScaleControl(true); //OK
+            // _controller.setCenterCoordinate(selectedPos);
+            // _controller.addCircle(CircleOption(center: selectedPos, radius: 20, fillColor: Colors.green));
         },
       ),
     );
