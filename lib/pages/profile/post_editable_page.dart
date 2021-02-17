@@ -162,7 +162,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
     _addrTextController.text = widget.post.address;
     _titleTextController.text = widget.post.title;
     _contentTextController.text = widget.post.content;
-    _categoryTextController.text = widget.post.categoryId.toString();
+    _categoryTextController.text = widget.post.categoryName;
 
     print('system: ${widget.post.system} - ${widget.post.series} - ${widget.post.stage}');
     if(widget.post.system != null){
@@ -696,11 +696,11 @@ class _PostEditblePageState extends State<PostEditblePage> {
                     Text('是否私有：'),
                     Switch(
                       value: _private, 
-                      onChanged: (value){
+                      onChanged: editmode ? (value){
                         setState(() {
                           _private = value;
                         });
-                      },
+                      }: null,
                     )
                   ],
                 ),

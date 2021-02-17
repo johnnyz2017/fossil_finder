@@ -13,6 +13,7 @@ class Comment{
   String title;
   String content;
   dynamic categoryId;
+  String categoryName;
   int sticky;
   String author;
 
@@ -24,6 +25,7 @@ class Comment{
       this.title,
       this.content,
       this.categoryId,
+      this.categoryName,
       this.sticky,
       this.author,
   });
@@ -43,6 +45,7 @@ class Comment{
       title: json["title"],
       content: json["content"],
       categoryId: json["category_id"],
+      categoryName: json['category_name'],
       sticky: json["sticky"],
       author: json["author"],
   );
@@ -55,6 +58,7 @@ class Comment{
       "title": title,
       "content": content,
       "category_id": categoryId,
+      'category_name' : categoryName,
       "sticky": sticky,
       "author": author,
   };
@@ -70,6 +74,7 @@ class Comment{
     map['title'] = title;
     map['content'] = content;
     map['category_id'] = categoryId;
+    map['category_name'] = categoryName;
     map['sticky'] = sticky;
     map['author'] = author;
 
@@ -85,6 +90,7 @@ class Comment{
     this.title = map['title'];
     this.content = map['content'];
     this.categoryId = map['category_id'];
+    this.categoryName = map['category_name'];
     this.sticky = map['sticky'];
     this.author = map['author'];
   }

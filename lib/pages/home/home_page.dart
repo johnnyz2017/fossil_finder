@@ -45,7 +45,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  FocusNode _inputFocus = FocusNode();
+  // FocusNode _inputFocus = FocusNode();
   List<Post> posts = new List<Post>();
 
   bool _used = false;
@@ -209,15 +209,14 @@ class _HomePageState extends State<HomePage> {
   
   AmapController _controller;
   List<Marker> _markers = [];
-  bool _locationStatus = false;
+  // bool _locationStatus = false;
 
   final TextEditingController _filter = new TextEditingController();
   
-  String _searchText = "";
   List names = new List();
   List filteredNames = new List();
   Icon _searchIcon = new Icon(Icons.search);
-  Widget _appBarTitle = new Text( 'Search Example' );
+  // Widget _appBarTitle = new Text( 'Search Example' );
 
   init() async{
     localStorage = await SharedPreferences.getInstance();
@@ -240,9 +239,9 @@ class _HomePageState extends State<HomePage> {
       print("need to get locationAlways permission first");
       status = await Permission.locationAlways.request().isGranted;
       if(status){
-        setState(() {
-          _locationStatus = true;
-        });
+        // setState(() {
+        //   _locationStatus = true;
+        // });
 
         await _controller?.showMyLocation(MyLocationOption(
           myLocationType: MyLocationType.Locate,
@@ -354,10 +353,10 @@ class _HomePageState extends State<HomePage> {
               showZoomControl: false,
               zoomLevel: 10,
               maskDelay: Duration(milliseconds: 500),
-              onMapClicked: (value) async{
-                _inputFocus.unfocus();
-                print('ampa clicked with ${value.latitude - value.longitude}');
-              },
+              // onMapClicked: (value) async{
+              //   // _inputFocus.unfocus();
+              //   print('ampa clicked with ${value.latitude - value.longitude}');
+              // },
               onMapCreated: (controller) async {
                 _controller = controller;
 
@@ -396,7 +395,7 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               heroTag: 'class',
               onPressed: () async{
-                _inputFocus.unfocus();
+                // _inputFocus.unfocus();
                 print('markers size: ${_markers.length}');
 
                 var selectedCategory = await Navigator.push(
@@ -437,7 +436,7 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               heroTag: 'add',
               onPressed: () async{
-                _inputFocus.unfocus();
+                // _inputFocus.unfocus();
                 final center = await _controller?.getCenterCoordinate();
 
                 Navigator.push(
@@ -458,7 +457,7 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               heroTag: 'show',
               onPressed: () async{
-                _inputFocus.unfocus();
+                // _inputFocus.unfocus();
                 print('markers size: ${_markers.length}');
                 // print('posts ${posts.length} - ${posts[0].images[0].url}');
 
@@ -503,7 +502,7 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               heroTag: 'close',
               onPressed: () async {
-                _inputFocus.unfocus();
+                // _inputFocus.unfocus();
                 await _controller?.showMyLocation(MyLocationOption(
                   myLocationType: MyLocationType.Locate,
                 ));
@@ -520,46 +519,46 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBar(BuildContext context) {
     return new AppBar(
-      centerTitle: true,
-      title: Container(
-        height: 50,
-        // color: Colors.blueAccent,
-        padding: EdgeInsets.only(top: 10.0),
-        child: new TextFormField(
-          focusNode: _inputFocus,
-          autofocus: false,
-          controller: _filter,
-          decoration: InputDecoration(
-            fillColor: Colors.white,      
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
-              borderSide: BorderSide(
-                color: Colors.white,
-                width: 1.5,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
-              borderSide: BorderSide(
-                color: Colors.green,
-                width: 1.5
-              ),
-            ),
-          ),
-          style: TextStyle(
-            color: Colors.white,
-            decorationColor: Color(0XFFFFCC11),//Font color change
-          ),
-          // onTap: (){
-          //   showSearch(context: context, delegate: DataSearch());
-          // },
-        ),
-      ),
+      // centerTitle: true,
+      // title: Container(
+      //   height: 50,
+      //   // color: Colors.blueAccent,
+      //   padding: EdgeInsets.only(top: 10.0),
+      //   child: new TextFormField(
+      //     focusNode: _inputFocus,
+      //     autofocus: false,
+      //     controller: _filter,
+      //     decoration: InputDecoration(
+      //       fillColor: Colors.white,      
+      //       enabledBorder: OutlineInputBorder(
+      //         borderRadius: BorderRadius.circular(5.0),
+      //         borderSide: BorderSide(
+      //           color: Colors.white,
+      //           width: 1.5,
+      //         ),
+      //       ),
+      //       focusedBorder: OutlineInputBorder(
+      //         borderRadius: BorderRadius.circular(5.0),
+      //         borderSide: BorderSide(
+      //           color: Colors.green,
+      //           width: 1.5
+      //         ),
+      //       ),
+      //     ),
+      //     style: TextStyle(
+      //       color: Colors.white,
+      //       decorationColor: Color(0XFFFFCC11),//Font color change
+      //     ),
+      //     // onTap: (){
+      //     //   showSearch(context: context, delegate: DataSearch());
+      //     // },
+      //   ),
+      // ),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.search),
           onPressed: () async {
-            _inputFocus.unfocus();
+            // _inputFocus.unfocus();
             var ret = showSearch(context: context, delegate: DataSearch(), query: _filter.text);
             ret.then((searchedPost) async{
               if(searchedPost == null) return;
@@ -618,7 +617,7 @@ class _HomePageState extends State<HomePage> {
           icon: new Image.asset('images/icons/scanning.png'),
           onPressed: (){
             print('scan icon clicked');
-            _inputFocus.unfocus();
+            // _inputFocus.unfocus();
             // _scanCode();
             _scan();
           },
@@ -631,16 +630,16 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
         this._searchIcon = new Icon(Icons.close);
-        this._appBarTitle = new TextField(
-          controller: _filter,
-          decoration: new InputDecoration(
-            prefixIcon: new Icon(Icons.search),
-            hintText: 'Search...'
-          ),
-        );
+        // this._appBarTitle = new TextField(
+        //   controller: _filter,
+        //   decoration: new InputDecoration(
+        //     prefixIcon: new Icon(Icons.search),
+        //     hintText: 'Search...'
+        //   ),
+        // );
       } else {
         this._searchIcon = new Icon(Icons.search);
-        this._appBarTitle = new Text( 'Search Example' );
+        // this._appBarTitle = new Text( 'Search Example' );
         filteredNames = names;
         _filter.clear();
       }

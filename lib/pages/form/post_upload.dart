@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
@@ -13,7 +11,6 @@ import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
 import 'package:fossils_finder/pages/map/map_show.dart';
 import 'package:fossils_finder/utils/db_helper.dart';
-import 'package:fossils_finder/utils/image_upload.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:fossils_finder/utils/strings.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,7 +19,6 @@ import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -75,7 +71,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
     });
   }
 
-  // Get State information by API
   List seriesList;
   String _currentSeries;
   String _currentSeriesName;
@@ -109,7 +104,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
   }
 
   Future _getStateListFromJson() async{
-    // PostService.getPost();
     String _content = await rootBundle.loadString('assets/data/system_series_stage_table.json');
     print('get states from json  ${_content}');
     var _jsonContent = json.decode(_content);
@@ -119,20 +113,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
   }
 
   Future _getCitiesListFromJson(int sid) async{
-    // PostService.getPost();
     String _content = await rootBundle.loadString('assets/data/system_series_stage_table.json');
     print('get states from json  ${_content}');
     var _jsonContent = json.decode(_content);
     var _cList = _jsonContent['cities'];
-    print('cites : ${_cList}');
-    // var _cities = _jsonContent['cities'].filter((item) => item.state_id == sid);
-    //AllMovies.where((i) => i.isAnimated).toList();
-    // _jsonContent['cities'].where((item) => item.state_id == sid);
-    // var _cities = _jsonContent['cities'].where((item) => item.state_id == sid).toList();
+    print('cites from json : ${_cList}');
     _cList.forEach((item) => print('${item["id"]}'));
     var _cities = _cList.where((item) => item['state_id'] == sid).toList();
-    print('_cities: ${_cities}');
-    // List<Post> postList = _jsonContent.map((item) => Post.fromJson(item)).toList();
 
     setState(() {
       seriesList = _cities;
@@ -151,20 +138,15 @@ class _PostUploadPageState extends State<PostUploadPage> {
       print('images files size: ${_imgsFile.length}  ${image.path}');
     });
     print('get image ${image.uri} ');
-    //_doUploadImage(image, "");//上传图片
   }
 
   Future uploadImages() async{
     for(int i =0; i < _imgsPath.length; i++){
       if(_imgsPath[i].startsWith('http')){
-        // setState(() {
-        //   _uploadingStatus[_imgsPath[i]] = true;
-        // });
         continue;
       } 
       print('upload ${_imgsPath[i]}');
       if(_uploadedStatus[_imgsPath[i]]) continue;
-      // _doUploadImage(_imgsPath[i], '');
       print('try to upload ${_imgsPath[i]}');
       setState(() {
           _uploadingStatus[_imgsPath[i]] = true;
@@ -177,29 +159,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
   @override
   void initState() {
     super.initState();
-    // final Future<Database> dbFuture = dbhelper.initializeDatabase();
-    // dbFuture.then((db){
-    //   print('after db init');
-    //   Future<List<Post>> postListFuture = dbhelper.getPostList();
-    //   postListFuture.then((noteList) {
-    //     print('get post list ${noteList.length} ');
-    //   });
-    // });
-    //File f = new File("/Users/johnnyz/Library/Developer/CoreSimulator/Devices/132ABB73-6757-4EF6-B756-F98A551FEBE5/data/Containers/Data/Application/A5EF41B5-85CE-449D-9B93-067374341C1B/tmp/image_picker_35008CE8-0759-4B96-939E-D82F4A752583-77679-0003AD0C9976E1EA.jpg");
-    // File f = File.fromUri(Uri(path: 'http://images.tornadory.com/1602602430178.jpg'));
-    // File f = File('http://images.tornadory.com/1602602430178.jpg');
-    // Image g = Image.network('http://images.tornadory.com/1602602430178.jpg');
-    // setState(() {
-      // _imgsFile.add(f);
-      // _imgsPath.add('http://images.tornadory.com/1602602430178.jpg');
-      // _imgsUploaded.add(true);
-      // _uploadedStatus['http://images.tornadory.com/1602602430178.jpg'] = true;
-      // print('images files size: ${_imgsFile.length} ');
-    // });
-
-    // _getStateList();
+   
     _getSystemList();
-    // _getStateListFromJson();
 
     _latTextController.text = widget.center.latitude.toStringAsFixed(6);
     _lngTextController.text = widget.center.longitude.toStringAsFixed(6);
@@ -252,51 +213,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
-                child: Form(
+          child: Form(
             key: _formKey,
             child: Column(
               children: <Widget>[
-                
                 Container(
                   height: 150,
                   child: Expanded(
-                  //   child: _imgsFile.length > 0 ? ReorderableListView(
-                  //     scrollDirection: Axis.horizontal,
-                  //     onReorder: (oldIndex, newIndex){
-                  //       setState(() {
-                  //         //update
-                  //       });
-                  //     },
-                  //     children: <Widget>[
-                  //       for(final img in _imgsFile)
-                  //         ListTile(
-                  //           key: ValueKey(img),
-                  //           leading: Stack(
-                  //             alignment: Alignment.center,
-                  //             children: <Widget>[
-                  //               Image.file(
-                  //                 img,width: 150, height: 150,
-                  //               ),
-                  //               Positioned(
-                  //                 right: 0,
-                  //                 top: 0,
-                  //                 child: IconButton(
-                  //                   icon: Icon(Icons.delete),
-                  //                   onPressed: (){
-                  //                     print('image remove icon clicked');
-                  //                     setState(() {
-                  //                       //_imgsFile.removeAt(index);
-                  //                     });
-                  //                   },
-                  //                 ),
-                  //               ),
-                  //               CircularProgressIndicator()
-                  //             ],
-                  //           ),
-                  //         )
-                  //     ],
-                  //   ) : Center(child: Text("未上传图片")),
-                    // child: _imgsFile.length > 0 ? ListView.builder(
                     child: _imgsPath.length > 0 ? ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (BuildContext context, int index){
@@ -334,7 +257,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                           ),
                         );
                       },
-                      // itemCount: _imgsFile.length,
                       itemCount: _imgsPath.length,
                     ) : Center(child: Text("未上传图片")),                   
                     ),
@@ -343,12 +265,14 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     RaisedButton(
+                      color: Colors.lightBlue,
                       child: Text('选择图片'),
                       onPressed: (){
                           getImage();
                       },
                     ),
                     RaisedButton(
+                      color: Colors.lightBlue,
                       child: Text('上传'),
                       onPressed: (){
                         uploadImages();
@@ -429,12 +353,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     IconButton(
                       iconSize: 20, 
                       icon: Icon(Icons.my_location), 
-                      onPressed: () async { 
-                        //AmapService.navigateDrive(LatLng(36.547901, 104.258354));
-                        // setState(() {
-                          // _latTextController.text = widget.center.latitude.toStringAsFixed(6);
-                          // _lngTextController.text = widget.center.longitude.toStringAsFixed(6);
-                        // });
+                      onPressed: () async {
                         var pos = await Navigator.push(
                           context,
                           MaterialPageRoute(builder: (BuildContext context) {
@@ -462,15 +381,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       inputFormatters: [
                         WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
                       ],
-                      //WhitelistingTextInputFormatter(RegExp("[a-z,A-Z,0-9]"))
                       controller: _altTextController,
-                      // autovalidate: true,
-                      // validator: (value){
-                      //   if(value.isEmpty){
-                      //     return '海拔没有填写';
-                      //   }
-                      //   return null;
-                      // },
                       ),)
                   ],
                 ),
@@ -479,13 +390,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     Text('地址: '),
                     Expanded(child: TextFormField(
                       controller: _addrTextController,
-                      // autovalidate: true,
-                      // validator: (value){
-                      //   if(value.isEmpty){
-                      //     return '地址没有填写';
-                      //   }
-                      //   return null;
-                      // },
                     ),)
                   ],
                 ),
@@ -498,12 +402,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                       child: TextFormField(
                         controller: _categoryTextController,
                         readOnly: true,
-                        // validator: (value){
-                        //   if(value.isEmpty){
-                        //     return '请选择一个分类';
-                        //   }
-                        //   return null;
-                        // },
                         onTap: () async{
                           category = await Navigator.push(
                             context,
@@ -528,16 +426,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     ),
                   ],
                 ),
-
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: <Widget>[
-                //     Text('分类: '),
-                //     Expanded(
-                //       child: 
-                //     ),
-                //   ],
-                // ),
 
                 Container(
                   // padding: EdgeInsets.only(left: 8, right: 8, top: 5),
@@ -571,7 +459,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
                                     return null;
                                   },);
                                   _currentSystemName = item['name'];
-                                  // print('_currentSystem ${_currentSystemName} - name : ${systemList.where((element) => element['id'] == sid)}');
+                                  _currentSeries = null;
+                                  _currentStage = null;
                                   _getSeriesList(sid);
                                 });
                               },
@@ -621,6 +510,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                                     return null;
                                   },);
                                   _currentSeriesName = item['name'];
+                                  _currentStage = null;
                                   print(_currentSeries);
                                   _getStagesList(_sid);
                                 });

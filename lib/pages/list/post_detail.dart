@@ -114,7 +114,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     Row(
                       children: <Widget>[
                         Expanded(
-                          child: Text('鉴定类别: ${post.title}',
+                          child: Text('鉴定类别: ${post.categoryName}',
                             style: TextStyle(
                               color: Colors.blue,
                               fontSize: 25
@@ -274,7 +274,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     ],
                   ),
                   title: InkWell(
-                    child: Text('鉴定类别： ${post.comments[index-1].title}'),
+                    child: Text('鉴定类别： ${post.comments[index-1].categoryName}'),
                     onTap: (){
                       print('鉴定类别 clicked');
                     },

@@ -16,6 +16,7 @@ class Post {
         this._published,
         this._images,
         this._categoryId,
+        this._categoryName,
         this._finalCategoryId,
         this._finalCategoryIdFrom,
         this._coordinateLongitude,
@@ -43,6 +44,7 @@ class Post {
         this._published,
         this._images,
         this._categoryId,
+        this._categoryName,
         this._finalCategoryId,
         this._finalCategoryIdFrom,
         this._coordinateLongitude,
@@ -70,6 +72,7 @@ class Post {
     String _imagesString;
     List<Image> _images;
     int _categoryId;
+    String _categoryName;
     int _finalCategoryId;
     int _finalCategoryIdFrom;
     double _coordinateLongitude;
@@ -96,6 +99,7 @@ class Post {
     String get imagesString => _imagesString;
     List<Image> get images => _images;
     int get categoryId => _categoryId;
+    String get categoryName => _categoryName;
     int get finalCategoryId => _finalCategoryId;
     int get finalCategoryIdFrom => _finalCategoryIdFrom;
     double get coordinateLongitude => _coordinateLongitude;
@@ -123,6 +127,7 @@ class Post {
         _published = json["published"] > 0 ? true : false,
         _images = List<Image>.from(json["images"].map((x) => Image.fromJson(x))),
         _categoryId = json["category_id"],
+        _categoryName = json['category_name'],
         _finalCategoryId = json["final_category_id"],
         _finalCategoryIdFrom = json["final_category_id_from"],
         _coordinateLongitude = json["coordinate_longitude"]?.toDouble(),
@@ -175,6 +180,7 @@ class Post {
         "published": _published,
         "images": List<Image>.from(_images.map((x) => x.toJson())),
         "category_id": _categoryId,
+        'category_name' : _categoryName,
         "final_category_id": _finalCategoryId,
         "final_category_id_from": _finalCategoryIdFrom,
         "coordinate_longitude": _coordinateLongitude,
@@ -214,6 +220,7 @@ class Post {
       }
       
       map['category_id'] = _categoryId;
+      map['category_name'] = _categoryName;
       map['final_category_id'] = _finalCategoryId;
       map['final_category_id_from'] = _finalCategoryIdFrom;
       map['coordinate_longitude'] = _coordinateLongitude;
@@ -252,6 +259,7 @@ class Post {
       }
       this._imagesString = map['images'];
       this._categoryId = map['category_id'];
+      this._categoryName = map['category_name'];
       this._finalCategoryId = map['final_category_id'];
       this._finalCategoryIdFrom = map['final_category_id_from'];
       this._coordinateLongitude = map['coordinate_longitude'];
