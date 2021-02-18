@@ -22,6 +22,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
 
+import 'package:easy_localization/easy_localization.dart';
+
 class PostUploadPage extends StatefulWidget {
   final LatLng center;
 
@@ -501,7 +503,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                                 color: Colors.black54,
                                 fontSize: 16,
                               ),
-                              hint: Text('Select Series'),
+                              hint: Text('Select Series'.tr().toString()),
                               onChanged: (String newValue) {
                                 setState(() {
                                   _currentSeries = newValue;

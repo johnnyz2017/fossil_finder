@@ -17,6 +17,8 @@ import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 import 'package:share/share.dart';
 // import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 
+import 'package:easy_localization/easy_localization.dart';
+
 class PostDetailPage extends StatefulWidget {
   final int pid;
 

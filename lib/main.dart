@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:fossils_finder/main_app.dart';
 import 'package:fossils_finder/pages/home/home_page.dart';
@@ -32,7 +33,16 @@ void MapInit() async{
 
 void main(){
   runApp(
-    FossilApp()
+    EasyLocalization(
+      supportedLocales: <Locale>[
+        Locale('en', 'US'),
+        Locale('zh', "CN")
+      ],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      saveLocale: true,
+      child: FossilApp()
+    )
   );
   MapInit();
 }
@@ -79,6 +89,9 @@ class _FossilAppState extends State<FossilApp> {
     return MaterialApp(
       title: "Fossil Finder",
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       // theme: ThemeData(primarySwatch: Colors.indigo, accentColor: Colors.blue),
       theme: ThemeData(
         // primarySwatch: Colors.indigo, 

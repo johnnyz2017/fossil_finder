@@ -239,6 +239,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.10"
+  easy_localization:
+    dependency: "direct main"
+    description:
+      name: easy_localization
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.3.3"
   encrypt:
     dependency: transitive
     description:
