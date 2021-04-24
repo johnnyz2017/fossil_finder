@@ -962,7 +962,9 @@ class _PostEditblePageState extends State<PostEditblePage> {
         print('upload success ....');
         setState(() {
           // _image = Image.network(uploadedItem.path, height: 200,); //OK
-          _imgsPath.add(uploadedItem.path);
+          // _imgsPath.add(uploadedItem.path);
+          _uploadedStatus[file.path] = true;
+          _uploadedPath[file.path] = uploadedItem.path;
         });
         // _view.uploadSuccess(uploadedItem.path);
       } else {

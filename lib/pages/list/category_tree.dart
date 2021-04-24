@@ -31,9 +31,14 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
   TreeViewController _treeViewController = TreeViewController();
   CategoryNode cNode;
   bool editmode = false;
+  // TreeViewController _treeViewController;
+  bool docsOpen = true;
+  bool deepExpanded = true;
+  String _selectedNode;
+  List<Node> _nodes;
 
   ExpanderPosition _expanderPosition = ExpanderPosition.start;
-  ExpanderType _expanderType = ExpanderType.caret;
+  ExpanderType _expanderType = ExpanderType.plusMinus;
   ExpanderModifier _expanderModifier = ExpanderModifier.none;
 
   Future<bool> editable(int id) async{
@@ -151,7 +156,7 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
     List _jsonList = _listJson as List;
     List<Post> postList = _jsonList.map((item) => Post.fromJson(item)).toList();
     setState(() {
-      posts = postList;
+      // posts = postList;
     });
     print('after get posts ${posts.length} - ${scrollController.offset}');
   }
@@ -199,16 +204,18 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
 
     print('get request content: ${_content}');
     var _jsonData = jsonDecode(_content.toString());
+    print('get children is: ${_jsonData['data']['children']}');
    
     setState(() {
       String categoriesJson = jsonEncode(_jsonData['data']['children']);
+      print('cate json string is: ${categoriesJson}');
       _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
 
-      String deepKey = 'c_5';
-      List<Node> newdata =
-          _treeViewController.expandToNode(deepKey);
-      _treeViewController =
-          _treeViewController.copyWith(children: newdata);
+      // String deepKey = 'c_5';
+      // List<Node> newdata =
+      //     _treeViewController.expandToNode(deepKey);
+      // _treeViewController =
+      //     _treeViewController.copyWith(children: newdata);
     });
   }
 
@@ -250,22 +257,26 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
         type: _expanderType,
         modifier: _expanderModifier,
         position: _expanderPosition,
-        color: Colors.grey.shade800,
+        color: Colors.grey.shade700,
         size: 20,
       ),
       labelStyle: TextStyle(
         fontSize: 16,
-        letterSpacing: 0.3,
+        letterSpacing: 0.1,
+        fontWeight: FontWeight.w800,
+        // color: Colors.blue.shade700,
+        color: Colors.black,
       ),
       parentLabelStyle: TextStyle(
         fontSize: 16,
         letterSpacing: 0.1,
         fontWeight: FontWeight.w800,
-        color: Colors.blue.shade700,
+        // color: Colors.blue.shade700,
+        color: Colors.black,
       ),
       iconTheme: IconThemeData(
         size: 18,
-        color: Colors.grey.shade800,
+        color: Colors.grey.shade700,
       ),
       colorScheme: Theme.of(context).brightness == Brightness.light
           ? ColorScheme.light(
@@ -273,12 +284,14 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
               onPrimary: Colors.grey.shade900,
               background: Colors.transparent,
               onBackground: Colors.black,
+              secondary: Colors.blue.shade50,
             )
           : ColorScheme.dark(
               primary: Colors.black26,
               onPrimary: Colors.white,
               background: Colors.transparent,
               onBackground: Colors.white70,
+              secondary: Colors.black26,
             ),
     );
 
@@ -408,12 +421,14 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
         children: <Widget>[
           Expanded(
             child: Container(
+              padding: EdgeInsets.only(left: 5),
               child: TreeView(
                 theme: _treeViewTheme,
                 controller: _treeViewController,
                 allowParentSelect: true,
                 supportParentDoubleTap: false,
-                
+                onExpansionChanged: (key, expanded) =>
+                        _expandNode(key, expanded),
                 onNodeTap: (key) {
                   debugPrint('debug print select key: $key');
                   String label = _treeViewController.getNode(key) == null
@@ -455,6 +470,35 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
         ],
       ),
     );
+  }
+
+  _expandNode(String key, bool expanded) {
+    String msg = '${expanded ? "Expanded" : "Collapsed"}: $key';
+    debugPrint(msg);
+    Node node = _treeViewController.getNode(key);
+    if (node != null) {
+      List<Node> updated;
+      if (key == 'docs') {
+        updated = _treeViewController.updateNode(
+          key,
+          node.copyWith(
+              expanded: expanded,
+              icon: NodeIcon(
+                codePoint: expanded
+                    ? Icons.folder_open.codePoint
+                    : Icons.folder.codePoint,
+                color: expanded ? "blue600" : "grey700",
+              )),
+        );
+      } else {
+        updated = _treeViewController.updateNode(
+            key, node.copyWith(expanded: expanded));
+      }
+      setState(() {
+        if (key == 'docs') docsOpen = expanded;
+        _treeViewController = _treeViewController.copyWith(children: updated);
+      });
+    }
   }
 
   @override

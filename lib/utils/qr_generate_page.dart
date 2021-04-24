@@ -37,7 +37,7 @@ class _QrCodeGeneratePageState extends State<QrCodeGeneratePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('记录二维码展示'),
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: Colors.blue,
         // actions: <Widget>[
         //   IconButton(
         //     icon: Icon(Icons.share),

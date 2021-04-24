@@ -653,6 +653,49 @@ import 'dart:convert';
 //   }
 // ];
 
+const List<Map<String, dynamic>> TEST_JSON = [
+  {
+      "id": 4,
+      "parent_id": 0,
+      "user_id": 9,
+      "title": "Category maxime",
+      "description": "Eius quidem eaque quisquam quasi.",
+      "label": "Category maxime",
+      "key": "c_4"
+  },
+  {
+      "id": 8,
+      "parent_id": 0,
+      "user_id": 9,
+      "title": "Category illum",
+      "description": "Omnis neque ea at.",
+      "label": "Category illum",
+      "key": "c_8",
+      "children": [
+          {
+              "id": 1,
+              "parent_id": 8,
+              "user_id": 7,
+              "title": "Category maiores",
+              "description": "Repellat explicabo quasi rerum esse sit qui.",
+              "label": "Category maiores",
+              "key": "c_1",
+              "children": [
+                  {
+                      "id": 10,
+                      "parent_id": 1,
+                      "user_id": 3,
+                      "title": "Category quaerat",
+                      "description": "Qui reprehenderit eum porro rerum quod.",
+                      "label": "Category quaerat",
+                      "key": "c_10"
+                  }
+              ]
+          }
+      ]
+  }
+];
+
 const List<Map<String, dynamic>> US_STATES = [
   {
     "label": "A",
@@ -824,3 +867,4 @@ const List<Map<String, dynamic>> US_STATES = [
 ];
 
 String US_STATES_JSON = jsonEncode(US_STATES);
+String TEST_JSON_STRING = jsonEncode(TEST_JSON);

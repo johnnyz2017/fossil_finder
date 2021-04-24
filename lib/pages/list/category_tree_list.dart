@@ -261,8 +261,8 @@ class _CategoryTreeListViewState extends State<CategoryTreeListView> {
     var _jsonData = jsonDecode(_content.toString());
 
     setState(() {
-      String categoriesJson = jsonEncode(_jsonData['data']['children']);
-      _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
+      // String categoriesJson = jsonEncode(_jsonData['data']['children']);
+      // _treeViewController = _treeViewController.loadJSON(json: categoriesJson);
     });
   }
 
@@ -276,8 +276,10 @@ class _CategoryTreeListViewState extends State<CategoryTreeListView> {
   Widget build(BuildContext context) {
     TreeViewTheme _treeViewTheme = TreeViewTheme(
       expanderTheme: ExpanderThemeData(
-        type: _expanderType,
-        modifier: _expanderModifier,
+        // type: _expanderType,
+        // modifier: _expanderModifier,
+        type: ExpanderType.plusMinus,
+        modifier: ExpanderModifier.none,
         position: _expanderPosition,
         color: Colors.grey.shade800,
         size: 20,

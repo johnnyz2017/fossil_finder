@@ -21,6 +21,7 @@ class DatabaseHelper {
   String colPublished = 'published';
   String colImages = 'images';
   String colCategoryId = 'category_id';
+  String colCategoryName = 'category_name';
   String colFinalCategoryId = 'final_category_id';
   String colFinalCategoryIdFrom = 'final_category_id_from';
   String colCoordinateLongitude = 'coordinate_longitude';
@@ -65,7 +66,7 @@ class DatabaseHelper {
   void _createDb(Database db, int newVersion) async {
     await db.execute(
         'CREATE TABLE $postTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colUserId INTEGER, $colAuthUserId INTEGER, $colTempId TEXT, $colPermId TEXT, $colTitle TEXT, '
-        '$colContent TEXT, $colPrivate INTEGER, $colPublished INTEGER, $colImages TEXT, $colCategoryId INTEGER, $colFinalCategoryId INTEGER, $colFinalCategoryIdFrom INTEGER, '
+        '$colContent TEXT, $colPrivate INTEGER, $colPublished INTEGER, $colImages TEXT, $colCategoryId INTEGER, $colCategoryName TEXT, $colFinalCategoryId INTEGER, $colFinalCategoryIdFrom INTEGER, '
         '$colCoordinateLongitude DOUBLE, $colCoordinateLatitude DOUBLE, $colCoordinateAltitude DOUBLE, '
         '$colAddress TEXT, $colSystem TEXT, $colSeries TEXT, $colStage TEXT, $colCreatedAt TEXT, $colUpdatedAt TEXT, $colAuthor TEXT)');
   }

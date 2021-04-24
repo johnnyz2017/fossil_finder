@@ -41,8 +41,8 @@ class _TreeViewTestPageState extends State<TreeViewTestPage> {
         ModContainer(ExpanderModifier.squareOutlined),
   };
   ExpanderPosition _expanderPosition = ExpanderPosition.start;
-  ExpanderType _expanderType = ExpanderType.caret;
-  ExpanderModifier _expanderModifier = ExpanderModifier.none;
+  ExpanderType _expanderType = ExpanderType.plusMinus;
+  ExpanderModifier _expanderModifier = ExpanderModifier.circleOutlined;
   bool _allowParentSelect = false;
   bool _supportParentDoubleTap = false;
 
@@ -171,6 +171,7 @@ class _TreeViewTestPageState extends State<TreeViewTestPage> {
         groupValue: _expanderType,
         onValueChanged: (ExpanderType newValue) {
           setState(() {
+            print(newValue);
             _expanderType = newValue;
           });
         },
@@ -187,6 +188,7 @@ class _TreeViewTestPageState extends State<TreeViewTestPage> {
         groupValue: _expanderModifier,
         onValueChanged: (ExpanderModifier newValue) {
           setState(() {
+            print(newValue);
             _expanderModifier = newValue;
           });
         },
@@ -320,8 +322,10 @@ class _TreeViewTestPageState extends State<TreeViewTestPage> {
               child: Text('JSON'),
               onPressed: () {
                 setState(() {
+                  // _treeViewController =
+                  //     _treeViewController.loadJSON(json: US_STATES_JSON);
                   _treeViewController =
-                      _treeViewController.loadJSON(json: US_STATES_JSON);
+                      _treeViewController.loadJSON(json: TEST_JSON_STRING);
                 });
               },
             ),
@@ -416,6 +420,7 @@ class _TreeViewTestPageState extends State<TreeViewTestPage> {
     Node node = _treeViewController.getNode(key);
     if (node != null) {
       List<Node> updated;
+      print('key: ${key}');
       if (key == 'docs') {
         updated = _treeViewController.updateNode(
           key,
