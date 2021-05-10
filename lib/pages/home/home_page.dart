@@ -425,7 +425,12 @@ class _HomePageState extends State<HomePage> {
                   }
                 }
               },
-              child: Icon(Icons.select_all),
+              child: new Image.asset(
+                'images/icons/category.png',
+                width: 21,
+                height: 21,
+                fit: BoxFit.fill
+              ),
               shape: CircleBorder(
               ),
             ),
@@ -465,7 +470,7 @@ class _HomePageState extends State<HomePage> {
                   _show = !_show;
                 });
 
-                bool need_reload = false;
+                bool _needReload = false;
 
                 if(_markers.isNotEmpty){
                   for(var marker in _markers){
@@ -474,13 +479,13 @@ class _HomePageState extends State<HomePage> {
                     if(marker != null)
                       marker.setVisible(_show);
                     else
-                      need_reload = true;
+                      _needReload = true;
                   }
                 }else{
-                  need_reload = true;
+                  _needReload = true;
                 }
 
-                if(need_reload){
+                if(_needReload){
                   print('need reload ...........');
                   setState(() {
                     _show = true;
@@ -491,7 +496,17 @@ class _HomePageState extends State<HomePage> {
                 if(_used) return;
                 _used = true;
               },
-              child: _show? Icon(Icons.highlight) : Icon(Icons.highlight_off),
+              child: _show? new Image.asset(
+                'images/icons/map_show.png',
+                width: 21,
+                height: 21,
+                fit: BoxFit.fill
+              ) : new Image.asset(
+                'images/icons/map_hide.png',
+                width: 21,
+                height: 21,
+                fit: BoxFit.fill
+              ),
               shape: CircleBorder(
               ),
             ),
@@ -507,7 +522,12 @@ class _HomePageState extends State<HomePage> {
                   myLocationType: MyLocationType.Locate,
                 ));
               },
-              child: Icon(FontAwesome.map_marker),
+              child: new Image.asset(
+                'images/icons/target.png',
+                width: 21,
+                height: 21,
+                fit: BoxFit.fill
+              ),
               shape: CircleBorder(
               ),
             ),
@@ -614,7 +634,12 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         IconButton(
-          icon: new Image.asset('images/icons/scanning.png'),
+          icon: new Image.asset(
+            'images/icons/scan.png',
+            width: 21,
+            height: 21,
+            fit: BoxFit.fill
+            ),
           onPressed: (){
             print('scan icon clicked');
             // _inputFocus.unfocus();

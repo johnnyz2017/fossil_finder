@@ -84,7 +84,12 @@ class _PostDetailPageState extends State<PostDetailPage> {
             },
           ),
           IconButton(
-            icon: new Image.asset('images/icons/qrcode.png'),
+            icon: new Image.asset(
+              'images/icons/qrcode_check.png',
+              width: 21,
+              height: 21,
+              fit: BoxFit.fill
+            ),
             onPressed: (){
               Navigator.push(
                 context,
