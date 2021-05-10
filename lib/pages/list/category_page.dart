@@ -29,7 +29,12 @@ class _CategoryPageState extends State<CategoryPage> with AutomaticKeepAliveClie
             child: new Container(
               decoration: BoxDecoration(
                 // color: Color.fromARGB(1, 64, 84, 175),
-                color: Colors.blue
+                // color: Colors.blue
+                // color: Colors.indigo
+                // color: Color(0xfff4f3f9),
+                // color: Color(0xff8cc1e1),
+                // color: Color(0xffe2edd9),
+                color: Color(0xffb8bf82),
                 // gradient: 
               ),
               // color: Color.fromARGB(1, 64, 84, 175),

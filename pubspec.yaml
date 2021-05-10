@@ -26,7 +26,7 @@ dependencies:
 
   flutter_localizations:
     sdk: flutter
-  intl: ^0.16.0
+  intl: ^0.17.0
   easy_localization: ^2.3.3
   
   flutter_login: 1.0.14
@@ -51,7 +51,7 @@ dependencies:
   http:
   dio:
   shared_preferences:
-  flutter_treeview:
+  # flutter_treeview:
 
   flutter_swiper: ^1.1.6
   # swipe_stack:
@@ -84,6 +84,10 @@ dependencies:
   sqflite:
   
   cached_network_image:
+  
+  ali_icons: ^0.0.3
+  # flex_color_scheme: 1.4.1
+  flex_color_scheme: 2.1.1
 
   # geolocation:
 
@@ -94,6 +98,8 @@ dev_dependencies:
   amap_map_fluttify:
     # path: /Users/johnnyz/work/sources/flutter/amap_map_fluttify-master/
     path: ./third_party/amap_map_fluttify/
+  flutter_treeview:
+    path: ./third_party/flutter_treeview-0.6.0+2/
 
   
   build_runner:
@@ -126,6 +132,28 @@ flutter:
     - images/icons/icons8-checkmark.png
     - images/icons/scanning.png
     - images/icons/qrcode.png
+    - images/icons/category.png
+    - images/icons/category_gray.png
+    - images/icons/comment.png
+    - images/icons/comment_gray.png
+    - images/icons/lock.png
+    - images/icons/lock_gray.png
+    - images/icons/map_show.png
+    - images/icons/map_show_gray.png
+    - images/icons/map_hide_gray.png
+    - images/icons/map_hide.png
+    - images/icons/password_change.png
+    - images/icons/password_change_gray.png
+    - images/icons/qrcode_check.png
+    - images/icons/qrcode_check_gray.png
+    - images/icons/scan.png
+    - images/icons/scan_gray.png
+    - images/icons/sync_failed.png
+    - images/icons/sync_failed_gray.png
+    - images/icons/target.png
+    - images/icons/target_gray.png
+    - images/icons/unlock.png
+    - images/icons/unlock_gray.png
     - images/others/hs001.jpeg
     - images/others/hs002.jpeg
     - images/others/hs003.jpeg

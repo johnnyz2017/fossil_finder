@@ -22,6 +22,7 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
   TextEditingController _categoryTextController = new TextEditingController();
   TextEditingController _titleTextController = new TextEditingController();
   TextEditingController _contentTextController = new TextEditingController();
+  bool _isGenus = false;
 
   CategoryNode category;
   
@@ -98,6 +99,20 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
                 ],
               ),
 
+              Row(
+                children: <Widget>[
+                  Text('属级/种级：'),
+                  Switch(
+                    value: _isGenus, 
+                    onChanged: (value){
+                      setState(() {
+                        _isGenus = value;
+                      });
+                    },
+                  )
+                ],
+              ),
+
               Expanded(
                 child: TextFormField(
                   controller: _contentTextController,
@@ -108,6 +123,31 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
                   maxLines: null,
                 ),
               ),
+              // TextFormField(
+              //   controller: _contentTextController,
+              //   decoration: InputDecoration(
+              //     labelText: '分类描述：',
+              //   ),
+              //   keyboardType: TextInputType.multiline,
+              //   maxLines: null,
+              // ),
+
+              // Expanded(
+              //   child: Row(
+              //       children: <Widget>[
+              //         Text('是否私有：'),
+              //         Switch(
+              //           value: false, 
+              //           onChanged: (value){
+              //             // _private = value;
+              //             setState(() {
+              //               // _private = value;
+              //             });
+              //           },
+              //         )
+              //       ],
+              //     ),
+              // ),
             ],
           ),
         ),
@@ -120,11 +160,13 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
     print('title ${_titleTextController.text}');
     print('content ${_contentTextController.text}');
     print('category_id ${_categoryId}');
+    print('is_genus ${_isGenus}');
 
     FormData formData = new FormData.fromMap({
       "title" : _titleTextController.text ?? "",
       "content" : _contentTextController.text ?? "",
-      'parent_id' : _categoryId
+      'parent_id' : _categoryId,
+      'is_genus' : _isGenus ? 1 : 0
     });
 
     SharedPreferences localStorage;

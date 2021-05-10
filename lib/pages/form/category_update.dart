@@ -29,6 +29,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
   TextEditingController _categoryTextController = new TextEditingController();
   TextEditingController _titleTextController = new TextEditingController();
   TextEditingController _contentTextController = new TextEditingController();
+  bool _isGenus = false;
 
   CategoryNode parentCategory;
 
@@ -52,6 +53,7 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
       _titleTextController.text = categoryItem.title;
       _contentTextController.text = categoryItem.description;
       _categoryTextController.text = _pCategory.title;
+      _isGenus = categoryItem.isGenus;
     });
   }
 
@@ -135,6 +137,20 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
                 ],
               ),
 
+              Row(
+                children: <Widget>[
+                  Text('属级/种级：'),
+                  Switch(
+                    value: _isGenus, 
+                    onChanged: (value){
+                      setState(() {
+                        _isGenus = value;
+                      });
+                    },
+                  )
+                ],
+              ),
+
               Expanded(
                 child: TextFormField(
                   controller: _contentTextController,
@@ -157,12 +173,14 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
     print('title ${_titleTextController.text}');
     print('content ${_contentTextController.text}');
     print('category_id ${_categoryId}');
+    print('is_genus ${_isGenus}');
 
     FormData formData = new FormData.fromMap({
       "title" : _titleTextController.text ?? "",
       "content" : _contentTextController.text ?? "",
       'parent_id' : _categoryId,
-      'id' : categoryItem.id
+      'id' : categoryItem.id,
+      'is_genus' : _isGenus ? 1 : 0,
     });
 
     SharedPreferences localStorage;

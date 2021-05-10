@@ -263,16 +263,18 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
       labelStyle: TextStyle(
         fontSize: 16,
         letterSpacing: 0.1,
-        fontWeight: FontWeight.w800,
+        // fontWeight: FontWeight.w800,
+        // fontStyle: FontStyle.italic,
         // color: Colors.blue.shade700,
         color: Colors.black,
       ),
       parentLabelStyle: TextStyle(
         fontSize: 16,
         letterSpacing: 0.1,
-        fontWeight: FontWeight.w800,
+        // fontWeight: FontWeight.w800,
         // color: Colors.blue.shade700,
         color: Colors.black,
+        fontStyle: FontStyle.italic,
       ),
       iconTheme: IconThemeData(
         size: 18,

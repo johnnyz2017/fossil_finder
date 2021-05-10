@@ -13,6 +13,8 @@ import 'package:fossils_finder/pages/profile/private_list_page.dart';
 import 'package:fossils_finder/pages/profile/public_list_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:ali_icons/ali_icons.dart';
+
 class MemberPage extends StatefulWidget {
   final String title;
 
@@ -60,51 +62,112 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
 
   @override
   Widget build(BuildContext context) {
+    String userName = user == null ? "未命名" : user.name;
+    String profileUrl = user == null ? 'images/icons/user.png' : user.avatar;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("会员中心")
-      ),
-      body: ListView(
-        children: <Widget>[
-          _topHeader(),
-          _actionList(),
-          SizedBox(height: 100,),
-          ListTile(
-            leading: Icon(Icons.settings),
-              title: Text("个人设置"),
-              onTap: (){
-                var ret = Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => MemberProfileUpdatePage(user: user,),
-                ));
-
-                ret.then((value){
-                  print('return from navi : ${value}');
-                  if(value == true){
-                    loadUserFromServer();
-                  }
-                });
-              },
-          ),
-          ListTile(
-            leading: Icon(Icons.change_history),
-              title: Text("修改密码"),
-              onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => PasswordUpdatePage(user: user,),
-                ));
-              },
-          ),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-              title: Text("退出登陆"),
-              onTap: (){
-                logout();
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (context) => LoginScreen(),
-                ));
-              },
-          ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: (){
+            },
+          )
         ],
+        title: Row(
+          children: <Widget>[
+            Container(
+                margin: EdgeInsets.fromLTRB(0, 8, 10, 8),
+                child: ClipOval(
+                  child: 
+                      profileUrl.startsWith('http') ? CachedNetworkImage(
+                              height: 50,
+                              width: 50,
+                              imageUrl: profileUrl,
+                              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                              errorWidget: (context, url, error) => Icon(Icons.error),
+                            )
+                      : Image.asset(profileUrl, height: 50, width: 50,),
+                ),
+                decoration: new BoxDecoration(
+                  border: new Border.all(
+                    color: Colors.orange,
+                    width: 1.0,
+                  ),
+                  borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
+                )),
+            Container(
+              child: Text(
+                userName,
+                style: TextStyle(fontSize: 18.0),
+              ),
+            ),
+            Container(
+              child: IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: (){
+                  var ret = Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MemberProfileUpdatePage(user: user,),
+                  ));
+
+                  ret.then((value){
+                    print('return from navi : ${value}');
+                    if(value == true){
+                      loadUserFromServer();
+                    }
+                  });
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+        child: ListView(
+          children: <Widget>[
+            _topHeader0(),
+            // _infoPanel(),
+            // _actionButons(),
+            _actionList(),
+            SizedBox(height: 300,),
+            // ListTile(
+            //   leading: Icon(Icons.settings),
+            //     title: Text("个人设置"),
+            //     onTap: (){
+            //       var ret = Navigator.of(context).push(MaterialPageRoute(
+            //         builder: (context) => MemberProfileUpdatePage(user: user,),
+            //       ));
+
+            //       ret.then((value){
+            //         print('return from navi : ${value}');
+            //         if(value == true){
+            //           loadUserFromServer();
+            //         }
+            //       });
+            //     },
+            // ),
+            ListTile(
+              leading: Icon(Icons.change_history),
+                title: Text("修改密码"),
+                onTap: (){
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => PasswordUpdatePage(user: user,),
+                  ));
+                },
+            ),
+            ListTile(
+              leading: Icon(Icons.exit_to_app),
+                title: Text("退出登陆"),
+                onTap: (){
+                  logout();
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ));
+                },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -116,6 +179,166 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
 
   @override
   bool get wantKeepAlive => true;
+
+  Widget _infoPanel(){
+    return Card(
+      color: Colors.red,
+      shadowColor: Colors.grey,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+        Column(
+          children: <Widget>[
+            Text('${user.postsCount}'),
+            Text('记录'),
+          ],
+        ),
+        Column(
+          children: <Widget>[
+            Text('${user.categoriesCount}'),
+            Text('类别'),
+          ],
+        ),
+        Column(
+          children: <Widget>[
+            Text('${user.commentsCount}'),
+            Text('鉴定'),
+          ],
+        ),
+      ],),
+    );
+  }
+
+  Widget _actionButons(){
+    return SizedBox(
+      height: 100,
+      child: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.access_alarm), 
+              onPressed: (){
+                print('public clicked');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return PublisPostsPage();
+                  }) 
+                );
+              }),
+            InkWell(
+              onTap: (){
+                print('public clicked');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return PublisPostsPage();
+                  }) 
+                );
+              },
+              child: Column(
+                children: <Widget>[
+                  Icon(AliIcons.user_outline),
+                  Text('公开'),
+                ],
+              ),
+            ),
+            Column(
+              children: <Widget>[
+                Icon(AliIcons.android),
+                Text('私有'),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                Icon(Icons.record_voice_over),
+                Text('未发布'),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                Icon(Icons.record_voice_over),
+                Text('鉴定'),
+              ],
+            ),
+          ],),
+        ),
+      ),
+    );
+  }
+  Widget _topHeader0(){
+    String userName = user == null ? "未命名" : user.name;
+    String userEmail = user == null ? '' : user.email;
+
+    return Card(
+      elevation: 5.0,
+      color: Colors.white60,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
+      // shadowColor: Colors.green,
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(children: <Widget>[
+                Container(
+                 child: Text('超级管理员', 
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                    )
+                  ),
+                ),
+                Text(userEmail, style: TextStyle(fontStyle: FontStyle.italic),),
+                SizedBox(height: 50,),
+              ],
+              ),
+            ),
+            
+
+            SizedBox(
+              height: 60,
+              child: Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Text('${user.postsCount}'),
+                        Text('记录'),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Text('${user.categoriesCount}'),
+                        Text('类别'),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Text('${user.commentsCount}'),
+                        Text('鉴定'),
+                      ],
+                    ),
+                  ],),
+                ),
+              ),
+            )
+          ],
+        ),
+    );
+  }
 
   Widget _topHeader(){
     String userName = user == null ? "未命名" : user.name;

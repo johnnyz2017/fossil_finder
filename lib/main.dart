@@ -14,6 +14,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'api/service_method.dart';
 import 'config/global_config.dart';
 
+import 'package:flex_color_scheme/flex_color_scheme.dart';
+
 SharedPreferences localStorage;
 
 void MapInit() async{
@@ -92,11 +94,26 @@ class _FossilAppState extends State<FossilApp> {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      // theme: ThemeData(primarySwatch: Colors.indigo, accentColor: Colors.blue),
-      theme: ThemeData(
-        // primarySwatch: Colors.indigo, 
-        accentColor: Colors.blue
-      ),
+      // theme: ThemeData(
+      //   // primaryColor: Color(0xfff4f3f9),
+      //   // primaryColor: Color(0xff8cc1e1),
+      //   // primaryColor: Color(0xffe2edd9),
+      //   primaryColor: Color(0xffb8bf82),
+      //   // primarySwatch: Colors.indigo, 
+      //   // accentColor: Colors.blue
+      // ),
+      theme: FlexColorScheme.light(
+        colors: FlexColor.schemes[FlexScheme.hippieBlue].light,
+      ).toTheme,
+      // theme: FlexColorScheme.light(
+      //   colors: FlexColor.schemes[FlexScheme.mandyRed].light,
+      // ).toTheme,
+      // // The Mandy red dark theme.
+      // darkTheme: FlexColorScheme.dark(
+      //   colors: FlexColor.schemes[FlexScheme.mandyRed].dark,
+      // ).toTheme,
+      // // Use dark or light theme based on system setting.
+      // themeMode: ThemeMode.system,
       home: isLoggedIn ? IndexPage() : LoginScreen(),
       // home: IndexPage(),
     );
