@@ -10,6 +10,7 @@
     <application
         android:name="com.tornadory.fossils_finder.FossilApplication"
         android:label="fossils_finder"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
 
         <service android:name="com.amap.api.location.APSService"></service>

@@ -43,10 +43,10 @@ class Global{
   //     _prefs.setString("profile", jsonEncode(profile.toJson()));
 }
 
-const String serviceUrl = 'http://localhost:8000'; //local
+// const String serviceUrl = 'http://localhost:8000'; //local
 // const String serviceUrl = 'http://foss-backend.herokuapp.com'; //heroku
 // const String serviceUrl = "http://42.192.48.39:8080"; //tx cloud
-// const String serviceUrl = 'http://47.108.137.45'; //aliyun
+const String serviceUrl = 'http://47.108.137.45'; //aliyun
 const String apiUrl = serviceUrl + '/api/v1';
 const servicePath = {
   'testauth' : '/testauth',
@@ -72,3 +72,6 @@ const httpHeaders = {
 
 const String TABLE_NAME_PBSETTING = 'pb_setting';
 const String TABLE_NAME_UPLOADED = 'uploaded';
+
+const double MARGIN = 0.06;
+const double DMARGIN = 20;

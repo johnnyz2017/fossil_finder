@@ -28,16 +28,8 @@ class _CategoryPageState extends State<CategoryPage> with AutomaticKeepAliveClie
             preferredSize: Size.fromHeight(kToolbarHeight - 30), //TBD
             child: new Container(
               decoration: BoxDecoration(
-                // color: Color.fromARGB(1, 64, 84, 175),
-                // color: Colors.blue
-                // color: Colors.indigo
-                // color: Color(0xfff4f3f9),
-                // color: Color(0xff8cc1e1),
-                // color: Color(0xffe2edd9),
-                color: Color(0xffb8bf82),
-                // gradient: 
+                color: Colors.grey[100]
               ),
-              // color: Color.fromARGB(1, 64, 84, 175),
               child: new SafeArea(
                 child: Column(
                   children: <Widget>[
@@ -47,7 +39,6 @@ class _CategoryPageState extends State<CategoryPage> with AutomaticKeepAliveClie
                         new Text("标本记录列表"), 
                         new Text("分类单元")
                       ],
-                      
                     ),
                   ],
                 ),

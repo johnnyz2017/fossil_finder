@@ -29,7 +29,8 @@ dependencies:
   intl: ^0.17.0
   easy_localization: ^2.3.3
   
-  flutter_login: 1.0.14
+  flutter_login:
+    path: ./third_party/flutter_login-1.0.14/
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -90,6 +91,7 @@ dependencies:
   flex_color_scheme: 2.1.1
 
   # geolocation:
+  flutter_screenutil: 5.0.0
 
 
 dev_dependencies:
@@ -146,8 +148,12 @@ flutter:
     - images/icons/password_change_gray.png
     - images/icons/qrcode_check.png
     - images/icons/qrcode_check_gray.png
+    - images/icons/logout.png
+    - images/icons/logout_gray.png
     - images/icons/scan.png
     - images/icons/scan_gray.png
+    - images/icons/layer.png
+    - images/icons/layer_gray.png
     - images/icons/sync_failed.png
     - images/icons/sync_failed_gray.png
     - images/icons/target.png

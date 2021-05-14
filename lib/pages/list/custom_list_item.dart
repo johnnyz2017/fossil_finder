@@ -22,11 +22,11 @@ class CustomListItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
-            flex: 2,
+            flex: 3,
             child: thumbnail,
           ),
           Expanded(
-            flex: 3,
+            flex: 2,
             child: _VideoDescription(
               title: title,
               user: user,

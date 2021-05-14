@@ -141,21 +141,22 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
   Widget build(BuildContext context) {
     TreeViewTheme _treeViewTheme = TreeViewTheme(
       expanderTheme: ExpanderThemeData(
-        type: _expanderType,
-        modifier: _expanderModifier,
+        type: ExpanderType.plusMinus,
+        modifier: ExpanderModifier.none,
         position: _expanderPosition,
         color: Colors.grey.shade800,
         size: 20,
       ),
       labelStyle: TextStyle(
         fontSize: 16,
-        letterSpacing: 0.3,
+        letterSpacing: 0.1,
+        color: Colors.black,
       ),
       parentLabelStyle: TextStyle(
         fontSize: 16,
         letterSpacing: 0.1,
-        fontWeight: FontWeight.w800,
-        color: Colors.blue.shade700,
+        color: Colors.black,
+        fontStyle: FontStyle.italic,
       ),
       iconTheme: IconThemeData(
         size: 18,

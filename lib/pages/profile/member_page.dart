@@ -11,6 +11,8 @@ import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/pages/profile/local_list_page.dart';
 import 'package:fossils_finder/pages/profile/private_list_page.dart';
 import 'package:fossils_finder/pages/profile/public_list_page.dart';
+import 'package:fossils_finder/pages/profile/setting_page.dart';
+import 'package:fossils_finder/widgets/custom_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:ali_icons/ali_icons.dart';
@@ -25,6 +27,8 @@ class MemberPage extends StatefulWidget {
 }
 
 class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMixin{
+
+  double _width = 600;
 
   User user;
 
@@ -62,6 +66,10 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
 
   @override
   Widget build(BuildContext context) {
+
+    setState(() {
+      _width = MediaQuery.of(context).size.width;
+    });
     String userName = user == null ? "未命名" : user.name;
     String profileUrl = user == null ? 'images/icons/user.png' : user.avatar;
 
@@ -71,6 +79,9 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: (){
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => SettingPage(user: user,),
+              ));
             },
           )
         ],
@@ -97,9 +108,12 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
                   borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
                 )),
             Container(
-              child: Text(
-                userName,
-                style: TextStyle(fontSize: 18.0),
+              child: Flexible(
+                child: Text(
+                  userName,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 18.0),
+                ),
               ),
             ),
             Container(
@@ -122,53 +136,16 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
           ],
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
-        child: ListView(
-          children: <Widget>[
-            _topHeader0(),
-            // _infoPanel(),
-            // _actionButons(),
+      body: 
+        Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+              child:  _topHeader0(),
+            ),
             _actionList(),
-            SizedBox(height: 300,),
-            // ListTile(
-            //   leading: Icon(Icons.settings),
-            //     title: Text("个人设置"),
-            //     onTap: (){
-            //       var ret = Navigator.of(context).push(MaterialPageRoute(
-            //         builder: (context) => MemberProfileUpdatePage(user: user,),
-            //       ));
-
-            //       ret.then((value){
-            //         print('return from navi : ${value}');
-            //         if(value == true){
-            //           loadUserFromServer();
-            //         }
-            //       });
-            //     },
-            // ),
-            ListTile(
-              leading: Icon(Icons.change_history),
-                title: Text("修改密码"),
-                onTap: (){
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => PasswordUpdatePage(user: user,),
-                  ));
-                },
-            ),
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-                title: Text("退出登陆"),
-                onTap: (){
-                  logout();
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
-                  ));
-                },
-            ),
-          ],
+          ]
         ),
-      ),
     );
   }
 
@@ -272,9 +249,48 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
       ),
     );
   }
+
   Widget _topHeader0(){
     String userName = user == null ? "未命名" : user.name;
     String userEmail = user == null ? '' : user.email;
+    String roleName = user == null ? '未知角色' : user.roleName;
+
+    return SizedBox(
+      width: _width * (1 - 2 * MARGIN),
+      child: Card(
+        elevation: 5.0,
+        color: Colors.white60,
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
+        margin: EdgeInsets.all(10),
+        // shadowColor: Colors.green,
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('${roleName}', 
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.start,
+              ),
+              Text('自${user.created.year}年${user.created.month}月${user.created.day}日加入fossil hunter以来，',textAlign: TextAlign.start,),
+              Text('录入 ${user.postsCount} 标本条，',textAlign: TextAlign.start,),
+              Text('涉及分类单元 ${user.categoriesCount} 个， ',textAlign: TextAlign.start,),
+              Text('发表鉴定意见 ${user.commentsCount} 条',textAlign: TextAlign.start,),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _topHeader10(){
+    String userName = user == null ? "未命名" : user.name;
+    String userEmail = user == null ? '' : user.email;
+    String roleName = user == null ? '未知角色' : user.roleName;
 
     return Card(
       elevation: 5.0,
@@ -289,7 +305,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
               padding: const EdgeInsets.all(8.0),
               child: Column(children: <Widget>[
                 Container(
-                 child: Text('超级管理员', 
+                 child: Text('${roleName}', 
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold
@@ -410,29 +426,12 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
     );
   }
 
-  Widget _myListTile(String title, Function onTapCallback){
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          bottom: BorderSide(width: 1, color: Colors.black12)
-        )
-      ),
-      child: ListTile(
-        leading: Icon(Icons.blur_circular),
-        title: Text(title),
-        trailing: Icon(Icons.arrow_right),
-        onTap: onTapCallback,
-      ),
-    );
-  }
-
   Widget _actionList(){
     return Container(
       margin: EdgeInsets.only(top: 10),
       child: Column(
         children: <Widget>[
-          _myListTile('已公开发布记录', (){
+          FListTile('images/icons/unlock_gray.png', '已公开记录', (){
             print('public clicked');
             Navigator.push(
               context,
@@ -441,7 +440,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
               }) 
             );
           }),
-          _myListTile('私有标本记录', (){
+          FListTile('images/icons/lock_gray.png', '私有记录', (){
             print('private clicked');
             Navigator.push(
               context,
@@ -450,7 +449,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
               }) 
             );
           }),
-          _myListTile('尚未发布记录', (){
+          FListTile('images/icons/sync_failed_gray.png', '未发布记录', (){
             print('local clicked');
             Navigator.push(
               context,
@@ -458,6 +457,15 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
                 return LocalPostsPage();
               }) 
             );
+          }),
+          FListTile('images/icons/comment_gray.png', '鉴定意见', (){
+            print('comments clicked');
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (BuildContext context) {
+            //     return LocalPostsPage();
+            //   }) 
+            // );
           }),
         ],
       ),

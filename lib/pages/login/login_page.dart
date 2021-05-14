@@ -9,12 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:fossils_finder/pages/home/home_page.dart';
 
-const users = const {
-  'dribbble@gmail.com': '12345',
-  'hunter@gmail.com': 'hunter',
-  'test@163.com': '111111'
-};
-
 SharedPreferences localStorage;
 
 class LoginScreen extends StatelessWidget {
@@ -51,7 +45,6 @@ class LoginScreen extends StatelessWidget {
 
     try {
       Options options = Options(
-        // contentType: ContentType.parse('application/json'),
         contentType: 'application/json',
       );
       Response response = await dio.post('/login',
@@ -74,24 +67,24 @@ class LoginScreen extends StatelessWidget {
           return 'Username or Password wrong';
         }
       } else if (response.statusCode == 401) {
-        // throw Exception("Incorrect Email/Password");
         return 'Incorrect Email/Password';
       } else
-        // throw Exception('Authentication Error');
         return 'Authentication Error';
     } on DioError catch (exception) {
-      // if (exception == null ||
-      //     exception.toString().contains('SocketException')) {
-      //   throw Exception("Network Error");
-      // } else if (exception.type == DioErrorType.RECEIVE_TIMEOUT ||
-      //     exception.type == DioErrorType.CONNECT_TIMEOUT) {
-      //   throw Exception(
-      //       "Could'nt connect, please ensure you have a stable network.");
-      // } else {
-      //   return null;
-      // }
+      print('DIO error: ${exception.toString()}');
 
-      return 'Network IO Error!';
+      if (exception == null ||
+          exception.toString().contains('SocketException')) {
+        // throw Exception("Network Error");
+        return 'Network Error';
+      } else if (exception.type == DioErrorType.RECEIVE_TIMEOUT ||
+          exception.type == DioErrorType.CONNECT_TIMEOUT) {
+        // throw Exception(
+        //     "Could'nt connect, please ensure you have a stable network.");
+        return 'Could not connect, please ensure you have a stable network.';
+      } else {
+        return 'Network IO Error!';
+      }
     }
   }
 
@@ -119,46 +112,31 @@ class LoginScreen extends StatelessWidget {
           return '注册失败';
         }
       } else if (response.statusCode == 401) {
-        // throw Exception("Incorrect Email/Password");
         return '注册失败，请检查网络';
       } else
-        // throw Exception('Authentication Error');
         return 'Authentication Error';
     } on DioError catch (exception) {
-      // if (exception == null ||
-      //     exception.toString().contains('SocketException')) {
-      //   throw Exception("Network Error");
-      // } else if (exception.type == DioErrorType.RECEIVE_TIMEOUT ||
-      //     exception.type == DioErrorType.CONNECT_TIMEOUT) {
-      //   throw Exception(
-      //       "Could'nt connect, please ensure you have a stable network.");
-      // } else {
-      //   return null;
-      // }
+      print('DIO error: ${exception.toString()}');
 
-      return 'Network IO Error!';
+      if (exception == null ||
+          exception.toString().contains('SocketException')) {
+        // throw Exception("Network Error");
+        return 'Network Error';
+      } else if (exception.type == DioErrorType.RECEIVE_TIMEOUT ||
+          exception.type == DioErrorType.CONNECT_TIMEOUT) {
+        // throw Exception(
+        //     "Could'nt connect, please ensure you have a stable network.");
+        return 'Could not connect, please ensure you have a stable network.';
+      } else {
+        return 'Network IO Error!';
+      }
     }
-  }
-
-  Future<String> _authUser(LoginData data) {
-    print('Name: ${data.name}, Password: ${data.password}');
-    return Future.delayed(loginTime).then((_) {
-      if (!users.containsKey(data.name)) {
-        return 'Username not exists';
-      }
-      if (users[data.name] != data.password) {
-        return 'Password does not match';
-      }
-      return null;
-    });
   }
 
   Future<String> _recoverPassword(String name) {
     print('Name: $name');
     return Future.delayed(loginTime).then((_) {
-      if (!users.containsKey(name)) {
-        return 'Username not exists';
-      }
+      print('TBD - recover password');
       return null;
     });
   }

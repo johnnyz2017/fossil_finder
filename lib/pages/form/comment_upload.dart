@@ -43,7 +43,7 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("发表鉴定"),
+        title: Text("编辑分类单元"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.done),
@@ -56,7 +56,7 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(DMARGIN),
         child: Form(
           key: _formKey,
           child: Column(

@@ -300,7 +300,7 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
     return Scaffold(
       appBar: AppBar(
         // title: _category != null ? Text(_category.title) : Text('请选择分类'),
-        title: editmode ? Text('编辑模式') : Text('选择分类查看'),
+        title: editmode ? Text('编辑模式') : Text('查看'),
         actions: <Widget>[
           Visibility(
             visible: editmode,

@@ -63,7 +63,7 @@ class _FossilAppState extends State<FossilApp> {
     localStorage = await SharedPreferences.getInstance();
     String _token = localStorage.get('token');
     // print('token is ${_token}');
-    if(_token != null && !(_token.isEmpty)){
+    if(_token != null && _token.isNotEmpty){
       var _content = await request(servicePath['testauth']);
       if(_content.statusCode != 200){
         if(_content.statusCode == 401){
@@ -94,27 +94,38 @@ class _FossilAppState extends State<FossilApp> {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      // theme: ThemeData(
-      //   // primaryColor: Color(0xfff4f3f9),
-      //   // primaryColor: Color(0xff8cc1e1),
-      //   // primaryColor: Color(0xffe2edd9),
-      //   primaryColor: Color(0xffb8bf82),
-      //   // primarySwatch: Colors.indigo, 
-      //   // accentColor: Colors.blue
-      // ),
-      theme: FlexColorScheme.light(
-        colors: FlexColor.schemes[FlexScheme.hippieBlue].light,
-      ).toTheme,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.grey[100],
+        accentColor: Colors.white,
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: Colors.grey[100],
+          selectedItemColor: Colors.blue
+        ),
+        iconTheme: IconThemeData(
+          color: Colors.grey[100]
+        ),
+
+        // fontFamily: 'Georgia',
+        // textTheme: TextTheme(
+        //   headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+        //   headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+        //   bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        // ),
+      ),
+      // theme: FlexColorScheme.light(
+      //   colors: FlexColor.schemes[FlexScheme.wasabi].light,
+      // ).toTheme,
       // theme: FlexColorScheme.light(
       //   colors: FlexColor.schemes[FlexScheme.mandyRed].light,
       // ).toTheme,
-      // // The Mandy red dark theme.
-      // darkTheme: FlexColorScheme.dark(
-      //   colors: FlexColor.schemes[FlexScheme.mandyRed].dark,
-      // ).toTheme,
-      // // Use dark or light theme based on system setting.
-      // themeMode: ThemeMode.system,
-      home: isLoggedIn ? IndexPage() : LoginScreen(),
+      home: isLoggedIn ? IndexPage() : 
+        Theme(
+          data: FlexColorScheme.light(
+            colors: FlexColor.schemes[FlexScheme.greyLaw].light,
+          ).toTheme,
+          child: LoginScreen()
+        ),
       // home: IndexPage(),
     );
   }

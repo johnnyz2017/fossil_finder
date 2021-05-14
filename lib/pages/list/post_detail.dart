@@ -85,7 +85,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           ),
           IconButton(
             icon: new Image.asset(
-              'images/icons/qrcode_check.png',
+              'images/icons/qrcode_check_gray.png',
               width: 21,
               height: 21,
               fit: BoxFit.fill
@@ -106,7 +106,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
         itemBuilder: (BuildContext context, int index){
           if(index == 0){                                            // post content
             return Container(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.all(20),
               child: Card(
                 child: Column(
                   children: <Widget>[
@@ -221,7 +221,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           Row(
                             children: <Widget>[
                               Text('采集时间: '),
-                              Expanded(child: Text('${post.createdAt.toString()}'),)
+                              Expanded(child: Text('${DateFormat.yMMMd().format(post.createdAt)}'),)
                             ],
                           ),
                           Padding(padding: EdgeInsets.only(top: 5)),

@@ -13,6 +13,7 @@ import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
@@ -27,6 +28,8 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 
 final _assetsIcon = Uri.parse('images/icons/fossil_icon_512.png');
@@ -94,7 +97,7 @@ class _HomePageState extends State<HomePage> {
           widget: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text('${post.title}'),
+              // Text('${post.title}'),
               // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
               ClipOval(
                 child: post.images.length > 0 ? 
@@ -172,7 +175,7 @@ class _HomePageState extends State<HomePage> {
           widget: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text('${post.title}'),
+              // Text('${post.title}'),
               // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
               ClipOval(
                 child: post.images.length > 0 ? 
@@ -218,6 +221,8 @@ class _HomePageState extends State<HomePage> {
   Icon _searchIcon = new Icon(Icons.search);
   // Widget _appBarTitle = new Text( 'Search Example' );
 
+  GlobalKey<ScaffoldState> _drawerKey = GlobalKey();
+
   init() async{
     localStorage = await SharedPreferences.getInstance();
     String _token = localStorage.get('token');
@@ -262,7 +267,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: _buildBar(context),
+      key: _drawerKey,
+      // appBar: _buildBar(context),
       drawer: Drawer(
         child: Column(
           children: <Widget>[
@@ -378,22 +384,83 @@ class _HomePageState extends State<HomePage> {
                 }
 
                 // _controller?.showZoomControl(true); //OK
-                // _controller?.showCompass(true); //NO
+                _controller?.showCompass(false); //NO
                 // _controller?.showLocateControl(true); //NO
-                _controller?.showScaleControl(true); //OK
+                _controller?.showScaleControl(false); //OK
                 
                 loadPostListFromServer(); //load posts after amap init
             },
           ),
-        ]
+
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: FloatingActionButton(
+              heroTag: 'add',
+              onPressed: () async{
+                // _inputFocus.unfocus();
+                final center = await _controller?.getCenterCoordinate();
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                    return PostUploadPage(center: center,);
+                  }) 
+                );
+              },
+              child: Icon(Icons.add),
+              shape: CircleBorder(
+              ),
+            ),
+          ),
+        ],
+        
       ),
       floatingActionButton: Stack(
         children: <Widget>[
           Positioned(
-            top: 150.0,
+            top: 100.0,
             right: 10.0,
             child: FloatingActionButton(
-              heroTag: 'class',
+              heroTag: 'layer',
+              onPressed: () async{
+                _drawerKey.currentState.openDrawer();
+              },
+              child: new Image.asset(
+                'images/icons/layer_gray.png',
+                width: 21,
+                height: 21,
+                fit: BoxFit.fill
+              ),
+              shape: CircleBorder(
+              ),
+            ),
+          ),
+          // Positioned(
+          //   bottom: 0.0,
+          //   right: MediaQuery.of(context).size.width * 0.5,
+          //   child: FloatingActionButton(
+          //     heroTag: 'add',
+          //     onPressed: () async{
+          //       // _inputFocus.unfocus();
+          //       final center = await _controller?.getCenterCoordinate();
+
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(builder: (BuildContext context) {
+          //           return PostUploadPage(center: center,);
+          //         }) 
+          //       );
+          //     },
+          //     child: Icon(Icons.add),
+          //     shape: CircleBorder(
+          //     ),
+          //   ),
+          // ),
+          Positioned(
+            bottom: 290.0,
+            right: 10.0,
+            child: FloatingActionButton(
+              heroTag: 'category',
               onPressed: () async{
                 // _inputFocus.unfocus();
                 print('markers size: ${_markers.length}');
@@ -426,7 +493,7 @@ class _HomePageState extends State<HomePage> {
                 }
               },
               child: new Image.asset(
-                'images/icons/category.png',
+                'images/icons/category_gray.png',
                 width: 21,
                 height: 21,
                 fit: BoxFit.fill
@@ -436,28 +503,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Positioned(
-            bottom: 150.0,
-            right: 10.0,
-            child: FloatingActionButton(
-              heroTag: 'add',
-              onPressed: () async{
-                // _inputFocus.unfocus();
-                final center = await _controller?.getCenterCoordinate();
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (BuildContext context) {
-                    return PostUploadPage(center: center,);
-                  }) 
-                );
-              },
-              child: Icon(Icons.add),
-              shape: CircleBorder(
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 80.0,
+            bottom: 220.0,
             right: 10.0,
             child: FloatingActionButton(
               heroTag: 'show',
@@ -497,16 +543,99 @@ class _HomePageState extends State<HomePage> {
                 _used = true;
               },
               child: _show? new Image.asset(
-                'images/icons/map_show.png',
+                'images/icons/map_show_gray.png',
                 width: 21,
                 height: 21,
                 fit: BoxFit.fill
               ) : new Image.asset(
-                'images/icons/map_hide.png',
+                'images/icons/map_hide_gray.png',
                 width: 21,
                 height: 21,
                 fit: BoxFit.fill
               ),
+              shape: CircleBorder(
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 150.0,
+            right: 10.0,
+            child: FloatingActionButton(
+              heroTag: 'scan',
+              onPressed: () async{
+                print('scan icon clicked');
+                _scan();
+              },
+              child: new Image.asset(
+                'images/icons/scan_gray.png',
+                width: 21,
+                height: 21,
+                fit: BoxFit.fill
+              ),
+              shape: CircleBorder(
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 80.0,
+            right: 10.0,
+            child: FloatingActionButton(
+              heroTag: 'search',
+              onPressed: () async{
+                var ret = showSearch(context: context, delegate: DataSearch(), query: _filter.text);
+                ret.then((searchedPost) async{
+                  if(searchedPost == null) return;
+
+                  var existed = false;
+                  posts.forEach((post) { 
+                    if(post.id == searchedPost.id){
+                      existed = true;
+                      _controller?.setCenterCoordinate(
+                        LatLng(searchedPost.coordinateLatitude, searchedPost.coordinateLongitude),
+                        zoomLevel: 19,
+                        animated: true,
+                      );
+                    }
+                  });
+
+                  if(!existed){
+                    final marker1 = await _controller?.addMarker(
+                      MarkerOption(
+                        latLng: LatLng(
+                          searchedPost.coordinateLatitude,
+                          searchedPost.coordinateLongitude,
+                        ),
+                        widget: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text('${searchedPost.title}'),
+                            ClipOval(
+                              child: searchedPost.images.length > 0 ? 
+                                  (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50,) : Image.asset(searchedPost.images[0].url, height: 50,))
+                                  : Image.asset('images/icons/marker.png', height: 50,)
+                            )
+                          ],
+                        ),
+                        imageConfig: createLocalImageConfiguration(context),
+                        title: '${searchedPost.title}',
+                        snippet: '${searchedPost.content}',
+                        width: 100,
+                        height: 100,
+                        object: '${searchedPost.id}'
+                      ),
+                    );
+                    _markers.add(marker1);
+                    posts.add(searchedPost);
+
+                    _controller?.setCenterCoordinate(
+                      LatLng(searchedPost.coordinateLatitude, searchedPost.coordinateLongitude),
+                      zoomLevel: 19,
+                      animated: true,
+                    );
+                  }
+                });
+              },
+              child: Icon(Icons.search),
               shape: CircleBorder(
               ),
             ),
@@ -523,7 +652,7 @@ class _HomePageState extends State<HomePage> {
                 ));
               },
               child: new Image.asset(
-                'images/icons/target.png',
+                'images/icons/target_gray.png',
                 width: 21,
                 height: 21,
                 fit: BoxFit.fill
@@ -635,11 +764,11 @@ class _HomePageState extends State<HomePage> {
         ),
         IconButton(
           icon: new Image.asset(
-            'images/icons/scan.png',
+            'images/icons/scan_gray.png',
             width: 21,
             height: 21,
             fit: BoxFit.fill
-            ),
+          ),
           onPressed: (){
             print('scan icon clicked');
             // _inputFocus.unfocus();

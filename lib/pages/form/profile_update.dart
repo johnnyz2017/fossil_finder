@@ -124,8 +124,14 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
                 decoration: new InputDecoration(
                   labelText: '名字',
                 ),
+                validator: (value){
+                  if(value.isEmpty || value.length < 3){
+                    return '名字不能少于三个字符';
+                  }
+
+                  return null;
+                },
                 // initialValue: widget.user.name,
-                // validator: ,
               ),
               TextFormField(
                 controller: _descriptionTextController,

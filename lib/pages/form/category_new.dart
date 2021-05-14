@@ -30,7 +30,7 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("发表鉴定"),
+        title: Text("编辑分类单元"),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.done),
@@ -53,11 +53,11 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
                 controller: _titleTextController,
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                  labelText: '分类标题：',
+                  labelText: '分类单元名称：',
                 ),
                 validator: (String value){
                   if(value.isEmpty)
-                    return '标题不能为空';
+                    return '名称不能为空';
                   return null;
 
                 },
@@ -71,7 +71,7 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
                     child: TextFormField(
                       controller: _categoryTextController,
                       decoration: InputDecoration(
-                        labelText: "父类别："
+                        labelText: "父级分类单元："
                       ),
                       readOnly: true,
                       onTap: ()async{
@@ -117,7 +117,7 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
                 child: TextFormField(
                   controller: _contentTextController,
                   decoration: InputDecoration(
-                    labelText: '分类描述：',
+                    labelText: '分类单元评注：',
                   ),
                   keyboardType: TextInputType.multiline,
                   maxLines: null,

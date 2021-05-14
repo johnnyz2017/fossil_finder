@@ -33,7 +33,7 @@ class PostUploadPage extends StatefulWidget {
 }
 
 class _PostUploadPageState extends State<PostUploadPage> {
-
+  double _width = 400;
   DatabaseHelper dbhelper = DatabaseHelper();
   final _formKey = GlobalKey<FormState>();
   Image _image;
@@ -171,6 +171,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
   @override
   Widget build(BuildContext context) {
     print('center got : ${widget.center.latitude}, ${widget.center.longitude}');
+    setState(() {
+      _width = MediaQuery.of(context).size.width;
+    });
     return Scaffold(
       appBar: AppBar(
         title: Text('发布页面'),
@@ -213,7 +216,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(DMARGIN),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -267,14 +270,14 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     RaisedButton(
-                      color: Colors.lightBlue,
+                      // color: Colors.lightBlue,
                       child: Text('选择图片'),
                       onPressed: (){
                           getImage();
                       },
                     ),
                     RaisedButton(
-                      color: Colors.lightBlue,
+                      // color: Colors.lightBlue,
                       child: Text('上传'),
                       onPressed: (){
                         uploadImages();

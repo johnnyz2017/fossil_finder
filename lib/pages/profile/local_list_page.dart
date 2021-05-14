@@ -66,8 +66,8 @@ class _LocalPostsPageState extends State<LocalPostsPage> {
                 // viewCount: post.comments.length,
                 viewCount: 0,
                 thumbnail: Container(
-                  height: 100,
-                  decoration: const BoxDecoration(color: Colors.grey),
+                  height: 130,
+                  // decoration: const BoxDecoration(color: Colors.grey),
                   child: post.images != null ? post.images.length > 0 ? (post.images[0].url.startsWith('http')? Image.network(post.images[0].url) : Image.asset(post.images[0].url)) : Text('NO IMAGE')
                          : Text('No Image'),
                 ),

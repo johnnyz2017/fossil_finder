@@ -20,7 +20,7 @@ List<Node> nodes = [
     expanded: true,
     icon: NodeIcon(
       codePoint:Icons.folder_open.codePoint,
-          // docsOpen ? Icons.folder_open.codePoint : Icons.folder.codePoint,
+      // docsOpen ? Icons.folder_open.codePoint : Icons.folder.codePoint,
       color: "blue",
     ),
     children: [

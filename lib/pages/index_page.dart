@@ -14,16 +14,38 @@ class IndexPage extends StatefulWidget {
 class _IndexPageState extends State<IndexPage> {
   final List<BottomNavigationBarItem> bottomTabs = [
     BottomNavigationBarItem(
-      icon: Icon(Icons.home),
+      // icon: Icon(Icons.home),
+      icon: new Image.asset(
+        'images/icons/scan_gray.png',
+        width: 0,
+        height: 0,
+        fit: BoxFit.fill
+      ),
       title: Text("首页")
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.list),
-      title: Text("标本信息")
+      // icon: Icon(Icons.list),
+      icon: new Image.asset(
+        'images/icons/scan_gray.png',
+        width: 0,
+        height: 0,
+        fit: BoxFit.fill
+      ),
+      title: Text("标本")
     ),
+    // BottomNavigationBarItem(
+    //   icon: Icon(Icons.person),
+    //   title: Text("我的")
+    // ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.person),
-      title: Text("个人信息")
+      // icon: Icon(Icons.person,),
+      icon: new Image.asset(
+        'images/icons/scan_gray.png',
+        width: 0,
+        height: 0,
+        fit: BoxFit.fill
+      ),
+      title: Text("我的")
     ),
     // BottomNavigationBarItem(
     //   icon: Icon(Icons.person),
@@ -33,10 +55,8 @@ class _IndexPageState extends State<IndexPage> {
 
   final List<Widget> tabBodies = [
     HomePage(title: '首页',),
-    // CategoryListView(title: 'Category Page'),
     CategoryPage(),
-    MemberPage(title: '会员中心'),
-    // TreeViewTestPage(title: 'Tree View Test Page',)
+    MemberPage(title: '我的'),
   ];
 
   int currentIndex = 0;

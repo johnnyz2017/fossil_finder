@@ -336,9 +336,9 @@ packages:
   flutter_login:
     dependency: "direct main"
     description:
-      name: flutter_login
-      url: "https://pub.flutter-io.cn"
-    source: hosted
+      path: "third_party/flutter_login-1.0.14"
+      relative: true
+    source: path
     version: "1.0.14"
   flutter_page_indicator:
     dependency: transitive
@@ -354,6 +354,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.11"
+  flutter_screenutil:
+    dependency: "direct main"
+    description:
+      name: flutter_screenutil
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "5.0.0"
   flutter_svg:
     dependency: transitive
     description:

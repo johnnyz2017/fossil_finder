@@ -75,8 +75,8 @@ class _PrivatePostsPageState extends State<PrivatePostsPage> {
                 user: post.author,
                 viewCount: post.comments.length,
                 thumbnail: Container(
-                  height: 100,
-                  decoration: const BoxDecoration(color: Colors.grey),
+                  height: 130,
+                  // decoration: const BoxDecoration(color: Colors.grey),
                   child: post.images.length > 0 ? (post.images[0].url.startsWith('http')? Image.network(post.images[0].url) : Image.asset(post.images[0].url)) : Text('NO IMAGE'),
                 ),
                 title: post.title,
