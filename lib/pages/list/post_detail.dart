@@ -12,8 +12,10 @@ import 'package:fossils_finder/pages/list/comment_submit.dart';
 import 'package:fossils_finder/config/global_config.dart';
 
 import 'package:fossils_finder/pages/map/map_show.dart';
+import 'package:fossils_finder/utils/local_info_utils.dart';
 import 'package:fossils_finder/utils/qr_generate_page.dart';
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+import 'package:fossils_finder/widgets/image_detail_widget.dart';
 import 'package:share/share.dart';
 // import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 
@@ -30,6 +32,14 @@ class PostDetailPage extends StatefulWidget {
 
 class _PostDetailPageState extends State<PostDetailPage> {
   Post post;
+  int userId = -1;
+
+  Future loadUserID() async {
+    int i = await getUserId();
+    setState(() {
+      userId = i;
+    });
+  }
 
   Future loadPostFromServer() async{
     var _content = await request('${serviceUrl}/api/v1/posts/${widget.pid}');
@@ -56,6 +66,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   @override
   void initState() {
     super.initState();
+    loadUserID();
     loadPostFromServer();
   }
   
@@ -73,14 +84,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
             icon: Icon(Icons.share),
             onPressed: (){
               String content = '${serviceUrl}/post/${post.id}';
-              // ClipboardData data = new ClipboardData(text: content);
-              // Clipboard.setData(data);
               Share.share('记录链接分享： ${content}');
-              // Share.shareFiles(paths)
-              // Fluttertoast.showToast(
-              //   msg: "分享链接已经复制到剪贴板，请到需要到地方粘贴即可。",
-              //   gravity: ToastGravity.CENTER,
-              //   textColor: Colors.grey);
             },
           ),
           IconButton(
@@ -94,7 +98,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (BuildContext context) {
-                  return QrCodeGeneratePage(qrString: '${serviceUrl}/post/${post.id}',);
+                  return QrCodeGeneratePage(qrString: '${serviceUrl}/posts/${post.id}',);
                 }) 
               );
             },
@@ -110,14 +114,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
               child: Card(
                 child: Column(
                   children: <Widget>[
-                    // Text(
-                    //   post.title, 
-                    //   style: TextStyle(
-                    //     //backgroundColor: Colors.yellow, 
-                    //     color: Colors.blue,
-                    //     fontSize: 30,
-                    //   ),
-                    // ),
                     Row(
                       children: <Widget>[
                         Expanded(
@@ -139,7 +135,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                               context,
                               MaterialPageRoute(builder: (BuildContext context) {
                                 //return CommentSubmitPage(post: post,);
-                                return CommentUploadPage(post: post,);
+                                return CommentUploadPage(post: post, comment: null,);
                               }) 
                             );
 
@@ -162,14 +158,25 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           itemBuilder: (BuildContext context,int index){
                             String url = post.images[index].url;
                             if(url.startsWith('http')){
-                              return new Image.network(url, fit: BoxFit.fitHeight);
+                              return Hero(
+                                tag: 'imgHero${index}',
+                                child: new Image.network(url, fit: BoxFit.fitHeight)
+                              );
                             }else{
-                              return new Image.asset(url, fit:BoxFit.fitHeight);
+                              return Hero(
+                                tag: 'imgHero${index}',
+                                child: new Image.asset(url, fit:BoxFit.fitHeight)
+                              );
                             }
                           },
                           itemCount: post.images.length > 0 ? post.images.length : 0,
                           pagination: new SwiperPagination(),
                           control: new SwiperControl(),
+                          onTap: (index)  async {
+                            Navigator.push(context, MaterialPageRoute(builder: (_) {
+                              return ImageDetailScreen(url: post.images[index].url);
+                            }));
+                          },
                         )
                         :
                         Text('无图片'),
@@ -179,10 +186,23 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       child: Column(children: <Widget>[
                           Row(
                             children: <Widget>[
+                              Text('记录标题: '),
+                              Expanded(child: Text('${post.title}'),)
+                            ],
+                          ),
+                          // Padding(padding: EdgeInsets.only(top: 10)),
+                          Row(
+                            children: <Widget>[
                               Text('采集地点: '),
                               Expanded(child: Text('${post.coordinateLongitude}, ${post.coordinateLatitude}'),),
                               IconButton(
-                                icon: Icon(Icons.gps_fixed),
+                                iconSize: 21,
+                                icon: Image.asset(
+                                  'images/icons/target_gray.png',
+                                  width: 21,
+                                  height: 21,
+                                  fit: BoxFit.fill
+                                ),
                                 onPressed: () async{
                                   print('采集地点 clicked');
                                   var pos = await Navigator.push(
@@ -196,79 +216,49 @@ class _PostDetailPageState extends State<PostDetailPage> {
                               )
                             ],
                           ),
-                          Padding(padding: EdgeInsets.only(top: 5)),
+                          // Padding(padding: EdgeInsets.only(top: 2)),
                           Row(
                             children: <Widget>[
                               Text('采集地址: '),
                               Expanded(child: Text('${post.address}'),)
                             ],
                           ),
-                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Padding(padding: EdgeInsets.only(top: 2)),
                           Row(
                             children: <Widget>[
                               Text('临时标本号: '),
                               Expanded(child: Text('${post.tempId}'),)
                             ],
                           ),
-                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Padding(padding: EdgeInsets.only(top: 2)),
                           Row(
                             children: <Widget>[
                               Text('永久标本号: '),
                               Expanded(child: Text('${post.permId}'),)
                             ],
                           ),
-                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Padding(padding: EdgeInsets.only(top: 2)),
                           Row(
                             children: <Widget>[
                               Text('采集时间: '),
-                              Expanded(child: Text('${DateFormat.yMMMd().format(post.createdAt)}'),)
+                              Expanded(child: Text('${DateFormat.yMd().add_jm().format(post.createdAt)}'),)
                             ],
                           ),
-                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Padding(padding: EdgeInsets.only(top: 2)),
                           Row(
                             children: <Widget>[
                               Text('详细描述: '),
                               Expanded(child: Text('${post.content}'),)
                             ],
                           ),
-                          Padding(padding: EdgeInsets.only(top: 10)),
+                          Padding(padding: EdgeInsets.only(top: 2)),
                       ],),
                     ),
                   ],
                 ),
               ),
             );
-
-
           }
-          // else if(index == post.comments.length + 1){     // submit button
-          //   return Container(
-          //     padding: EdgeInsets.all(5),
-          //     child: RaisedButton(
-          //       onPressed: (){
-          //         print('submit comment button clicked');
-
-          //         var ret = Navigator.push(
-          //           context,
-          //           MaterialPageRoute(builder: (BuildContext context) {
-          //             //return CommentSubmitPage(post: post,);
-          //             return CommentUploadPage(post: post,);
-          //           }) 
-          //         );
-
-          //         ret.then((value){
-          //           print('return from navi : ${value}');
-          //           if(value == true){
-          //             loadPostFromServer();
-          //           }
-          //         });
-          //         // AmapService.navigateDrive(LatLng(36.547901, 104.258354));
-          //       },
-          //       child: Text('发表鉴定'),
-          //       textColor: Colors.green,
-          //     ),
-          //   );
-          // }
           else{                                                  // comments
             return Container(
               padding: EdgeInsets.all(5),
@@ -287,6 +277,30 @@ class _PostDetailPageState extends State<PostDetailPage> {
                     },
                   ),
                   subtitle: Text(post.comments[index-1].content),
+                  trailing: Visibility(
+                    visible: post.comments[index-1].userId == userId,
+                    child: InkWell(
+                      child: Icon(Icons.edit,),
+                      onTap: (){
+                        print('post comment: ${post.comments[index-1]}');
+
+                        var ret = Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (BuildContext context) {
+                            //return CommentSubmitPage(post: post,);
+                            return CommentUploadPage(post: post, comment: post.comments[index-1],editmode: true,);
+                          }) 
+                        );
+
+                        ret.then((value){
+                          print('return from navi : ${value}');
+                          if(value == true){
+                            loadPostFromServer();
+                          }
+                        });
+                      },
+                    ),
+                  ),
                 ),
               ),
             );

@@ -57,6 +57,7 @@ const servicePath = {
   'unpublishedposts' : '/unpublishedposts',
   'publishedposts' : '/publishedposts',
   'privateposts' : '/privateposts',
+  'postsfrommycomments' : '/postsfrommycomments',
   'comments' : '/comments',
   'users' : '/users',
   'changepw' : '/changepw'

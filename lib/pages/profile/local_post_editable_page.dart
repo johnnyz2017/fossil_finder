@@ -382,8 +382,13 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                         },
                     )),
                     IconButton(
-                      iconSize: 20, 
-                      icon: Icon(Icons.my_location), 
+                      iconSize: 21, 
+                      icon: Image.asset(
+                        'images/icons/target_gray.png',
+                        width: 21,
+                        height: 21,
+                        fit: BoxFit.fill
+                      ), 
                       onPressed: editmode ? () async {
                         var pos = await Navigator.push(
                           context,
@@ -521,7 +526,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                     children: <Widget>[
                       Container(
                         // alignment: Alignment.centerRight,
-                        width: 100,
+                        width: 80,
                         child: Text('System / Period: ')),
                       Expanded(
                         child: DropdownButtonHideUnderline(
@@ -572,7 +577,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                     children: <Widget>[
                       Container(
                         // alignment: Alignment.centerRight,
-                        width: 100,
+                        width: 80,
                         child: Text('Series / Epoch: ')),
                       Expanded(
                         child: DropdownButtonHideUnderline(
@@ -623,7 +628,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                     children: <Widget>[
                       Container(
                         // alignment: Alignment.centerRight,
-                        width: 100,
+                        width: 80,
                         child: Text('Stage / Age: ')),
                       Expanded(
                         child: DropdownButtonHideUnderline(
@@ -669,13 +674,18 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                 Row(
                   children: <Widget>[
                     Text('是否私有：'),
-                    Switch(
-                      value: _private, 
-                      onChanged: editmode ? (value){
-                        setState(() {
-                          _private = value;
-                        });
-                      } : null,
+                    Theme(
+                      data: ThemeData(
+                        primaryColor: Colors.blueAccent
+                      ),
+                      child: Switch(
+                        value: _private, 
+                        onChanged: editmode ? (value){
+                          setState(() {
+                            _private = value;
+                          });
+                        } : null,
+                      ),
                     )
                   ],
                 ),

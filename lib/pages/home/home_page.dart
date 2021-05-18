@@ -17,6 +17,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
+import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/form/post_upload.dart';
 import 'package:fossils_finder/pages/list/category_posts.dart';
@@ -31,10 +32,6 @@ import 'package:flutter_icons/flutter_icons.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
-final _assetsIcon = Uri.parse('images/icons/fossil_icon_512.png');
-
-final _assetsIcon1 = AssetImage('images/icons/marker.png');
 
 SharedPreferences localStorage;
 
@@ -98,13 +95,22 @@ class _HomePageState extends State<HomePage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               // Text('${post.title}'),
-              // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
-              ClipOval(
-                child: post.images.length > 0 ? 
-                    (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50,) : Image.asset(post.images[0].url, height: 50,))
-                    : Image.asset('images/icons/marker.png', height: 50,)
-                // child: Image.asset('images/icons/marker.png', height: 50,)
+              Container(
+                width: 80,
+                height: 50,
+                child: ClipOval(
+                  clipper: _MyClipper(),
+                  child: post.images.length > 0 ? 
+                      (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), fit: BoxFit.fill, height: 50, width: 80) : Image.asset(post.images[0].url, fit: BoxFit.fill, height: 50, width: 80))
+                      : Image.asset('images/icons/marker.png', fit: BoxFit.fill)
+                ),
               )
+              // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
+              // ClipOval(
+              //   child: post.images.length > 0 ? 
+              //       (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50, width: 50) : Image.asset(post.images[0].url, height: 50, width: 50))
+              //       : Image.asset('images/icons/marker.png', height: 50,)
+              // )
             ],
           ),
           imageConfig: createLocalImageConfiguration(context),
@@ -177,11 +183,20 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               // Text('${post.title}'),
               // ClipOval(child: Image.asset('images/icons/marker.png', height: 50,),)
-              ClipOval(
-                child: post.images.length > 0 ? 
-                    (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50,) : Image.asset(post.images[0].url, height: 50,))
-                    : Image.asset('images/icons/marker.png', height: 50,)
-                // child: Image.asset('images/icons/marker.png', height: 50,)
+              // ClipOval(
+              //   child: post.images.length > 0 ? 
+              //       (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50, width: 50) : Image.asset(post.images[0].url, height: 50, width: 50))
+              //       : Image.asset('images/icons/marker.png', height: 50,)
+              // )
+              Container(
+                width: 80,
+                height: 50,
+                child: ClipOval(
+                  clipper: _MyClipper(),
+                  child: post.images.length > 0 ? 
+                      (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), fit: BoxFit.fill,) : Image.asset(post.images[0].url, fit: BoxFit.fill))
+                      : Image.asset('images/icons/marker.png', height: 50,)
+                ),
               )
             ],
           ),
@@ -465,7 +480,7 @@ class _HomePageState extends State<HomePage> {
                 // _inputFocus.unfocus();
                 print('markers size: ${_markers.length}');
 
-                var selectedCategory = await Navigator.push(
+                CategoryNode selectedCategory = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (BuildContext context) {
                     return CategorySelector(treeJson: "", editable: false);
@@ -483,12 +498,16 @@ class _HomePageState extends State<HomePage> {
                       marker.remove();
                     }
                   }
-                  String _key = selectedCategory.key;
-                  String _type = _key.split('_')[0];
-                  if(_type.isNotEmpty || _type == "c"){
-                    var _categoryId = int.parse(_key.split('_')[1]);
-                    print('got category id ${_categoryId}');
-                    loadPostListViaCategoryFromServer(_categoryId);
+                  if(selectedCategory.id == 0){
+                    loadPostListFromServer();
+                  }else{
+                    String _key = selectedCategory.key;
+                    String _type = _key.split('_')[0];
+                    if(_type.isNotEmpty || _type == "c"){
+                      var _categoryId = int.parse(_key.split('_')[1]);
+                      print('got category id ${_categoryId}');
+                      loadPostListViaCategoryFromServer(_categoryId);
+                    }
                   }
                 }
               },
@@ -508,10 +527,7 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               heroTag: 'show',
               onPressed: () async{
-                // _inputFocus.unfocus();
                 print('markers size: ${_markers.length}');
-                // print('posts ${posts.length} - ${posts[0].images[0].url}');
-
                 setState(() {
                   _show = !_show;
                 });
@@ -609,10 +625,23 @@ class _HomePageState extends State<HomePage> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Text('${searchedPost.title}'),
-                            ClipOval(
-                              child: searchedPost.images.length > 0 ? 
-                                  (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50,) : Image.asset(searchedPost.images[0].url, height: 50,))
-                                  : Image.asset('images/icons/marker.png', height: 50,)
+                            // ClipOval(
+                            //   child: Image.asset('images/icons/marker.png', height: 50)
+                            // ),
+                            // ClipOval(
+                            //   child: searchedPost.images.length > 0 ? 
+                            //       (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50, width: 50) : Image.asset(searchedPost.images[0].url, height: 50, width: 50))
+                            //       : Image.asset('images/icons/marker.png', height: 50,)
+                            // )
+                            Container(
+                              width: 80,
+                              height: 50,
+                              child: ClipOval(
+                                clipper: _MyClipper(),
+                                child: searchedPost.images.length > 0 ? 
+                                    (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), fit: BoxFit.fill, height: 50, width: 80) : Image.asset(searchedPost.images[0].url, fit: BoxFit.fill, height: 50, width: 80))
+                                    : Image.asset('images/icons/marker.png', height: 50,)
+                              ),
                             )
                           ],
                         ),
@@ -735,9 +764,18 @@ class _HomePageState extends State<HomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text('${searchedPost.title}'),
+                        // ClipOval(
+                        //   child: Image.asset('images/icons/marker.png', height: 50,)
+                        // )
+                        // ClipOval(
+                        //   child: searchedPost.images.length > 0 ? 
+                        //       (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50, width: 50) : Image.asset(searchedPost.images[0].url, height: 50, width: 50))
+                        //       : Image.asset('images/icons/marker.png', height: 50,)
+                        // )
                         ClipOval(
+                          clipper: _MyClipper(),
                           child: searchedPost.images.length > 0 ? 
-                              (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), height: 50,) : Image.asset(searchedPost.images[0].url, height: 50,))
+                              (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), fit: BoxFit.fill, height: 50, width: 80) : Image.asset(searchedPost.images[0].url, fit: BoxFit.fill, height: 50, width: 80))
                               : Image.asset('images/icons/marker.png', height: 50,)
                         )
                       ],
@@ -1055,4 +1093,19 @@ class DataSearch extends SearchDelegate<Post>{
     },
   );
 
+}
+
+
+
+
+class _MyClipper extends CustomClipper<Rect>{
+  @override
+  Rect getClip(Size size) {
+    return new Rect.fromLTRB(10.0, 10.0, size.width - 10.0,  size.height- 10.0);
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Rect> oldClipper) {
+    return false;
+  }
 }

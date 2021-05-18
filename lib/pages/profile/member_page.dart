@@ -9,6 +9,7 @@ import 'package:fossils_finder/pages/form/password_update.dart';
 import 'package:fossils_finder/pages/form/profile_update.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/pages/profile/local_list_page.dart';
+import 'package:fossils_finder/pages/profile/posts_of_comments_page.dart';
 import 'package:fossils_finder/pages/profile/private_list_page.dart';
 import 'package:fossils_finder/pages/profile/public_list_page.dart';
 import 'package:fossils_finder/pages/profile/setting_page.dart';
@@ -28,7 +29,7 @@ class MemberPage extends StatefulWidget {
 
 class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMixin{
 
-  double _width = 600;
+  double _width = 400;
 
   User user;
 
@@ -63,13 +64,11 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
     loadUserFromServer();
   }
 
-
   @override
   Widget build(BuildContext context) {
-
-    setState(() {
-      _width = MediaQuery.of(context).size.width;
-    });
+    // setState(() {
+    //   _width = MediaQuery.of(context).size.width;
+    // });
     String userName = user == null ? "未命名" : user.name;
     String profileUrl = user == null ? 'images/icons/user.png' : user.avatar;
 
@@ -125,7 +124,6 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
                   ));
 
                   ret.then((value){
-                    print('return from navi : ${value}');
                     if(value == true){
                       loadUserFromServer();
                     }
@@ -137,13 +135,49 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
         ),
       ),
       body: 
-        Column(
+        ListView(
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
               child:  _topHeader0(),
             ),
-            _actionList(),
+            // _actionList(),
+            FListTile('images/icons/unlock_gray.png', '已公开记录', (){
+              print('public clicked');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return PublisPostsPage();
+                }) 
+              );
+            }),
+            FListTile('images/icons/lock_gray.png', '私有记录', (){
+              print('private clicked');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return PrivatePostsPage();
+                }) 
+              );
+            }),
+            FListTile('images/icons/sync_failed_gray.png', '未发布记录', (){
+              print('local clicked');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return LocalPostsPage();
+                }) 
+              );
+            }),
+            FListTile('images/icons/comment_gray.png', '鉴定意见', (){
+              print('comments clicked');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return PostsOfCommentsPage();
+                }) 
+              );
+            }),
           ]
         ),
     );
@@ -427,48 +461,91 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
   }
 
   Widget _actionList(){
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      child: Column(
-        children: <Widget>[
-          FListTile('images/icons/unlock_gray.png', '已公开记录', (){
-            print('public clicked');
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (BuildContext context) {
-                return PublisPostsPage();
-              }) 
-            );
-          }),
-          FListTile('images/icons/lock_gray.png', '私有记录', (){
-            print('private clicked');
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (BuildContext context) {
-                return PrivatePostsPage();
-              }) 
-            );
-          }),
-          FListTile('images/icons/sync_failed_gray.png', '未发布记录', (){
-            print('local clicked');
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (BuildContext context) {
-                return LocalPostsPage();
-              }) 
-            );
-          }),
-          FListTile('images/icons/comment_gray.png', '鉴定意见', (){
-            print('comments clicked');
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (BuildContext context) {
-            //     return LocalPostsPage();
-            //   }) 
-            // );
-          }),
-        ],
-      ),
+    // var items = [
+    //   FListTile('images/icons/unlock_gray.png', '已公开记录', (){
+    //     print('public clicked');
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(builder: (BuildContext context) {
+    //         return PublisPostsPage();
+    //       }) 
+    //     );
+    //   }),
+    //   FListTile('images/icons/lock_gray.png', '私有记录', (){
+    //     print('private clicked');
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(builder: (BuildContext context) {
+    //         return PrivatePostsPage();
+    //       }) 
+    //     );
+    //   }),
+    //   FListTile('images/icons/sync_failed_gray.png', '未发布记录', (){
+    //     print('local clicked');
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(builder: (BuildContext context) {
+    //         return LocalPostsPage();
+    //       }) 
+    //     );
+    //   }),
+    //   FListTile('images/icons/comment_gray.png', '鉴定意见', (){
+    //     print('comments clicked');
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(builder: (BuildContext context) {
+    //         return PostsOfCommentsPage();
+    //       }) 
+    //     );
+    //   })
+    // ];
+    // return ListView.separated(
+    //   itemBuilder: (BuildContext context, int index){
+    //      return items[index];
+    //   }, 
+    //   separatorBuilder: (context, index) => Divider(
+    //     height: 30,
+    //   ),  
+    //   itemCount: 4);
+    return Column(
+      children: <Widget>[
+        FListTile('images/icons/unlock_gray.png', '已公开记录', (){
+          print('public clicked');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return PublisPostsPage();
+            }) 
+          );
+        }),
+        FListTile('images/icons/lock_gray.png', '私有记录', (){
+          print('private clicked');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return PrivatePostsPage();
+            }) 
+          );
+        }),
+        FListTile('images/icons/sync_failed_gray.png', '未发布记录', (){
+          print('local clicked');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return LocalPostsPage();
+            }) 
+          );
+        }),
+        FListTile('images/icons/comment_gray.png', '鉴定意见', (){
+          print('comments clicked');
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (BuildContext context) {
+              return PostsOfCommentsPage();
+            }) 
+          );
+        }),
+      ],
     );
   }
 }

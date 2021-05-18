@@ -8,6 +8,7 @@ import 'package:fossils_finder/pages/index_page.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 import 'package:fossils_finder/utils/db_provider.dart';
+import 'package:fossils_finder/utils/local_info_utils.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,10 +22,6 @@ SharedPreferences localStorage;
 void MapInit() async{
   final provider = DbProvider();
   await provider.init();
-  
-  // localStorage = await SharedPreferences.getInstance();
-  // String _token = localStorage.get('token');
-  // print('token is ${_token}');
 
   await enableFluttifyLog(false);
   await AmapService.init(
@@ -60,14 +57,12 @@ class _FossilAppState extends State<FossilApp> {
   bool isLoggedIn = false;
 
   void init() async{
-    localStorage = await SharedPreferences.getInstance();
-    String _token = localStorage.get('token');
-    // print('token is ${_token}');
+    String _token = await getToken();
     if(_token != null && _token.isNotEmpty){
       var _content = await request(servicePath['testauth']);
       if(_content.statusCode != 200){
         if(_content.statusCode == 401){
-          localStorage.remove('token');
+          await removeToken();
           print('#### unauthenticated, need back to login page ${_content.statusCode}');
         }
         print('#### Network Connection Failed: ${_content.statusCode}');
@@ -113,19 +108,14 @@ class _FossilAppState extends State<FossilApp> {
         //   bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
         // ),
       ),
-      // theme: FlexColorScheme.light(
-      //   colors: FlexColor.schemes[FlexScheme.wasabi].light,
-      // ).toTheme,
-      // theme: FlexColorScheme.light(
-      //   colors: FlexColor.schemes[FlexScheme.mandyRed].light,
-      // ).toTheme,
-      home: isLoggedIn ? IndexPage() : 
-        Theme(
-          data: FlexColorScheme.light(
-            colors: FlexColor.schemes[FlexScheme.greyLaw].light,
-          ).toTheme,
-          child: LoginScreen()
-        ),
+      home: isLoggedIn ? IndexPage() : LoginScreen()
+        // Theme(
+        //   data: ThemeData(
+        //     primaryColor: Colors.grey[500],
+        //     accentColor: Colors.grey[100]
+        //   ),
+        //   child: LoginScreen()
+        // ),
       // home: IndexPage(),
     );
   }

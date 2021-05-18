@@ -126,7 +126,7 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
                 ),
                 validator: (value){
                   if(value.isEmpty || value.length < 3){
-                    return '名字不能少于三个字符';
+                    return '名字不能少于一个字符';
                   }
 
                   return null;

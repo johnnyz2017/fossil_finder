@@ -140,13 +140,18 @@ class _CategoryUpdatePageState extends State<CategoryUpdatePage> {
               Row(
                 children: <Widget>[
                   Text('属级/种级：'),
-                  Switch(
-                    value: _isGenus, 
-                    onChanged: (value){
-                      setState(() {
-                        _isGenus = value;
-                      });
-                    },
+                  Theme(
+                    data: ThemeData(
+                      primaryColor: Colors.blueAccent
+                    ),
+                    child: Switch(
+                      value: _isGenus, 
+                      onChanged: (value){
+                        setState(() {
+                          _isGenus = value;
+                        });
+                      },
+                    ),
                   )
                 ],
               ),

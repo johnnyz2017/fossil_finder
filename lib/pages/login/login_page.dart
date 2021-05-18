@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/pages/index_page.dart';
+import 'package:fossils_finder/utils/local_info_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:dio/dio.dart';
@@ -35,11 +36,6 @@ class LoginScreen extends StatelessWidget {
 
   Duration get loginTime => Duration(milliseconds: 2250);
 
-  save(String _token) async{
-    await init();
-    localStorage.setString("token", _token);
-  }
-
   Future<String> _login(LoginData data) async{
     print('Name: ${data.name}, Password: ${data.password}');
 
@@ -53,14 +49,16 @@ class LoginScreen extends StatelessWidget {
       print("status code == ${response.statusCode}");
       if (response.statusCode == 200 || response.statusCode == 201) {
         var responseJson = json.decode(response.data);
-        print('response: ${response.data} - ${responseJson['statusCode']}');
+        // print('response: ${response.data} - ${responseJson['statusCode']}');
 
         var status = responseJson['statusCode'] as int;
         if(status == 200){
-          print("status == 200");
           String _token = responseJson['token'];
-          print('get token : ${_token}');
-          await save(_token);
+          await setToken(_token);
+          int userId = responseJson['user']['id'];
+          await setUserId(userId);
+          int i = await getUserId();
+          print('get user id from local storage ${i}');
           return null;
         }else{
           print("status != 200");
@@ -143,17 +141,23 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlutterLogin(
-      title: 'Fossil Hunter',
-      logo: 'images/icons/fossil_icon_512.png',
-      onLogin: _login,
-      onSignup: _register,
-      onSubmitAnimationCompleted: () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => IndexPage(),
-        ));
-      },
-      onRecoverPassword: _recoverPassword,
+    return Theme(
+      data: ThemeData(
+        primaryColor: Colors.grey[500],
+        accentColor: Colors.grey[100]
+      ),
+      child: FlutterLogin(
+        title: 'Fossil Hunter',
+        logo: 'images/icons/fossil_icon_512.png',
+        onLogin: _login,
+        onSignup: _register,
+        onSubmitAnimationCompleted: () {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => IndexPage(),
+          ));
+        },
+        onRecoverPassword: _recoverPassword,
+      ),
     );
   }
 }

@@ -192,6 +192,20 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
               },
             ),
           ),
+          Visibility(
+            visible: !widget.editable,
+            child: IconButton(
+              icon: Icon(Icons.select_all),
+              onPressed: (){
+                cNode = CategoryNode.fromJson({
+                    "key" : "c_0",
+                    "title" : "root",
+                    'id' : 0
+                  });
+                Navigator.pop(context, cNode);
+              },
+            ),
+          ),
           IconButton(
             icon: Icon(Icons.done),
             onPressed: (){

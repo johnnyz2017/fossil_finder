@@ -356,8 +356,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
                         },
                     )),
                     IconButton(
-                      iconSize: 20, 
-                      icon: Icon(Icons.my_location), 
+                      iconSize: 21, 
+                      icon: Image.asset(
+                        'images/icons/target_gray.png',
+                        width: 21,
+                        height: 21,
+                        fit: BoxFit.fill
+                      ), 
                       onPressed: () async {
                         var pos = await Navigator.push(
                           context,
@@ -432,170 +437,315 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   ],
                 ),
 
-                Container(
-                  // padding: EdgeInsets.only(left: 8, right: 8, top: 5),
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        // alignment: Alignment.centerRight,
-                        width: 100,
-                        child: Text('System / Period: ')),
-                      Expanded(
-                        child: DropdownButtonHideUnderline(
-                          child: ButtonTheme(
-                            alignedDropdown: true,
-                            child: DropdownButton<String>(
-                              disabledHint: Text('DISABLED'),
-                              value: _currentSystem,
-                              iconSize: 30,
-                              icon: (null),
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 16,
-                              ),
-                              hint: Text('Select System'),
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  _currentSystem = newValue;
-                                  int sid = int.parse(_currentSystem);
-                                  var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
-                                    return null;
-                                  },);
-                                  _currentSystemName = item['name'];
-                                  _currentSeries = null;
-                                  _currentStage = null;
-                                  _getSeriesList(sid);
-                                });
-                              },
-                              items: systemList?.map((item) {
-                                    return new DropdownMenuItem(
-                                      child: new Text(item['name']),
-                                      value: item['id'].toString(),
-                                    );
-                                  })?.toList() ??
-                                  [],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      // alignment: Alignment.centerRight,
+                      width: 80,
+                      child: Text('System / Period: ')
+                    ),
+                    Expanded(
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton<String>(
+                            disabledHint: Text('DISABLED'),
+                            value: _currentSystem,
+                            iconSize: 30,
+                            icon: (null),
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16,
                             ),
+                            hint: Text('Select System'),
+                            onChanged: (String newValue) {
+                              setState(() {
+                                _currentSystem = newValue;
+                                int sid = int.parse(_currentSystem);
+                                var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
+                                  return null;
+                                },);
+                                _currentSystemName = item['name'];
+                                _currentSeries = null;
+                                _currentStage = null;
+                                _getSeriesList(sid);
+                              });
+                            },
+                            items: systemList?.map((item) {
+                                  return new DropdownMenuItem(
+                                    child: new Text(item['name']),
+                                    value: item['id'].toString(),
+                                  );
+                                })?.toList() ??
+                                [],
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+                // Container(
+                //   // padding: EdgeInsets.only(left: 8, right: 8, top: 5),
+                //   color: Colors.white,
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: <Widget>[
+                //       Container(
+                //         // alignment: Alignment.centerRight,
+                //         width: 100,
+                //         child: Text('System / Period: ')
+                //       ),
+                //       Expanded(
+                //         child: DropdownButtonHideUnderline(
+                //           child: ButtonTheme(
+                //             alignedDropdown: true,
+                //             child: DropdownButton<String>(
+                //               disabledHint: Text('DISABLED'),
+                //               value: _currentSystem,
+                //               iconSize: 30,
+                //               icon: (null),
+                //               style: TextStyle(
+                //                 color: Colors.black54,
+                //                 fontSize: 16,
+                //               ),
+                //               hint: Text('Select System'),
+                //               onChanged: (String newValue) {
+                //                 setState(() {
+                //                   _currentSystem = newValue;
+                //                   int sid = int.parse(_currentSystem);
+                //                   var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
+                //                     return null;
+                //                   },);
+                //                   _currentSystemName = item['name'];
+                //                   _currentSeries = null;
+                //                   _currentStage = null;
+                //                   _getSeriesList(sid);
+                //                 });
+                //               },
+                //               items: systemList?.map((item) {
+                //                     return new DropdownMenuItem(
+                //                       child: new Text(item['name']),
+                //                       value: item['id'].toString(),
+                //                     );
+                //                   })?.toList() ??
+                //                   [],
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
 
-                Container(
-                  // padding: EdgeInsets.only(left: 15, right: 15, top: 5),
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        // alignment: Alignment.centerRight,
-                        width: 100,
-                        child: Text('Series / Epoch: ')),
-                      Expanded(
-                        child: DropdownButtonHideUnderline(
-                          child: ButtonTheme(
-                            alignedDropdown: true,
-                            child: DropdownButton<String>(
-                              value: _currentSeries,
-                              iconSize: 30,
-                              icon: (null),
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 16,
-                              ),
-                              hint: Text('Select Series'.tr().toString()),
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  _currentSeries = newValue;
-                                  int _sid = int.parse(_currentSeries);
-                                  var item = seriesList.firstWhere((element) => element['id'] == _sid, orElse: () {
-                                    return null;
-                                  },);
-                                  _currentSeriesName = item['name'];
-                                  _currentStage = null;
-                                  print(_currentSeries);
-                                  _getStagesList(_sid);
-                                });
-                              },
-                              items: seriesList?.map((item) {
-                                    print("map item ${item}");
-                                    return new DropdownMenuItem(
-                                      child: new Text(item['name']),
-                                      value: item['id'].toString(),
-                                    );
-                                  })?.toList() ??
-                                  [],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      // alignment: Alignment.centerRight,
+                      width: 80,
+                      child: Text('Series / Epoch: ')),
+                    Expanded(
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton<String>(
+                            value: _currentSeries,
+                            iconSize: 30,
+                            icon: (null),
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16,
                             ),
+                            hint: Text('Select Series'.tr().toString()),
+                            onChanged: (String newValue) {
+                              setState(() {
+                                _currentSeries = newValue;
+                                int _sid = int.parse(_currentSeries);
+                                var item = seriesList.firstWhere((element) => element['id'] == _sid, orElse: () {
+                                  return null;
+                                },);
+                                _currentSeriesName = item['name'];
+                                _currentStage = null;
+                                print(_currentSeries);
+                                _getStagesList(_sid);
+                              });
+                            },
+                            items: seriesList?.map((item) {
+                                  print("map item ${item}");
+                                  return new DropdownMenuItem(
+                                    child: new Text(item['name']),
+                                    value: item['id'].toString(),
+                                  );
+                                })?.toList() ??
+                                [],
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Container(
-                  // padding: EdgeInsets.only(left: 15, right: 15, top: 5),
-                  color: Colors.white,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        // alignment: Alignment.centerRight,
-                        width: 100,
-                        child: Text('Stage / Age: ')),
-                      Expanded(
-                        child: DropdownButtonHideUnderline(
-                          child: ButtonTheme(
-                            alignedDropdown: true,
-                            child: DropdownButton<String>(
-                              value: _currentStage,
-                              iconSize: 30,
-                              icon: (null),
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 16,
-                              ),
-                              hint: Text('Select Stage'),
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  _currentStage = newValue;
-                                  int sid = int.parse(_currentStage);
-                                  var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
-                                    return null;
-                                  },);
-                                  _currentStageName = item['name'];
-                                  print(_currentStage);
-                                });
-                              },
-                              items: stagesList?.map((item) {
-                                    print("map item ${item}");
-                                    return new DropdownMenuItem(
-                                      child: new Text(item['name']),
-                                      value: item['id'].toString(),
-                                    );
-                                  })?.toList() ??
-                                  [],
+                // Container(
+                //   color: Colors.white,
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: <Widget>[
+                //       Container(
+                //         // alignment: Alignment.centerRight,
+                //         width: 80,
+                //         child: Text('Series / Epoch: ')),
+                //       Expanded(
+                //         child: DropdownButtonHideUnderline(
+                //           child: ButtonTheme(
+                //             alignedDropdown: true,
+                //             child: DropdownButton<String>(
+                //               value: _currentSeries,
+                //               iconSize: 30,
+                //               icon: (null),
+                //               style: TextStyle(
+                //                 color: Colors.black54,
+                //                 fontSize: 16,
+                //               ),
+                //               hint: Text('Select Series'.tr().toString()),
+                //               onChanged: (String newValue) {
+                //                 setState(() {
+                //                   _currentSeries = newValue;
+                //                   int _sid = int.parse(_currentSeries);
+                //                   var item = seriesList.firstWhere((element) => element['id'] == _sid, orElse: () {
+                //                     return null;
+                //                   },);
+                //                   _currentSeriesName = item['name'];
+                //                   _currentStage = null;
+                //                   print(_currentSeries);
+                //                   _getStagesList(_sid);
+                //                 });
+                //               },
+                //               items: seriesList?.map((item) {
+                //                     print("map item ${item}");
+                //                     return new DropdownMenuItem(
+                //                       child: new Text(item['name']),
+                //                       value: item['id'].toString(),
+                //                     );
+                //                   })?.toList() ??
+                //                   [],
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      // alignment: Alignment.centerRight,
+                      width: 80,
+                      child: Text('Stage / Age: ')),
+                    Expanded(
+                      child: DropdownButtonHideUnderline(
+                        child: ButtonTheme(
+                          alignedDropdown: true,
+                          child: DropdownButton<String>(
+                            value: _currentStage,
+                            iconSize: 30,
+                            icon: (null),
+                            style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 16,
                             ),
+                            hint: Text('Select Stage'),
+                            onChanged: (String newValue) {
+                              setState(() {
+                                _currentStage = newValue;
+                                int sid = int.parse(_currentStage);
+                                var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
+                                  return null;
+                                },);
+                                _currentStageName = item['name'];
+                                print(_currentStage);
+                              });
+                            },
+                            items: stagesList?.map((item) {
+                                  print("map item ${item}");
+                                  return new DropdownMenuItem(
+                                    child: new Text(item['name']),
+                                    value: item['id'].toString(),
+                                  );
+                                })?.toList() ??
+                                [],
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+                // Container(
+                //   // padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+                //   color: Colors.white,
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: <Widget>[
+                //       Container(
+                //         // alignment: Alignment.centerRight,
+                //         width: 80,
+                //         child: Text('Stage / Age: ')),
+                //       Expanded(
+                //         child: DropdownButtonHideUnderline(
+                //           child: ButtonTheme(
+                //             alignedDropdown: true,
+                //             child: DropdownButton<String>(
+                //               value: _currentStage,
+                //               iconSize: 30,
+                //               icon: (null),
+                //               style: TextStyle(
+                //                 color: Colors.black54,
+                //                 fontSize: 16,
+                //               ),
+                //               hint: Text('Select Stage'),
+                //               onChanged: (String newValue) {
+                //                 setState(() {
+                //                   _currentStage = newValue;
+                //                   int sid = int.parse(_currentStage);
+                //                   var item = systemList.firstWhere((element) => element['id'] == sid, orElse: () {
+                //                     return null;
+                //                   },);
+                //                   _currentStageName = item['name'];
+                //                   print(_currentStage);
+                //                 });
+                //               },
+                //               items: stagesList?.map((item) {
+                //                     print("map item ${item}");
+                //                     return new DropdownMenuItem(
+                //                       child: new Text(item['name']),
+                //                       value: item['id'].toString(),
+                //                     );
+                //                   })?.toList() ??
+                //                   [],
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
 
                 Row(
                   children: <Widget>[
                     Text('是否私有：'),
-                    Switch(
-                      value: _private, 
-                      onChanged: (value){
-                        // _private = value;
-                        setState(() {
-                          _private = value;
-                        });
-                      },
+                    Theme(
+                      data: ThemeData(
+                        primaryColor: Colors.blueAccent
+                      ),
+                      child: Switch(
+                        value: _private, 
+                        onChanged: (value){
+                          setState(() {
+                            _private = value;
+                          });
+                        },
+                      ),
                     )
                   ],
                 ),
