@@ -287,7 +287,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
                         var ret = Navigator.push(
                           context,
                           MaterialPageRoute(builder: (BuildContext context) {
-                            //return CommentSubmitPage(post: post,);
                             return CommentUploadPage(post: post, comment: post.comments[index-1],editmode: true,);
                           }) 
                         );

@@ -288,6 +288,11 @@ class _PostUploadPageState extends State<PostUploadPage> {
                   children: <Widget>[
                     Text('标题: '),
                     Expanded(child: TextFormField(
+                      // decoration: InputDecoration(
+                      //   border: null,
+                      //   isDense: true,
+                      //   contentPadding: EdgeInsets.all(1)
+                      // ),
                       controller: _titleTextController,
                       autovalidate: true,
                       validator: (value){

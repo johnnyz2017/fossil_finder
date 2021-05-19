@@ -191,36 +191,6 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
   @override
   bool get wantKeepAlive => true;
 
-  Widget _infoPanel(){
-    return Card(
-      color: Colors.red,
-      shadowColor: Colors.grey,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-        Column(
-          children: <Widget>[
-            Text('${user.postsCount}'),
-            Text('记录'),
-          ],
-        ),
-        Column(
-          children: <Widget>[
-            Text('${user.categoriesCount}'),
-            Text('类别'),
-          ],
-        ),
-        Column(
-          children: <Widget>[
-            Text('${user.commentsCount}'),
-            Text('鉴定'),
-          ],
-        ),
-      ],),
-    );
-  }
-
   Widget _actionButons(){
     return SizedBox(
       height: 100,
@@ -285,8 +255,6 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
   }
 
   Widget _topHeader0(){
-    String userName = user == null ? "未命名" : user.name;
-    String userEmail = user == null ? '' : user.email;
     String roleName = user == null ? '未知角色' : user.roleName;
 
     return SizedBox(
@@ -317,145 +285,6 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _topHeader10(){
-    String userName = user == null ? "未命名" : user.name;
-    String userEmail = user == null ? '' : user.email;
-    String roleName = user == null ? '未知角色' : user.roleName;
-
-    return Card(
-      elevation: 5.0,
-      color: Colors.white60,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14.0))),
-      // shadowColor: Colors.green,
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(children: <Widget>[
-                Container(
-                 child: Text('${roleName}', 
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
-                    )
-                  ),
-                ),
-                Text(userEmail, style: TextStyle(fontStyle: FontStyle.italic),),
-                SizedBox(height: 50,),
-              ],
-              ),
-            ),
-            
-
-            SizedBox(
-              height: 60,
-              child: Container(
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Text('${user.postsCount}'),
-                        Text('记录'),
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Text('${user.categoriesCount}'),
-                        Text('类别'),
-                      ],
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Text('${user.commentsCount}'),
-                        Text('鉴定'),
-                      ],
-                    ),
-                  ],),
-                ),
-              ),
-            )
-          ],
-        ),
-    );
-  }
-
-  Widget _topHeader(){
-    String userName = user == null ? "未命名" : user.name;
-    String profileUrl = user == null ? 'images/icons/user.png' : user.avatar;
-    String userEmail = user == null ? '' : user.email;
-
-    return Card(
-      color: Colors.white60,
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-            Container(
-              child: ClipOval(
-                child: 
-                  profileUrl.startsWith('http') ? CachedNetworkImage(
-                          height: 100,
-                          width: 100,
-                          imageUrl: profileUrl,
-                          placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) => Icon(Icons.error),
-                        )
-                  : Image.asset(profileUrl, height: 100, width: 100,),
-              )
-            ),
-            SizedBox(width: 20,),
-            Column(
-              children: <Widget>[
-                Text(
-                  userName, 
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold
-                  )
-                ),
-
-                Text(userEmail, style: TextStyle(fontStyle: FontStyle.italic),)
-              ],
-            ),
-          ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-            Column(
-              children: <Widget>[
-                Text('${user.postsCount}'),
-                Text('记录'),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                Text('${user.categoriesCount}'),
-                Text('类别'),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                Text('${user.commentsCount}'),
-                Text('鉴定'),
-              ],
-            ),
-          ],)
-        ],
       ),
     );
   }

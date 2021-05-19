@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/pages/index_page.dart';
 import 'package:fossils_finder/utils/local_info_utils.dart';
@@ -8,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
-import 'package:fossils_finder/pages/home/home_page.dart';
 
 SharedPreferences localStorage;
 
@@ -118,12 +116,9 @@ class LoginScreen extends StatelessWidget {
 
       if (exception == null ||
           exception.toString().contains('SocketException')) {
-        // throw Exception("Network Error");
         return 'Network Error';
       } else if (exception.type == DioErrorType.RECEIVE_TIMEOUT ||
           exception.type == DioErrorType.CONNECT_TIMEOUT) {
-        // throw Exception(
-        //     "Could'nt connect, please ensure you have a stable network.");
         return 'Could not connect, please ensure you have a stable network.';
       } else {
         return 'Network IO Error!';

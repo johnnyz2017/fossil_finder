@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 class ImageDetailScreen extends StatelessWidget {
   final url;
@@ -10,9 +11,12 @@ class ImageDetailScreen extends StatelessWidget {
         onTap: () {
           Navigator.pop(context);
         },
-        child: Center(
-          child: url.startsWith('http') ? Image.network(url) 
-                                        : Image.asset(url)
+        // child: Center(
+        //   child: url.startsWith('http') ? Image.network(url) 
+        //                                 : Image.asset(url)
+        // ),
+        child: PhotoView(
+          imageProvider: url.startsWith('http') ?  NetworkImage(url) : AssetImage(url),
         ),
       ),
     );

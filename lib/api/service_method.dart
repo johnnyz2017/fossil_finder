@@ -9,10 +9,6 @@ import 'package:fossils_finder/utils/local_info_utils.dart';
 Future<Response> request(url, {formData}) async{
   try{
     print('start to request data from ${url}');
-    
-    // SharedPreferences localStorage;
-    // localStorage = await SharedPreferences.getInstance();
-    // String _token = localStorage.get('token');
     String _token = await getToken();
 
     BaseOptions options = BaseOptions(
