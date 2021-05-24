@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fossils_finder/main_app.dart';
-import 'package:fossils_finder/pages/home/home.dart';
-
-import 'package:fossils_finder/pages/login/login_page.dart';
-
+import 'package:fossils_finder/pages/home/home_page.dart';
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
-import 'package:fossils_finder/pages/main_page.dart';
-import 'map/map_demo.dart';
 
 Future<void> main() async {
   runApp(
