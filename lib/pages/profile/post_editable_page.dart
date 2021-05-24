@@ -241,48 +241,46 @@ class _PostEditblePageState extends State<PostEditblePage> {
                 
                 Container(
                   height: 150,
-                  child: Expanded(
-                    child: _imgsPath.length > 0 ? ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (BuildContext context, int index){
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: <Widget>[
-                              _imgsPath[index].startsWith('http')? 
-                                Image.network('${_imgsPath[index]}')
-                                : Image.file(File(_imgsPath[index])),
-                              Visibility(
-                                visible: editmode,
-                                child: Positioned(
-                                  right: 0,
-                                  top: 10.0,
-                                  child: IconButton(
-                                    icon: new Image.asset('images/icons/icons8-delete.png'),
-                                    onPressed: (){
-                                      print('image remove icon clicked');
-                                      setState(() {
-                                        _uploadedStatus.remove(_imgsPath[index]);
-                                        _uploadingStatus.remove(_imgsPath[index]);
-                                        _imgsPath.removeAt(index);
-                                      });
-                                    },
-                                  ),
+                  child: _imgsPath.length > 0 ? ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index){
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            _imgsPath[index].startsWith('http')? 
+                              Image.network('${_imgsPath[index]}')
+                              : Image.file(File(_imgsPath[index])),
+                            Visibility(
+                              visible: editmode,
+                              child: Positioned(
+                                right: 0,
+                                top: 10.0,
+                                child: IconButton(
+                                  icon: new Image.asset('images/icons/icons8-delete.png'),
+                                  onPressed: (){
+                                    print('image remove icon clicked');
+                                    setState(() {
+                                      _uploadedStatus.remove(_imgsPath[index]);
+                                      _uploadingStatus.remove(_imgsPath[index]);
+                                      _imgsPath.removeAt(index);
+                                    });
+                                  },
                                 ),
                               ),
-                              Visibility(
-                                visible: _uploadingStatus[_imgsPath[index]] || _uploadedStatus[_imgsPath[index]],
-                                child: _uploadedStatus[_imgsPath[index]] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                      // itemCount: _imgsFile.length,
-                      itemCount: _imgsPath.length,
-                    ) : Center(child: Text("未上传图片")),                   
-                  ),
+                            ),
+                            Visibility(
+                              visible: _uploadingStatus[_imgsPath[index]] || _uploadedStatus[_imgsPath[index]],
+                              child: _uploadedStatus[_imgsPath[index]] ? Image.asset('images/icons/icons8-checkmark.png', width: 40, height: 40,) : CircularProgressIndicator(),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                    // itemCount: _imgsFile.length,
+                    itemCount: _imgsPath.length,
+                  ) : Center(child: Text("未上传图片")),    
                   // child: Expanded(
                   //   child: _imgsPath.length > 0 ? ListView.builder(
                   //     scrollDirection: Axis.horizontal,

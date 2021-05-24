@@ -106,6 +106,16 @@ dev_dependencies:
   
   build_runner:
   json_serializable:
+  flutter_launcher_name: ^0.0.1
+  flutter_launcher_icons: ^0.8.1
+
+flutter_launcher_name:
+  name: "Fossil Hunter"
+
+flutter_icons:
+  image_path: "images/icons/fossil_icon_512.png"
+  android: true
+  ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

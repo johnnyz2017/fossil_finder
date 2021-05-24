@@ -9,7 +9,7 @@
         <!-- android:name="io.flutter.app.FlutterApplication" -->
     <application
         android:name="com.tornadory.fossils_finder.FossilApplication"
-        android:label="fossils_finder"
+        android:label="Fossil Hunter"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
 

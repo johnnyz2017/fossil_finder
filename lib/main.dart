@@ -25,8 +25,10 @@ void MapInit() async{
 
   await enableFluttifyLog(false);
   await AmapService.init(
-    iosKey: '442bcb9df9178d4e0e1d30370c485907',
-    androidKey: 'cf2c5badb6669ff95b26030d9e77f490',
+    // iosKey: '442bcb9df9178d4e0e1d30370c485907',
+    // androidKey: 'cf2c5badb6669ff95b26030d9e77f490',
+    iosKey: '6d91117a0ede4105d44a8374bb32228f',
+    androidKey: '8fe793567d6bf7e8d21c4ef41d2672cf'
   );
 }
 
