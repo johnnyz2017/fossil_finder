@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fossils_finder/config/global_config.dart';
 
 class CustomListItem extends StatelessWidget {
   const CustomListItem({
@@ -59,7 +60,7 @@ class _VideoDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       // padding: const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-      padding: EdgeInsets.all(5.0),
+      padding: EdgeInsets.all(DMARGIN),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

@@ -15,6 +15,7 @@ import 'package:fossils_finder/pages/map/map_show.dart';
 import 'package:fossils_finder/utils/local_info_utils.dart';
 import 'package:fossils_finder/utils/qr_generate_page.dart';
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+import 'package:fossils_finder/widgets/helper_widgets.dart';
 import 'package:fossils_finder/widgets/image_detail_widget.dart';
 import 'package:share/share.dart';
 // import 'package:amap_map_fluttify/amap_map_fluttify.dart';
@@ -54,10 +55,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
       });
     }else{
       print('no post get, return');
-      Fluttertoast.showToast(
-        msg: "获取记录失败，请检查网络或者记录ID是否正确",
-        gravity: ToastGravity.CENTER,
-        textColor: Colors.red);
+      // Fluttertoast.showToast(
+      //   msg: "获取记录失败，请检查网络或者记录ID是否正确",
+      //   gravity: ToastGravity.CENTER,
+      //   textColor: Colors.red);
+      errorToast(_jsonData['message']);
       Navigator.pop(context, true);
     }
     
@@ -110,7 +112,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
         itemBuilder: (BuildContext context, int index){
           if(index == 0){                                            // post content
             return Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(DMARGIN),
               child: Card(
                 child: Column(
                   children: <Widget>[
@@ -261,7 +263,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           }
           else{                                                  // comments
             return Container(
-              padding: EdgeInsets.all(5),
+              padding: EdgeInsets.all(DMARGIN),
               child: Card(
                 child: ListTile(
                   leading: Column(

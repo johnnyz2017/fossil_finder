@@ -15,6 +15,7 @@ import 'package:fossils_finder/pages/map/map_show.dart';
 import 'package:fossils_finder/utils/db_helper.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:fossils_finder/utils/strings.dart';
+import 'package:fossils_finder/widgets/helper_widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -208,10 +209,11 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                 if(!_uploadedStatus[path]){
                   print('still have some not been uploaded');
                   
-                  Fluttertoast.showToast(
-                    msg: "还有图片未上传！",
-                    gravity: ToastGravity.CENTER,
-                    textColor: Colors.red);
+                  // Fluttertoast.showToast(
+                  //   msg: "还有图片未上传！",
+                  //   gravity: ToastGravity.CENTER,
+                  //   textColor: Colors.red);
+                  // errorToast("还有图片未上传！");
                   AlertDialog(title: Text('还有图片未上传'),);
                   return;
                 }
@@ -225,7 +227,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(DMARGIN),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -412,7 +414,8 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                     Text('海拔: '),
                     Expanded(child: TextFormField(
                       inputFormatters: [
-                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                        // WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                        FilteringTextInputFormatter.allow(RegExp(r'^-?(?:-?(?:[0-9]+))?(?:.[0-9]*)?(?:[eE][+-]?(?:[0-9]+))?'))
                       ],
                       readOnly: !editmode,
                       // initialValue: widget.post.altitude.toString(),
@@ -730,10 +733,11 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                               onPressed: ()async{
                                 print("确定");
                                 Navigator.pop(context,"ok");
-                                Fluttertoast.showToast(
-                                    msg: "删除成功",
-                                    gravity: ToastGravity.CENTER,
-                                    textColor: Colors.grey);
+                                // Fluttertoast.showToast(
+                                //     msg: "删除成功",
+                                //     gravity: ToastGravity.CENTER,
+                                //     textColor: Colors.grey);
+                                successToast("删除成功");
 
                                 dbhelper.deletePost(widget.post.id);
 
@@ -792,17 +796,19 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
     print('#### after insert post into local database - result: ${ret}');
 
     if(ret > 0){
-      Fluttertoast.showToast(
-          msg: "本地保存成功",
-          gravity: ToastGravity.CENTER,
-          textColor: Colors.grey);
+      // Fluttertoast.showToast(
+      //     msg: "本地保存成功",
+      //     gravity: ToastGravity.CENTER,
+      //     textColor: Colors.grey);
+      successToast("本地保存成功");
       
       Navigator.pop(context, true);
     }else{
-      Fluttertoast.showToast(
-          msg: "本地保存失败，请检查表单各属性，程序权限授予等。",
-          gravity: ToastGravity.CENTER,
-          textColor: Colors.red);
+      // Fluttertoast.showToast(
+      //     msg: "本地保存失败，请检查表单各属性，程序权限授予等。",
+      //     gravity: ToastGravity.CENTER,
+      //     textColor: Colors.red);
+      errorToast("本地保存失败，请检查表单各属性，程序权限授予等。");
     }
   }
 
@@ -866,19 +872,21 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            msg: "发布成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     msg: "发布成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("发布成功");
 
         dbhelper.deletePost(widget.post.id);
 
         Navigator.pop(context, true);
       }else{
-        Fluttertoast.showToast(
-            msg: "发布失败，继续保存在本地数据库中！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //     msg: "发布失败，继续保存在本地数据库中！",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.red);
+        errorToast("发布失败，继续保存在本地数据库中！");
       }
     }
   }
@@ -907,15 +915,17 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            msg: "图片上传成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     msg: "图片上传成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("图片上传成功");
       }else{
-        Fluttertoast.showToast(
-            msg: "图片上传失败！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //     msg: "图片上传失败！",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.red);
+        errorToast("图片上传失败！");
       }
     }
   }
@@ -935,23 +945,17 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
       if (uploadedItem != null) {
         print('upload success ....');
         setState(() {
-          // _image = Image.network(uploadedItem.path, height: 200,); //OK
-          // _imgsPath.add(uploadedItem.path);
           _uploadedStatus[file.path] = true;
           _uploadedPath[file.path] = uploadedItem.path;
         });
-        // _view.uploadSuccess(uploadedItem.path);
       } else {
         print('failed to upload ...');
-        // _view.uploadFaild('上传失败！请重试');
       }
     } on DioError catch (e) {
-      debugPrint(e.toString());
+      // debugPrint(e.toString());
       print('dio error ${e.message}');
-      // _view.uploadFaild('${e.message}');
     } catch (e) {
       debugPrint(e.toString());
-      // _view.uploadFaild('$e');
     }
   }
 }

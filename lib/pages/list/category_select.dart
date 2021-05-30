@@ -10,6 +10,7 @@ import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/pages/form/category_new.dart';
 import 'package:fossils_finder/pages/form/category_update.dart';
+import 'package:fossils_finder/widgets/helper_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CategorySelector extends StatefulWidget {
@@ -99,23 +100,26 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            msg: "删除成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     msg: "删除成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("删除成功");
         return true;
       }else{
-        Fluttertoast.showToast(
-            msg: "删除失败！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //     msg: "删除失败！",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.red);
+        errorToast(responseJson['message']);
         return false;
       }
     }else{
-      Fluttertoast.showToast(
-        msg: "网络连接失败，检查网络",
-        gravity: ToastGravity.CENTER,
-        textColor: Colors.red);
+      // Fluttertoast.showToast(
+      //   msg: "网络连接失败，检查网络!",
+      //   gravity: ToastGravity.CENTER,
+      //   textColor: Colors.red);
+      errorToast("网络连接失败，检查网络!");
       return false;
     }
   }
@@ -218,10 +222,11 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
               }else{
                 if(cNode.id == widget.sid){
                   print('select wrong id ${cNode.id}');
-                  Fluttertoast.showToast(
-                    msg: "不能选择自己！",
-                    gravity: ToastGravity.CENTER,
-                    textColor: Colors.red);
+                  // Fluttertoast.showToast(
+                  //   msg: "不能选择自己！",
+                  //   gravity: ToastGravity.CENTER,
+                  //   textColor: Colors.red);
+                  errorToast("不能选择自己！");
                 }
                 else{
                   Navigator.pop(context, cNode);
@@ -362,10 +367,11 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                         // print("${_treeViewController.getNode('c_3')}");
                       // });
                     }else{
-                      Fluttertoast.showToast(
-                        msg: "无法编辑该类别",
-                        gravity: ToastGravity.CENTER,
-                        textColor: Colors.red);
+                      // Fluttertoast.showToast(
+                      //   msg: "无法编辑该类别",
+                      //   gravity: ToastGravity.CENTER,
+                      //   textColor: Colors.red);
+                      errorToast("无法编辑该类别");
                     }
                     
                   } : null,
@@ -439,10 +445,11 @@ class _CategorySelectorState extends State<CategorySelector> with AutomaticKeepA
                         }
                       );                   
                     }else{
-                      Fluttertoast.showToast(
-                        msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别",
-                        gravity: ToastGravity.CENTER,
-                        textColor: Colors.red);
+                      // Fluttertoast.showToast(
+                      //   msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别!",
+                      //   gravity: ToastGravity.CENTER,
+                      //   textColor: Colors.red);
+                      errorToast("无法删除该类别，请确认权限和该类别下是否无记录或者子类别!");
                     }
                     // if(_treeViewController.getNode(cNode.key).isParent){
                     //   print('current selected is ${cNode.key}-${cNode.label} is parent, can not be deleted');

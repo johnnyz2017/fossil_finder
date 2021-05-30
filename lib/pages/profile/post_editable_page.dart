@@ -208,10 +208,10 @@ class _PostEditblePageState extends State<PostEditblePage> {
                 if(path.startsWith('http')) continue;
                 if(!_uploadedStatus[path]){
                   print('still have some not been uploaded');
-                  Fluttertoast.showToast(
-                    msg: "还有图片未上传！",
-                    gravity: ToastGravity.CENTER,
-                    textColor: Colors.red);
+                  // Fluttertoast.showToast(
+                  //   msg: "还有图片未上传！",
+                  //   gravity: ToastGravity.CENTER,
+                  //   textColor: Colors.red);
                   AlertDialog(title: Text('还有图片未上传'),);
                   return;
                 }
@@ -232,7 +232,7 @@ class _PostEditblePageState extends State<PostEditblePage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(DMARGIN),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -437,7 +437,8 @@ class _PostEditblePageState extends State<PostEditblePage> {
                     Text('海拔: '),
                     Expanded(child: TextFormField(
                       inputFormatters: [
-                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                        // WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                        FilteringTextInputFormatter.allow(RegExp(r'^-?(?:-?(?:[0-9]+))?(?:.[0-9]*)?(?:[eE][+-]?(?:[0-9]+))?'))
                       ],
                       readOnly: !editmode,
                       // initialValue: widget.post.altitude.toString(),

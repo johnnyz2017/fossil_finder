@@ -13,6 +13,7 @@ import 'package:fossils_finder/pages/map/map_show.dart';
 import 'package:fossils_finder/utils/db_helper.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:fossils_finder/utils/strings.dart';
+import 'package:fossils_finder/widgets/helper_widgets.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
@@ -190,20 +191,22 @@ class _PostUploadPageState extends State<PostUploadPage> {
               int len = _imgsPath.length;
               if(len < 1) {
                 print('no pictures selected');
-                Fluttertoast.showToast(
-                  msg: "没有选择图片！",
-                  gravity: ToastGravity.CENTER,
-                  textColor: Colors.red);
+                // Fluttertoast.showToast(
+                //   msg: "没有选择图片！",
+                //   gravity: ToastGravity.CENTER,
+                //   textColor: Colors.red);
+                errorToast("没有选择图片！");
               }
               for(int i = 0; i < len; i++){
                 String path = _imgsPath[i];
                 if(path.startsWith('http')) continue;
                 if(!_uploadedStatus[path]){
                   print('still have some not been uploaded');
-                  Fluttertoast.showToast(
-                    msg: "还有图片未上传！",
-                    gravity: ToastGravity.CENTER,
-                    textColor: Colors.red);
+                  // Fluttertoast.showToast(
+                  //   msg: "还有图片未上传！",
+                  //   gravity: ToastGravity.CENTER,
+                  //   textColor: Colors.red);
+                  errorToast("还有图片未上传！");
                   return;
                 }
               }
@@ -378,6 +381,9 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     Expanded(child: TextFormField(
                       inputFormatters: [
                         WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                        // WhitelistingTextInputFormatter(RegExp(r'^-?\d+')),
+                        // WhitelistingTextInputFormatter(RegExp(r'^(\-|\+)?\d+(\.\d+)?$')),
+                        // FilteringTextInputFormatter.allow(RegExp(r'^-?(?:-?(?:[0-9]+))?(?:.[0-9]*)?(?:[eE][+-]?(?:[0-9]+))?'))
                       ],
                       controller: _lngTextController,
                       autovalidate: true,
@@ -436,7 +442,8 @@ class _PostUploadPageState extends State<PostUploadPage> {
                     Text('海拔: '),
                     Expanded(child: TextFormField(
                       inputFormatters: [
-                        WhitelistingTextInputFormatter(RegExp("[-,.,0-9]"))
+                        // WhitelistingTextInputFormatter(RegExp("[-,.,0-9]")),
+                        FilteringTextInputFormatter.allow(RegExp(r'^-?(?:-?(?:[0-9]+))?(?:.[0-9]*)?(?:[eE][+-]?(?:[0-9]+))?'))
                       ],
                       controller: _altTextController,
                       ),)
@@ -692,17 +699,13 @@ class _PostUploadPageState extends State<PostUploadPage> {
     print('#### after insert post into local database - result: ${ret}');
 
     if(ret > 0){
-      Fluttertoast.showToast(
-          msg: "本地保存成功",
-          gravity: ToastGravity.CENTER,
-          textColor: Colors.grey);
+      successToast("本地保存成功");
+      print('saved successfully');
+      // showSuccessToast(context, "本地保存成功");
       
       Navigator.pop(context, true);
     }else{
-      Fluttertoast.showToast(
-          msg: "本地保存失败，请检查表单各属性，程序权限授予等。",
-          gravity: ToastGravity.CENTER,
-          textColor: Colors.red);
+      errorToast("本地保存失败，请检查表单各属性，程序权限授予等。");
     }
   }
 
@@ -769,17 +772,19 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            msg: "发布成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     msg: "发布成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("发布成功");
 
         Navigator.pop(context, true);
       }else{
-        Fluttertoast.showToast(
-            msg: "发布失败，继续保存在本地数据库中！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //     msg: "发布失败，继续保存在本地数据库中！",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.red);
+        errorToast("发布失败，如果网络存在问题可以先保存在本地数据库中！");
       }
     }
   }
@@ -848,23 +853,19 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            timeInSecForIosWeb: 5,
-            msg: "提交成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     timeInSecForIosWeb: 5,
+        //     msg: "提交成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("提交成功");
         Navigator.pop(context, true);
       }else{
-        Fluttertoast.showToast(
-            msg: "提交失败，请暂存在本地数据库中！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        var msg = responseJson['message'];
+        errorToast(msg);
       }
     }else{
-      Fluttertoast.showToast(
-          msg: "提交记录失败！",
-          gravity: ToastGravity.CENTER,
-          textColor: Colors.red);
+      errorToast("提交失败，如果是网络问题可以点保存按钮暂存在本地数据库中！");
     }
   }
 
@@ -906,15 +907,17 @@ class _PostUploadPageState extends State<PostUploadPage> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            msg: "图片上传成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     msg: "图片上传成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("图片上传成功");
       }else{
-        Fluttertoast.showToast(
-            msg: "图片上传失败！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //     msg: "图片上传失败！",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.red);
+        errorToast(responseJson['message']);
       }
     }
   }
@@ -932,24 +935,17 @@ class _PostUploadPageState extends State<PostUploadPage> {
       if (uploadedItem != null) {
         print('upload success ....');
         setState(() {
-          // _image = Image.network(uploadedItem.path, height: 200,); //OK
-          // _imgsPath.add(uploadedItem.path);
-
           _uploadedStatus[file.path] = true;
           _uploadedPath[file.path] = uploadedItem.path;
         });
-        // _view.uploadSuccess(uploadedItem.path);
       } else {
         print('failed to upload ...');
-        // _view.uploadFaild('上传失败！请重试');
       }
     } on DioError catch (e) {
-      debugPrint(e.toString());
+      // debugPrint(e.toString());
       print('dio error ${e.message}');
-      // _view.uploadFaild('${e.message}');
     } catch (e) {
       debugPrint(e.toString());
-      // _view.uploadFaild('$e');
     }
   }
 }

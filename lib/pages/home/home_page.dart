@@ -24,6 +24,7 @@ import 'package:fossils_finder/pages/list/category_select.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/utils/permission.dart';
+import 'package:fossils_finder/widgets/clipper_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -95,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                 width: 80,
                 height: 50,
                 child: ClipOval(
-                  clipper: _MyClipper(),
+                  clipper: MyClipper(),
                   child: post.images.length > 0 ? 
                       (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), fit: BoxFit.fill, height: 50, width: 80) : Image.asset(post.images[0].url, fit: BoxFit.fill, height: 50, width: 80))
                       : Image.asset('images/icons/marker.png', fit: BoxFit.fill)
@@ -188,7 +189,7 @@ class _HomePageState extends State<HomePage> {
                 width: 80,
                 height: 50,
                 child: ClipOval(
-                  clipper: _MyClipper(),
+                  clipper: MyClipper(),
                   child: post.images.length > 0 ? 
                       (post.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  post.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), fit: BoxFit.fill,) : Image.asset(post.images[0].url, fit: BoxFit.fill))
                       : Image.asset('images/icons/marker.png', height: 50,)
@@ -633,7 +634,7 @@ class _HomePageState extends State<HomePage> {
                               width: 80,
                               height: 50,
                               child: ClipOval(
-                                clipper: _MyClipper(),
+                                clipper: MyClipper(),
                                 child: searchedPost.images.length > 0 ? 
                                     (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), fit: BoxFit.fill, height: 50, width: 80) : Image.asset(searchedPost.images[0].url, fit: BoxFit.fill, height: 50, width: 80))
                                     : Image.asset('images/icons/marker.png', height: 50,)
@@ -769,7 +770,7 @@ class _HomePageState extends State<HomePage> {
                         //       : Image.asset('images/icons/marker.png', height: 50,)
                         // )
                         ClipOval(
-                          clipper: _MyClipper(),
+                          clipper: MyClipper(),
                           child: searchedPost.images.length > 0 ? 
                               (searchedPost.images[0].url.startsWith('http') ? CachedNetworkImage(imageUrl:  searchedPost.images[0].url, placeholder: (context, url) => Center(child: CircularProgressIndicator()), fit: BoxFit.fill, height: 50, width: 80) : Image.asset(searchedPost.images[0].url, fit: BoxFit.fill, height: 50, width: 80))
                               : Image.asset('images/icons/marker.png', height: 50,)
@@ -1089,19 +1090,4 @@ class DataSearch extends SearchDelegate<Post>{
     },
   );
 
-}
-
-
-
-
-class _MyClipper extends CustomClipper<Rect>{
-  @override
-  Rect getClip(Size size) {
-    return new Rect.fromLTRB(10.0, 10.0, size.width - 10.0,  size.height- 10.0);
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Rect> oldClipper) {
-    return false;
-  }
 }

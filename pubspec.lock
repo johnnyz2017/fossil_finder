@@ -303,7 +303,7 @@ packages:
     source: hosted
     version: "2.1.1"
   flushbar:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flushbar
       url: "https://pub.flutter-io.cn"

@@ -10,6 +10,7 @@ import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/model/comment.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
+import 'package:fossils_finder/widgets/helper_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CommentUploadPage extends StatefulWidget {
@@ -248,19 +249,21 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            msg: "提交成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     msg: "提交成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("提交成功");
 
         Navigator.pop(context, true);
       }else{
-        Fluttertoast.showToast(
-            msg: "提交失败！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //     msg: "提交失败！",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.red);
+        errorToast(responseJson['message']);
 
-        Navigator.pop(context, false);
+        // Navigator.pop(context, false);
       }
     }
   }
@@ -320,19 +323,21 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            msg: "提交成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     msg: "提交成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("提交成功");
 
         Navigator.pop(context, true);
       }else{
-        Fluttertoast.showToast(
-            msg: "提交失败！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //     msg: "提交失败！",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.red);
+        errorToast(responseJson['message']);
 
-        Navigator.pop(context, false);
+        // Navigator.pop(context, false);
       }
     }
   }

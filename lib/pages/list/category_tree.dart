@@ -16,6 +16,7 @@ import 'package:fossils_finder/pages/list/category_posts.dart';
 import 'package:fossils_finder/pages/list/custom_list_item.dart';
 import 'package:fossils_finder/pages/list/post_detail.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
+import 'package:fossils_finder/widgets/helper_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryTreeView extends StatefulWidget {
@@ -106,23 +107,26 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            msg: "提交成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     msg: "提交成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("提交成功");
         return true;
       }else{
-        Fluttertoast.showToast(
-            msg: "提交失败！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //     msg: "提交失败！",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.red);
+        errorToast(responseJson['message']);
         return false;
       }
     }else{
-      Fluttertoast.showToast(
-        msg: "网络连接失败，检查网络",
-        gravity: ToastGravity.CENTER,
-        textColor: Colors.red);
+      // Fluttertoast.showToast(
+      //   msg: "网络连接失败，检查网络!",
+      //   gravity: ToastGravity.CENTER,
+      //   textColor: Colors.red);
+      errorToast("网络连接失败，检查网络!");
       return false;
     }
   }
@@ -326,10 +330,11 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
                     }
                   });
                 }else{
-                  Fluttertoast.showToast(
-                    msg: "无法编辑该类别",
-                    gravity: ToastGravity.CENTER,
-                    textColor: Colors.red);
+                  // Fluttertoast.showToast(
+                  //   msg: "无法编辑该类别",
+                  //   gravity: ToastGravity.CENTER,
+                  //   textColor: Colors.red);
+                  errorToast("无法编辑该类别");
                 }
               },
             ),
@@ -400,10 +405,11 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
                     }
                   );
                 }else{
-                  Fluttertoast.showToast(
-                    msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别",
-                    gravity: ToastGravity.CENTER,
-                    textColor: Colors.red);
+                  // Fluttertoast.showToast(
+                  //   msg: "无法删除该类别，请确认权限和该类别下是否无记录或者子类别",
+                  //   gravity: ToastGravity.CENTER,
+                  //   textColor: Colors.red);
+                  errorToast("无法删除该类别，请确认权限和该类别下是否无记录或者子类别");
                 }
               },
             ),
@@ -423,7 +429,7 @@ class _CategoryTreeViewState extends State<CategoryTreeView> {
         children: <Widget>[
           Expanded(
             child: Container(
-              padding: EdgeInsets.only(left: 5),
+              padding: EdgeInsets.only(left: DMARGIN),
               child: TreeView(
                 theme: _treeViewTheme,
                 controller: _treeViewController,

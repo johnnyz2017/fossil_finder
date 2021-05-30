@@ -8,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/user.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
+import 'package:fossils_finder/widgets/helper_widgets.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:path/path.dart' as path;
@@ -87,7 +88,7 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(DMARGIN),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -195,19 +196,21 @@ class _MemberProfileUpdatePageState extends State<MemberProfileUpdatePage> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-          timeInSecForIosWeb: 2,
-          msg: "个人设置更新成功",
-          gravity: ToastGravity.CENTER,
-          textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //   timeInSecForIosWeb: 2,
+        //   msg: "个人设置更新成功",
+        //   gravity: ToastGravity.CENTER,
+        //   textColor: Colors.grey);
+        successToast("个人设置更新成功");
         
         Navigator.pop(context, true);
       }else{
-        Fluttertoast.showToast(
-          timeInSecForIosWeb: 2,
-          msg: "更新失败，请检查网络重试一下！",
-          gravity: ToastGravity.CENTER,
-          textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //   timeInSecForIosWeb: 2,
+        //   msg: "更新失败，请检查网络重试一下！",
+        //   gravity: ToastGravity.CENTER,
+        //   textColor: Colors.red);
+        errorToast(responseJson['message']);
       }
     }
   }

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:fossils_finder/api/service_method.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/user.dart';
-import 'package:fossils_finder/pages/form/password_update.dart';
 import 'package:fossils_finder/pages/form/profile_update.dart';
 import 'package:fossils_finder/pages/login/login_page.dart';
 import 'package:fossils_finder/pages/profile/local_list_page.dart';
@@ -13,6 +12,7 @@ import 'package:fossils_finder/pages/profile/posts_of_comments_page.dart';
 import 'package:fossils_finder/pages/profile/private_list_page.dart';
 import 'package:fossils_finder/pages/profile/public_list_page.dart';
 import 'package:fossils_finder/pages/profile/setting_page.dart';
+import 'package:fossils_finder/widgets/clipper_widget.dart';
 import 'package:fossils_finder/widgets/custom_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -87,8 +87,11 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
         title: Row(
           children: <Widget>[
             Container(
-                margin: EdgeInsets.fromLTRB(0, 8, 10, 8),
+                // margin: EdgeInsets.fromLTRB(0, 8, 10, 8),
+                width: 50,
+                height: 50,
                 child: ClipOval(
+                  clipper: MyClipper(),
                   child: 
                       profileUrl.startsWith('http') ? CachedNetworkImage(
                               height: 50,
@@ -99,13 +102,14 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
                             )
                       : Image.asset(profileUrl, height: 50, width: 50,),
                 ),
-                decoration: new BoxDecoration(
-                  border: new Border.all(
-                    color: Colors.orange,
-                    width: 1.0,
-                  ),
-                  borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
-                )),
+                // decoration: new BoxDecoration(
+                //   border: new Border.all(
+                //     color: Colors.orange,
+                //     width: 1.0,
+                //   ),
+                //   borderRadius: new BorderRadius.all(new Radius.circular(50.0)),
+                // )
+            ),
             Container(
               child: Flexible(
                 child: Text(
@@ -138,7 +142,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
         ListView(
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+              padding: EdgeInsets.fromLTRB(DMARGIN, 20, DMARGIN, 10),
               child:  _topHeader0(),
             ),
             // _actionList(),
@@ -281,7 +285,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
               Text('自${user.created.year}年${user.created.month}月${user.created.day}日加入fossil hunter以来，',textAlign: TextAlign.start,),
               Text('录入 ${user.postsCount} 标本条，',textAlign: TextAlign.start,),
               Text('涉及分类单元 ${user.categoriesCount} 个， ',textAlign: TextAlign.start,),
-              Text('发表鉴定意见 ${user.commentsCount} 条',textAlign: TextAlign.start,),
+              Text('发表鉴定意见 ${user.commentsCount} 条。',textAlign: TextAlign.start,),
             ],
           ),
         ),

@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fossils_finder/config/global_config.dart';
 import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
+import 'package:fossils_finder/widgets/helper_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryNewPage extends StatefulWidget {
@@ -43,7 +44,7 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(DMARGIN),
         child: Form(
           key: _formKey,
           child: Column(
@@ -214,19 +215,22 @@ class _CategoryNewPageState extends State<CategoryNewPage> {
 
       var status = responseJson['code'] as int;
       if(status == 200){
-        Fluttertoast.showToast(
-            msg: "提交成功",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.grey);
+        // Fluttertoast.showToast(
+        //     msg: "提交成功",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.grey);
+        successToast("提交成功");
 
         Navigator.pop(context, true);
       }else{
-        Fluttertoast.showToast(
-            msg: "提交失败！",
-            gravity: ToastGravity.CENTER,
-            textColor: Colors.red);
+        // Fluttertoast.showToast(
+        //     msg: "提交失败！",
+        //     gravity: ToastGravity.CENTER,
+        //     textColor: Colors.red);
+        // errorToast("提交失败");
+        errorToast(responseJson['message']);
 
-        Navigator.pop(context, false);
+        // Navigator.pop(context, false);
       }
     }
   }
