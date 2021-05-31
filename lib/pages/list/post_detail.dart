@@ -263,7 +263,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
           }
           else{                                                  // comments
             return Container(
-              padding: EdgeInsets.all(DMARGIN),
+              padding: EdgeInsets.fromLTRB(DMARGIN, 10.0, DMARGIN, 5.0),
               child: Card(
                 child: ListTile(
                   leading: Column(

@@ -88,19 +88,19 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
           children: <Widget>[
             Container(
                 // margin: EdgeInsets.fromLTRB(0, 8, 10, 8),
-                width: 50,
-                height: 50,
+                width: 75,
+                height: 75,
                 child: ClipOval(
                   clipper: MyClipper(),
                   child: 
                       profileUrl.startsWith('http') ? CachedNetworkImage(
-                              height: 50,
-                              width: 50,
-                              imageUrl: profileUrl,
-                              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                              errorWidget: (context, url, error) => Icon(Icons.error),
-                            )
-                      : Image.asset(profileUrl, height: 50, width: 50,),
+                        height: 75,
+                        width: 75,
+                        imageUrl: profileUrl,
+                        placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      )
+                      : Image.asset(profileUrl, height: 75, width: 75,),
                 ),
                 // decoration: new BoxDecoration(
                 //   border: new Border.all(

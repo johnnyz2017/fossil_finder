@@ -51,6 +51,13 @@ class Auth with ChangeNotifier {
     return mode;
   }
 
+  String _username = '';
+  get username => _username;
+  set username(String username) {
+    _username = username;
+    notifyListeners();
+  }
+
   String _email = '';
   get email => _email;
   set email(String email) {

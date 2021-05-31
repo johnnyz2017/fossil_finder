@@ -35,14 +35,14 @@ class LoginScreen extends StatelessWidget {
   Duration get loginTime => Duration(milliseconds: 2250);
 
   Future<String> _login(LoginData data) async{
-    print('Name: ${data.name}, Password: ${data.password}');
+    print('Name: ${data.email}, Password: ${data.password}');
 
     try {
       Options options = Options(
         contentType: 'application/json',
       );
       Response response = await dio.post('/login',
-          data: {"email": data.name, "password": data.password}, options: options);
+          data: {"email": data.email, "password": data.password}, options: options);
       
       print("status code == ${response.statusCode}");
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -85,14 +85,14 @@ class LoginScreen extends StatelessWidget {
   }
 
   Future<String> _register(LoginData data) async{
-    print('Name: ${data.name}, Password: ${data.password}');
+    print('Email: ${data.email}, UserName: ${data.username}, Password: ${data.password}');
     
     try {
       Options options = Options(
         contentType: 'application/json',
       );
       Response response = await dio.post('/register',
-          data: {"email": data.name, "password": data.password, "name": "新用户"}, options: options);
+          data: {"email": data.email, "password": data.password, "name": data.username}, options: options);
       
       print("status code == ${response.statusCode}");
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -102,6 +102,12 @@ class LoginScreen extends StatelessWidget {
         var status = responseJson['statusCode'] as int;
         if(status == 200){
           print("status == 200");
+          String _token = responseJson['token'];
+          await setToken(_token);
+          int userId = responseJson['data']['id'];
+          await setUserId(userId);
+          int i = await getUserId();
+          print('get user id from local storage ${i}');
           return null;
         }else{
           print("status != 200");
