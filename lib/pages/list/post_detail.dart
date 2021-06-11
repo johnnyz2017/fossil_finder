@@ -196,7 +196,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           Row(
                             children: <Widget>[
                               Text('采集地点: '),
-                              Expanded(child: Text('${post.coordinateLongitude}, ${post.coordinateLatitude}'),),
+                              Expanded(child: Text('${post.coordinateLatitude}, ${post.coordinateLongitude}'),),
                               IconButton(
                                 iconSize: 21,
                                 icon: Image.asset(

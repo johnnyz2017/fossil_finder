@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:amap_map_fluttify/amap_map_fluttify.dart';
+import 'package:fossils_finder/widgets/clipper_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class MapShowPage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _MapShowPageState extends State<MapShowPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: widget.selectable ? Text('${selectedPos.latitude.toStringAsFixed(6)}, ${selectedPos.longitude.toStringAsFixed(6)}') : Text('地图'),
+        title: widget.selectable ? Text('${selectedPos.latitude.toStringAsFixed(4)}, ${selectedPos.longitude.toStringAsFixed(4)}') : Text('地图'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.done),
@@ -44,22 +45,43 @@ class _MapShowPageState extends State<MapShowPage> {
       body: AmapView(
           mapType: MapType.Standard,
           showZoomControl: false,
-          zoomLevel: 10,
-          maskDelay: Duration(milliseconds: 500),
+          zoomLevel: 12,
+          // maskDelay: Duration(milliseconds: 100),
           onMapClicked: (value) async{
-            print('ampa clicked with ${value.latitude - value.longitude}');
+            print('amap clicked with ${value.latitude} - ${value.longitude}');
             setState(() {
               selectedPos = value;
             });
+            // _controller.getLocation();
+            
+            if(widget.selectable){
+              await _marker?.remove();
+              print('after makrer remove, create a marker @ ${selectedPos.latitude} - ${selectedPos.longitude}');
+              _marker = await _controller?.addMarker(
+                MarkerOption(
+                  latLng: selectedPos,
+                  // widget: Container(
+                  //   child: Image.asset('images/icons/marker-blue.png'),
+                  //   width: 50, height : 50
+                  // ),
+                  iconUri: Uri(path: 'images/icons/marker-blue.png'),
+                  infoWindowEnabled: true,
+                ),
+              );
+
+              _marker?.setCoordinate(selectedPos);
+            }
           },
           onMapCreated: (controller) async {
             _controller = controller;
+            // await _controller?.getLocation(); //TOO LONG
 
             bool status = await Permission.locationAlways.isGranted;
             if(!status){
               print("need to get locationAlways permission first");
               status = await Permission.locationAlways.request().isGranted;
               if(status){
+                print('status == true');
                 await _controller?.showMyLocation(MyLocationOption(
                   myLocationType: MyLocationType.Locate,
                 ));
@@ -67,13 +89,47 @@ class _MapShowPageState extends State<MapShowPage> {
                 _controller?.showScaleControl(true); //OK          
                 _controller.setCenterCoordinate(selectedPos);
                 _controller.addCircle(CircleOption(center: selectedPos, radius: 20, fillColor: Colors.green));
+
+                _marker = await _controller?.addMarker(
+                  MarkerOption(
+                    latLng: selectedPos,
+                    // widget: Container(
+                    //   child: Image.asset('images/icons/marker-blue.png'),
+                    //   width: 50, height : 50
+                    // ),
+                    iconUri: Uri(path: 'images/icons/marker-blue.png'),
+                    infoWindowEnabled: true,
+                  ),
+                );
+
+                _marker.setCoordinate(selectedPos);
               }else{
                 print("need to grant the location permission first");
               }
             }else{
-              await _controller?.showMyLocation(MyLocationOption(
-                myLocationType: MyLocationType.Locate,
-              ));
+              print('permission isGranted');
+              // await _controller?.showMyLocation(MyLocationOption(
+              //   myLocationType: MyLocationType.Locate,
+              // ));
+              await _controller?.setCenterCoordinate(selectedPos);
+
+              await _controller?.showScaleControl(true); //OK          
+              // _controller.setCenterCoordinate(selectedPos);
+              // _controller.addCircle(CircleOption(center: selectedPos, radius: 20, fillColor: Colors.green));
+
+              _marker = await _controller?.addMarker(
+                MarkerOption(
+                  latLng: selectedPos,
+                  // widget: Container(
+                  //   child: Image.asset('images/icons/marker-blue.png'),
+                  //   width: 50, height : 50
+                  // ),
+                  iconUri: Uri(path: 'images/icons/marker-blue.png'),
+                  infoWindowEnabled: true,
+                ),
+              );
+
+              _marker?.setCoordinate(selectedPos);
             }
 
             // _controller?.showZoomControl(true); //OK

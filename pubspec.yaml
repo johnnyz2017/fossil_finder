@@ -138,6 +138,7 @@ flutter:
     - images/icons/fossil_icon_512.png
     - images/icons/user.png
     - images/icons/marker.png
+    - images/icons/marker-blue.png
     - images/icons/map-icon-satillite.png
     - images/icons/map-icon-standard.png
     - images/icons/map-amap.png

@@ -33,6 +33,7 @@ class LocalPostEditblePage extends StatefulWidget {
 }
 
 class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
+  LatLng centerPos;
   DatabaseHelper dbhelper = DatabaseHelper();
   bool editmode = false;
   final _formKey = GlobalKey<FormState>();
@@ -137,6 +138,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
     super.initState();
     _private = widget.post.private;
     _category = widget.post.categoryId;
+    centerPos = LatLng(widget.post.coordinateLatitude, widget.post.coordinateLongitude);
 
     _getSystemList();
     
@@ -152,8 +154,8 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
       }
     }
 
-    _latTextController.text = widget.post.coordinateLatitude?.toStringAsFixed(6);
-    _lngTextController.text = widget.post.coordinateLongitude?.toStringAsFixed(6);
+    _latTextController.text = centerPos.latitude.toStringAsFixed(6);
+    _lngTextController.text = centerPos.longitude.toStringAsFixed(6);
     _altTextController.text = widget.post.coordinateAltitude?.toStringAsFixed(6);
     _addrTextController.text = widget.post.address;
     _titleTextController.text = widget.post.title;
@@ -348,22 +350,6 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('经度: '),
-                    Expanded(child: TextFormField(
-                      inputFormatters: [
-                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
-                      ],
-                      readOnly: !editmode,
-                      // initialValue: widget.post.longitude.toString(),
-                      controller: _lngTextController,
-                      autovalidate: true,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '经度没有填写';
-                          }
-                          return null;
-                        },
-                      )),
                     Text('纬度: '),
                     Expanded(child: TextFormField(
                       inputFormatters: [
@@ -380,6 +366,22 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                           return null;
                         },
                     )),
+                    Text('经度: '),
+                    Expanded(child: TextFormField(
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                      ],
+                      readOnly: !editmode,
+                      // initialValue: widget.post.longitude.toString(),
+                      controller: _lngTextController,
+                      autovalidate: true,
+                      validator: (value){
+                          if(value.isEmpty){
+                            return '经度没有填写';
+                          }
+                          return null;
+                        },
+                      )),
                     IconButton(
                       iconSize: 21, 
                       icon: Image.asset(
@@ -393,7 +395,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                           context,
                           MaterialPageRoute(builder: (BuildContext context) {
                             return MapShowPage(
-                              coord: LatLng(widget.post.coordinateLatitude, widget.post.coordinateLongitude),
+                              coord: centerPos,
                               selectable: true,
                             );
                           })
@@ -401,6 +403,7 @@ class _LocalPostEditblePageState extends State<LocalPostEditblePage> {
                         if(pos != null){
                           print('pos get: ${pos.latitude} - ${pos.longitude}');
                           setState(() {
+                            centerPos = pos;
                             _latTextController.text = pos.latitude.toStringAsFixed(6);
                             _lngTextController.text = pos.longitude.toStringAsFixed(6);
                           });

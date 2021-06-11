@@ -369,14 +369,15 @@ class _HomePageState extends State<HomePage> {
             AmapView(
               mapType: MapType.Standard,
               showZoomControl: false,
-              zoomLevel: 10,
-              maskDelay: Duration(milliseconds: 500),
+              zoomLevel: 12,
+              // maskDelay: Duration(milliseconds: 500),
               // onMapClicked: (value) async{
               //   // _inputFocus.unfocus();
               //   print('ampa clicked with ${value.latitude - value.longitude}');
               // },
               onMapCreated: (controller) async {
                 _controller = controller;
+                // await _controller?.getLocation();
 
                 bool status = await Permission.locationAlways.isGranted;
                 if(!status){

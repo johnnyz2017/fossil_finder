@@ -34,6 +34,7 @@ class PostUploadPage extends StatefulWidget {
 }
 
 class _PostUploadPageState extends State<PostUploadPage> {
+  LatLng centerPos;
   double _width = 400;
   DatabaseHelper dbhelper = DatabaseHelper();
   final _formKey = GlobalKey<FormState>();
@@ -162,16 +163,17 @@ class _PostUploadPageState extends State<PostUploadPage> {
   @override
   void initState() {
     super.initState();
+    centerPos = widget.center;
    
     _getSystemList();
 
-    _latTextController.text = widget.center.latitude.toStringAsFixed(6);
-    _lngTextController.text = widget.center.longitude.toStringAsFixed(6);
+    _latTextController.text = centerPos.latitude.toStringAsFixed(6);
+    _lngTextController.text = centerPos.longitude.toStringAsFixed(6);
   }
 
   @override
   Widget build(BuildContext context) {
-    print('center got : ${widget.center.latitude}, ${widget.center.longitude}');
+    print('center got : ${centerPos.latitude}, ${centerPos.longitude}');
     setState(() {
       _width = MediaQuery.of(context).size.width;
     });
@@ -377,6 +379,20 @@ class _PostUploadPageState extends State<PostUploadPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    Text('纬度: '),
+                    Expanded(child: TextFormField(
+                      inputFormatters: [
+                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
+                      ],
+                      controller: _latTextController,
+                      autovalidate: true,
+                      validator: (value){
+                          if(value.isEmpty){
+                            return '纬度没有填写';
+                          }
+                          return null;
+                        },
+                    )),
                     Text('经度: '),
                     Expanded(child: TextFormField(
                       inputFormatters: [
@@ -394,20 +410,6 @@ class _PostUploadPageState extends State<PostUploadPage> {
                           return null;
                         },
                       )),
-                    Text('纬度: '),
-                    Expanded(child: TextFormField(
-                      inputFormatters: [
-                        WhitelistingTextInputFormatter(RegExp("[.,0-9]"))
-                      ],
-                      controller: _latTextController,
-                      autovalidate: true,
-                      validator: (value){
-                          if(value.isEmpty){
-                            return '纬度没有填写';
-                          }
-                          return null;
-                        },
-                    )),
                     IconButton(
                       iconSize: 21, 
                       icon: Image.asset(
@@ -421,7 +423,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                           context,
                           MaterialPageRoute(builder: (BuildContext context) {
                             return MapShowPage(
-                              coord: LatLng(widget.center.latitude, widget.center.longitude),
+                              coord: LatLng(centerPos.latitude, centerPos.longitude),
                               selectable: true,
                             );
                           })
@@ -429,6 +431,7 @@ class _PostUploadPageState extends State<PostUploadPage> {
                         if(pos != null){
                           print('pos get: ${pos.latitude} - ${pos.longitude}');
                           setState(() {
+                            centerPos = pos;
                             _latTextController.text = pos.latitude.toStringAsFixed(6);
                             _lngTextController.text = pos.longitude.toStringAsFixed(6);
                           });
