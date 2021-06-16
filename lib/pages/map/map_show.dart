@@ -14,6 +14,7 @@ class MapShowPage extends StatefulWidget {
 }
 
 class _MapShowPageState extends State<MapShowPage> {
+  double markerSize = 30.0;
   AmapController _controller;
   List<Marker> _markers = [];
   bool _locationStatus = false;
@@ -60,12 +61,21 @@ class _MapShowPageState extends State<MapShowPage> {
               _marker = await _controller?.addMarker(
                 MarkerOption(
                   latLng: selectedPos,
-                  // widget: Container(
-                  //   child: Image.asset('images/icons/marker-blue.png'),
-                  //   width: 50, height : 50
-                  // ),
-                  iconUri: Uri(path: 'images/icons/marker-blue.png'),
+                  widget: Container(
+                    child: Image.asset('images/icons/marker-red.png'),
+                    width: markerSize, height : markerSize
+                  ),
+                  // iconUri: Uri(path: 'images/icons/marker-blue.png'),
                   infoWindowEnabled: true,
+                  // iconProvider: NetworkImage(
+                  //   "https://cdn.clipartsfree.net/vector/medium/77913-map-marker-red-images.png",
+                  //   scale: 0.01
+                  // ),
+                  // iconProvider: AssetImage('images/icons/marker-red.png', package: 'fossils_finder'),
+                  width: markerSize,
+                  height: markerSize, 
+                  anchorV: 0.5,
+                  anchorU: 0.5
                 ),
               );
 
@@ -87,18 +97,27 @@ class _MapShowPageState extends State<MapShowPage> {
                 ));
 
                 _controller?.showScaleControl(true); //OK          
-                _controller.setCenterCoordinate(selectedPos);
-                _controller.addCircle(CircleOption(center: selectedPos, radius: 20, fillColor: Colors.green));
+                _controller.setCenterCoordinate(selectedPos); //OK
+                // _controller.addCircle(CircleOption(center: selectedPos, radius: 20, fillColor: Colors.green));
 
                 _marker = await _controller?.addMarker(
                   MarkerOption(
                     latLng: selectedPos,
-                    // widget: Container(
-                    //   child: Image.asset('images/icons/marker-blue.png'),
-                    //   width: 50, height : 50
-                    // ),
-                    iconUri: Uri(path: 'images/icons/marker-blue.png'),
+                    widget: Container(
+                      child: Image.asset('images/icons/marker-red.png'),
+                      width: markerSize, height : markerSize
+                    ),
+                    // iconUri: Uri(path: 'images/icons/marker-red.png'),
                     infoWindowEnabled: true,
+                    // iconProvider: NetworkImage(
+                    //   "https://cdn.clipartsfree.net/vector/medium/77913-map-marker-red-images.png",
+                    //   scale: 0.01,
+                    // ),
+                    // iconProvider: AssetImage('images/icons/marker-red.png'),
+                    width: markerSize,
+                    height: markerSize, 
+                    anchorV: 0.5,
+                    anchorU: 0.5
                   ),
                 );
 
@@ -120,12 +139,21 @@ class _MapShowPageState extends State<MapShowPage> {
               _marker = await _controller?.addMarker(
                 MarkerOption(
                   latLng: selectedPos,
-                  // widget: Container(
-                  //   child: Image.asset('images/icons/marker-blue.png'),
-                  //   width: 50, height : 50
-                  // ),
-                  iconUri: Uri(path: 'images/icons/marker-blue.png'),
+                  widget: Container(
+                    child: Image.asset('images/icons/marker-red.png'),
+                    width: markerSize, height : markerSize
+                  ),
+                  // iconUri: Uri(path: 'images/icons/marker-blue.png'),
                   infoWindowEnabled: true,
+                  // iconProvider: NetworkImage(
+                  //   "https://cdn.clipartsfree.net/vector/medium/77913-map-marker-red-images.png",
+                  //   scale: 0.01
+                  // ),
+                  // iconProvider: AssetImage('images/icons/marker-red.png'),
+                  width: markerSize,
+                  height: markerSize, 
+                  anchorV: 0.5,
+                  anchorU: 0.5
                 ),
               );
 
