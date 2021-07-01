@@ -91,7 +91,6 @@ class _CommentUploadPageState extends State<CommentUploadPage> {
                   if(value.isEmpty)
                     return '标题不能为空';
                   return null;
-
                 },
               ),
 

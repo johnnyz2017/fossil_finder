@@ -1,7 +1,7 @@
-// const String serviceUrl = 'http://localhost:8000'; //local
+const String serviceUrl = 'http://localhost:8000'; //local
 // const String serviceUrl = 'http://foss-backend.herokuapp.com'; //heroku
 // const String serviceUrl = "http://42.192.48.39:8080"; //tx cloud
-const String serviceUrl = 'http://47.108.137.45'; //aliyun
+// const String serviceUrl = 'http://47.108.137.45'; //aliyun
 const String apiUrl = serviceUrl + '/api/v1';
 const servicePath = {
   'testauth' : '/testauth',
@@ -15,7 +15,8 @@ const servicePath = {
   'postsfrommycomments' : '/postsfrommycomments',
   'comments' : '/comments',
   'users' : '/users',
-  'changepw' : '/changepw'
+  'changepw' : '/changepw',
+  'sharedposts' : '/sharedposts',
 };
 
 const httpHeaders = {

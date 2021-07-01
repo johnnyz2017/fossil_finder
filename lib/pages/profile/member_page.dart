@@ -12,6 +12,7 @@ import 'package:fossils_finder/pages/profile/posts_of_comments_page.dart';
 import 'package:fossils_finder/pages/profile/private_list_page.dart';
 import 'package:fossils_finder/pages/profile/public_list_page.dart';
 import 'package:fossils_finder/pages/profile/setting_page.dart';
+import 'package:fossils_finder/pages/profile/shared_list_page.dart';
 import 'package:fossils_finder/widgets/clipper_widget.dart';
 import 'package:fossils_finder/widgets/custom_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -140,6 +141,7 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
       ),
       body: 
         ListView(
+          // shrinkWrap: true,
           children: [
             Padding(
               padding: EdgeInsets.fromLTRB(DMARGIN, 20, DMARGIN, 10),
@@ -179,6 +181,15 @@ class _MemberPageState extends State<MemberPage> with AutomaticKeepAliveClientMi
                 context,
                 MaterialPageRoute(builder: (BuildContext context) {
                   return PostsOfCommentsPage();
+                }) 
+              );
+            }),
+            FListTile('images/icons/shared_gray.png', '被分享记录', (){
+              print('shared posts clicked');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return SharedPostsPage();
                 }) 
               );
             }),

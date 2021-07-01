@@ -137,6 +137,7 @@ flutter:
   assets:
     - images/icons/fossil_icon_512.png
     - images/icons/user.png
+    - images/icons/shared_gray.png
     - images/icons/marker.png
     - images/icons/marker-blue.png
     - images/icons/marker-red.png

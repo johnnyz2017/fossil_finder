@@ -12,6 +12,7 @@ import 'package:fossils_finder/model/category.dart';
 import 'package:fossils_finder/model/post.dart';
 import 'package:fossils_finder/pages/list/category_select.dart';
 import 'package:fossils_finder/pages/map/map_show.dart';
+import 'package:fossils_finder/pages/profile/share_post.dart';
 import 'package:fossils_finder/utils/qiniu_image_upload.dart';
 import 'package:fossils_finder/utils/strings.dart';
 import 'package:image_picker/image_picker.dart';
@@ -187,6 +188,17 @@ class _PostEditblePageState extends State<PostEditblePage> {
       appBar: AppBar(
         title: Text('发布页面'),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (BuildContext context) {
+                  return SharePostPage(postId: widget.post.id,);
+                }) 
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: (){
