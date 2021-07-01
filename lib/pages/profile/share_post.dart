@@ -188,6 +188,17 @@ class _SharePostPageState extends State<SharePostPage> {
             msg: share? "分享成功" : "取消分享成功",
             gravity: ToastGravity.CENTER,
             textColor: Colors.grey);
+
+        // var _listJson = responseJson['data'];
+      
+        // print('get json data is  ${responseJson}');
+        
+        // List _jsonList = _listJson as List;
+        // List<User> sharedUserList = _jsonList.map((item) => User.fromJson(item)).toList();
+        // print('postList: ${sharedUserList}');
+        // setState(() {
+        //   sharedUsers = sharedUserList;
+        // });
         
         // Navigator.pop(context, true);
       }else{
